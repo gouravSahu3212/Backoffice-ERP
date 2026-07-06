@@ -13,7 +13,7 @@ class UpdateAgentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,22 +26,22 @@ class UpdateAgentRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                'max:255'
+                'max:255',
             ],
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users')->ignore($this->agent)
+                Rule::unique('users')->ignore($this->agent),
             ],
             'phone' => [
                 'nullable',
-                'max:20'
+                'max:20',
             ],
             'password' => [
                 'nullable',
                 'confirmed',
-                'min:8'
-            ]
+                'min:8',
+            ],
         ];
     }
 }

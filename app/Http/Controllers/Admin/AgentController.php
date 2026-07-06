@@ -3,18 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 // use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Services\AgentService;
+use App\Http\Requests\Admin\StoreAgentRequest;
+use App\Http\Requests\Admin\UpdateAgentRequest;
 use App\Models\User;
-use App\Http\Requests\StoreAgentRequest;
-use App\Http\Requests\UpdateAgentRequest;
-
+use App\Services\AgentService;
+use Illuminate\Http\Request;
 
 class AgentController extends AdminController
 {
     public function __construct(
         protected AgentService $service
-    ){
+    ) {
         //
     }
 
@@ -29,8 +28,8 @@ class AgentController extends AdminController
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%")
-                      ->orWhere('phone', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
                 });
             })
             ->orderBy('name')

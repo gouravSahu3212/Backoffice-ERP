@@ -12,7 +12,7 @@ class StoreAgentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,22 +25,22 @@ class StoreAgentRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                'max:255'
+                'max:255',
             ],
             'email' => [
                 'required',
                 'email',
-                'unique:users,email'
+                'unique:users,email',
             ],
             'phone' => [
                 'nullable',
-                'max:20'
+                'max:20',
             ],
             'password' => [
                 'required',
                 'confirmed',
-                'min:8'
-            ]
+                'min:8',
+            ],
         ];
     }
 }
