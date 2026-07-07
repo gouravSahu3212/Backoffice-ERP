@@ -27,6 +27,12 @@ class StoreAgentRequest extends FormRequest
                 'required',
                 'max:255',
             ],
+            'username' => [
+                'required',
+                'max:50',
+                'unique:users,username',
+                'regex:/^[a-zA-Z0-9_]+$/',
+            ],
             'email' => [
                 'required',
                 'email',
@@ -38,9 +44,22 @@ class StoreAgentRequest extends FormRequest
             ],
             'password' => [
                 'required',
-                'confirmed',
                 'min:8',
             ],
+            'is_active' => [
+                'nullable',
+                'boolean',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'username.regex' => 'Username may only contain letters, numbers, and underscores.',
         ];
     }
 }

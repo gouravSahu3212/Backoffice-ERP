@@ -136,3 +136,70 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - Do NOT delete tests without approval.
 
 </laravel-boost-guidelines>
+
+<project-architecture-rules>
+=== project architecture rules ===
+
+# Project Code Quality & Architecture
+
+These rules are specific to this Backoffice ERP project and must be followed on every new module, feature, or change.
+
+## Modular Architecture
+
+- Every new feature or module must be built with a clean, layered architecture:
+  - **Model** → Eloquent model with proper casts, fillable, relationships, and scopes.
+  - **Repository** → Extends `BaseRepository`. All direct DB queries go here — never in controllers or services.
+  - **Service** → Orchestrates business logic using the repository. Controllers only call services.
+  - **Controller** → Thin. Only handles HTTP concerns: input, calling the service, and returning a response.
+  - **Form Request** → All validation lives in a dedicated `FormRequest` class. Never validate in controllers.
+
+## Reusability & Extensibility
+
+- Design every class to be **open for extension, closed for modification** (OCP).
+- Extract shared logic into the `BaseRepository` or a dedicated trait rather than duplicating across services.
+- Blade components (`resources/views/components/`) must be generic and reusable across modules — never module-specific.
+- If a service method grows beyond one clear responsibility, split it into smaller private methods or a dedicated class.
+
+## Naming Conventions
+
+- Controllers: `{Resource}Controller` (e.g., `AgentController`).
+- Services: `{Resource}Service` (e.g., `AgentService`).
+- Repositories: `{Resource}Repository` (e.g., `AgentRepository`).
+- Form Requests: `Store{Resource}Request`, `Update{Resource}Request`.
+- Migrations: `add_{field}_to_{table}_table`, `create_{table}_table`.
+- Blade views: `resources/views/admin/{resource}/index.blade.php`, `create.blade.php`, `edit.blade.php`, `_form.blade.php`.
+
+## Controller Rules
+
+- Controllers must **never** contain query logic or business logic.
+- Return JSON (`response()->json()`) when `$request->expectsJson()` is true; redirect otherwise.
+- Keep controller methods to fewer than 15 lines wherever possible.
+
+## Service Rules
+
+- Services orchestrate; they do not query the database directly.
+- Every public service method must have an explicit PHP return type.
+- Handle all side-effects (role assignment, event dispatch, notifications) inside the service, not the controller.
+
+## Repository Rules
+
+- All Eloquent queries live in the repository.
+- Repositories extend `BaseRepository` and inject the model via the constructor.
+- Common query patterns (paginate, findByEmail, etc.) belong in the repository, not inline in controllers.
+
+## Frontend (Blade + Tailwind)
+
+- UI interactions that do not require a full page reload **must** use AJAX (`fetch`) with JSON responses.
+- Modals for create/edit operations are preferred over separate pages to keep the UX seamless.
+- All action buttons that mutate state (toggle, delete) must update the DOM immediately on success without a reload.
+- Reuse existing Blade components (`x-nav-item`, `x-sidebar`, `x-header`, etc.) before creating new ones.
+- Inline `<script>` blocks belong in `@push('scripts')` — never in the middle of a template.
+
+## Database
+
+- Every new column must have a dedicated migration file generated via `php artisan make:migration`.
+- Add columns as `nullable()` unless the field is genuinely required at the DB level.
+- Always add a `down()` method that precisely reverses the `up()` method.
+- New models require a factory and, where appropriate, a seeder.
+
+</project-architecture-rules>

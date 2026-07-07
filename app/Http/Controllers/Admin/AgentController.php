@@ -78,17 +78,51 @@ class AgentController extends AdminController
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource in storage (supports JSON for AJAX).
      */
     public function update(UpdateAgentRequest $request, User $agent)
     {
         abort_unless($agent->hasRole('Agent'), 404);
 
-        $this->service->update($agent, $request->validated());
+        $agent = $this->service->update($agent, $request->validated());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Agent updated successfully.',
+                'agent' => [
+                    'id' => $agent->id,
+                    'name' => $agent->name,
+                    'username' => $agent->username,
+                    'email' => $agent->email,
+                    'phone' => $agent->phone,
+                    'is_active' => $agent->is_active,
+                ],
+            ]);
+        }
 
         return redirect()
             ->route('admin.agents.index')
             ->with('success', 'Agent updated successfully.');
+    }
+
+    /**
+     * Toggle the agent's active status (supports JSON for AJAX).
+     */
+    public function toggleStatus(Request $request, User $agent)
+    {
+        abort_unless($agent->hasRole('Agent'), 404);
+
+        $this->service->toggleStatus($agent);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'is_active' => $agent->fresh()->is_active,
+            ]);
+        }
+
+        return back()->with('success', 'Agent status updated.');
     }
 
     /**
