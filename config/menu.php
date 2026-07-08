@@ -17,17 +17,26 @@ return [
             'title' => 'Hotels',
             'route' => 'admin.hotels.index',
             'icon' => 'building',
+            'submenu' => [
+                [
+                    'title' => 'Booking',
+                    'route' => 'admin.hotels.bookings.index',
+                    'icon' => 'calendar',
+                ],
+            ]
         ],
         [
             'title' => 'Transfers',
             'route' => 'admin.transfers.index',
             'icon' => 'truck',
-        ],
-        [
-            'title' => 'Bookings',
-            'route' => 'admin.bookings.index',
-            'icon' => 'calendar',
-        ],
+            'submenu' => [
+                [
+                    'title' => 'Booking',
+                    'route' => 'admin.transfers.bookings.index',
+                    'icon' => 'calendar',
+                ],
+            ]
+        ]
     ],
 
     'agent' => [
