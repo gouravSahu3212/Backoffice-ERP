@@ -32,7 +32,6 @@
                     'Agent' => 'agent.dashboard',
                     default => 'dashboard',
                 };
-                echo "menu.{$menuKey}";
             @endphp
 
             @foreach ($menuItems as $item)
@@ -53,7 +52,7 @@
                             {{ $item['title'] }}
                         </x-nav-item>
 
-                        <div class="pl-6 space-y-1">
+                        <div class="pl-4 space-y-1">
                             @foreach ($item['submenu'] as $subItem)
                                 @php
                                     $subRoute = Route::has($subItem['route']) ? $subItem['route'] : $fallbackRoute;

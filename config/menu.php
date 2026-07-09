@@ -14,6 +14,18 @@ return [
             'icon' => 'users',
         ],
         [
+            'title' => 'Transfers',
+            'route' => 'admin.transfers.index',
+            'icon' => 'truck',
+            'submenu' => [
+                [
+                    'title' => 'Booking',
+                    'route' => 'admin.transfers.bookings.index',
+                    'icon' => 'calendar',
+                ],
+            ]
+        ],
+        [
             'title' => 'Hotels',
             'route' => 'admin.hotels.index',
             'icon' => 'building',
@@ -26,17 +38,22 @@ return [
             ]
         ],
         [
-            'title' => 'Transfers',
-            'route' => 'admin.transfers.index',
-            'icon' => 'truck',
+            'title' => 'Tours',
+            'route' => 'admin.tours.index',
+            'icon' => 'map-pin',
             'submenu' => [
                 [
                     'title' => 'Booking',
-                    'route' => 'admin.transfers.bookings.index',
+                    'route' => 'admin.tours.bookings.index',
                     'icon' => 'calendar',
                 ],
             ]
-        ]
+        ],
+        [
+            'title' => 'Tour Requests',
+            'route' => 'admin.tour-requests.index',
+            'icon' => 'ticket',
+        ],
     ],
 
     'agent' => [
