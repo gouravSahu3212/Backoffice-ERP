@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
 use App\Http\Controllers\Admin\AgentController;
+use App\Http\Controllers\Admin\TourController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,6 +19,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/dashboard', AdminDashboard::class)->name('dashboard');
             Route::resource('agents', AgentController::class);
             Route::patch('agents/{agent}/toggle-status', [AgentController::class, 'toggleStatus'])->name('agents.toggle-status');
+            Route::resource('tours', TourController::class)->except(['create', 'edit', 'show']);
+            Route::patch('tours/{tour}/toggle-status', [TourController::class, 'toggleStatus'])->name('tours.toggle-status');
         });
 
     Route::middleware('role:Agent')

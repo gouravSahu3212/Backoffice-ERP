@@ -40,7 +40,7 @@ return [
         [
             'title' => 'Tours',
             'route' => 'admin.tours.index',
-            'icon' => 'map-pin',
+            'icon' => 'map',
             'submenu' => [
                 [
                     'title' => 'Booking',
