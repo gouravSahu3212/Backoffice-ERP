@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\TourController;
+use App\Http\Controllers\Admin\TransferController;
+use App\Http\Controllers\Admin\CityTransferRateController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,6 +23,15 @@ Route::middleware(['auth'])->group(function () {
             Route::patch('agents/{agent}/toggle-status', [AgentController::class, 'toggleStatus'])->name('agents.toggle-status');
             Route::resource('tours', TourController::class)->except(['create', 'edit', 'show']);
             Route::patch('tours/{tour}/toggle-status', [TourController::class, 'toggleStatus'])->name('tours.toggle-status');
+
+            // Transfers
+            Route::get('transfers', [TransferController::class, 'index'])->name('transfers.index');
+            Route::post('transfers/city-rates', [CityTransferRateController::class, 'store'])->name('transfers.city-rates.store');
+            Route::put('transfers/city-rates/{rate}', [CityTransferRateController::class, 'update'])->name('transfers.city-rates.update');
+            Route::patch('transfers/city-rates/{rate}/toggle-status', [CityTransferRateController::class, 'toggleStatus'])->name('transfers.city-rates.toggle-status');
+            Route::delete('transfers/city-rates/{rate}', [CityTransferRateController::class, 'destroy'])->name('transfers.city-rates.destroy');
+            Route::post('transfers/locations', [CityTransferRateController::class, 'storeLocation'])->name('transfers.locations.store');
+            Route::post('transfers/vehicle-types', [CityTransferRateController::class, 'storeVehicleType'])->name('transfers.vehicle-types.store');
         });
 
     Route::middleware('role:Agent')
