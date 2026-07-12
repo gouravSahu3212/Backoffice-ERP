@@ -6,6 +6,7 @@ use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\TourController;
 use App\Http\Controllers\Admin\TransferController;
+use App\Http\Controllers\Admin\AirportTransferRateController;
 use App\Http\Controllers\Admin\CityTransferRateController;
 
 Route::get('/', function () {
@@ -32,6 +33,14 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('transfers/city-rates/{rate}', [CityTransferRateController::class, 'destroy'])->name('transfers.city-rates.destroy');
             Route::post('transfers/locations', [CityTransferRateController::class, 'storeLocation'])->name('transfers.locations.store');
             Route::post('transfers/vehicle-types', [CityTransferRateController::class, 'storeVehicleType'])->name('transfers.vehicle-types.store');
+
+            // Airport Transfer Rates
+            Route::post('transfers/airport-rates', [AirportTransferRateController::class, 'store'])->name('transfers.airport-rates.store');
+            Route::put('transfers/airport-rates/{rate}', [AirportTransferRateController::class, 'update'])->name('transfers.airport-rates.update');
+            Route::patch('transfers/airport-rates/{rate}/toggle-status', [AirportTransferRateController::class, 'toggleStatus'])->name('transfers.airport-rates.toggle-status');
+            Route::delete('transfers/airport-rates/{rate}', [AirportTransferRateController::class, 'destroy'])->name('transfers.airport-rates.destroy');
+            Route::post('transfers/zones', [AirportTransferRateController::class, 'storeZone'])->name('transfers.zones.store');
+            Route::post('transfers/airport-vehicle-types', [AirportTransferRateController::class, 'storeVehicleType'])->name('transfers.airport-vehicle-types.store');
         });
 
     Route::middleware('role:Agent')

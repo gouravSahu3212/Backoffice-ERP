@@ -28,10 +28,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
 
-## Verification Scripts
-
-- Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
-
 ## Application Structure & Architecture
 
 - Stick to existing directory structure; don't create new base folders without approval.
@@ -126,15 +122,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
 - Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
 
-=== pest/core rules ===
-
-## Pest
-
-- This project uses Pest for testing. Create tests: `php artisan make:test --pest {name}`.
-- The `{name}` argument should not include the test suite directory. Use `php artisan make:test --pest SomeFeatureTest` instead of `php artisan make:test --pest Feature/SomeFeatureTest`.
-- Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
-- Do NOT delete tests without approval.
-
 </laravel-boost-guidelines>
 
 <project-architecture-rules>
@@ -190,6 +177,7 @@ These rules are specific to this Backoffice ERP project and must be followed on 
 ## Frontend (Blade + Tailwind)
 
 - UI interactions that do not require a full page reload **must** use AJAX (`fetch`) with JSON responses.
+- Always try to generate the same UI as defined in the screenshots that are provided as referance
 - Modals for create/edit operations are preferred over separate pages to keep the UX seamless.
 - All action buttons that mutate state (toggle, delete) must update the DOM immediately on success without a reload.
 - Reuse existing Blade components (`x-nav-item`, `x-sidebar`, `x-header`, etc.) before creating new ones.
@@ -197,6 +185,7 @@ These rules are specific to this Backoffice ERP project and must be followed on 
 
 ## Database
 
+- Never run such commands that can clean the existing data in the database
 - Every new column must have a dedicated migration file generated via `php artisan make:migration`.
 - Add columns as `nullable()` unless the field is genuinely required at the DB level.
 - Always add a `down()` method that precisely reverses the `up()` method.
