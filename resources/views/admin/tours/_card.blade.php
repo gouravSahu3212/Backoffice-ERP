@@ -110,7 +110,7 @@
 
         {{-- Toggle Status (AJAX) --}}
         <button type="button" title="{{ $tour->is_active ? 'Deactivate' : 'Activate' }}"
-            class="toggle-status-btn p-1.5 text-gray-400 hover:text-gray-700 transition-colors"
+            class="tour-toggle-status-btn p-1.5 text-gray-400 hover:text-gray-700 transition-colors"
             data-id="{{ $tour->id }}" data-is-active="{{ $tour->is_active ? '1' : '0' }}"
             data-toggle-url="{{ route('admin.tours.toggle-status', $tour) }}">
             @if ($tour->is_active)
