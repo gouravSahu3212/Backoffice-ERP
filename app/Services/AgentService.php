@@ -16,14 +16,15 @@ class AgentService
         return $this->repository->paginate($search);
     }
 
-    public function create(array $data)
+    public function create(array $data): User
     {
         $agent = $this->repository->create([
-            'name'      => $data['name'],
-            'email'     => $data['email'],
-            'phone'     => $data['phone'],
-            'password'  => $data['password'],
-            'is_active' => true,
+            'name' => $data['name'],
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'phone' => $data['phone'] ?? null,
+            'password' => $data['password'],
+            'is_active' => isset($data['is_active']) ? (bool) $data['is_active'] : true,
         ]);
 
         $agent->assignRole('Agent');
@@ -31,19 +32,30 @@ class AgentService
         return $agent;
     }
 
-    public function update(User $agent, array $data)
+    public function update(User $agent, array $data): User
     {
-        if (empty($data['password'])) {
-            unset($data['password']);
+        $payload = [
+            'name' => $data['name'],
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'phone' => $data['phone'] ?? null,
+            'is_active' => isset($data['is_active']) ? (bool) $data['is_active'] : $agent->is_active,
+        ];
+
+        if (! empty($data['password'])) {
+            $payload['password'] = $data['password'];
         }
 
-        return $this->repository->update($agent, $data);
+        return $this->repository->update($agent, $payload);
     }
 
-    public function toggleStatus(User $agent)
+    public function toggleStatus(User $agent): void
     {
-        $agent->update([
-            'is_active' => !$agent->is_active
-        ]);
+        $agent->update(['is_active' => ! $agent->is_active]);
+    }
+
+    public function delete(User $agent): void
+    {
+        $this->repository->delete($agent);
     }
 }

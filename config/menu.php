@@ -14,19 +14,45 @@ return [
             'icon' => 'users',
         ],
         [
-            'title' => 'Hotels',
-            'route' => 'admin.hotels.index',
-            'icon' => 'building',
-        ],
-        [
             'title' => 'Transfers',
             'route' => 'admin.transfers.index',
             'icon' => 'truck',
+            'submenu' => [
+                [
+                    'title' => 'Booking',
+                    'route' => 'admin.transfers.bookings.index',
+                    'icon' => 'calendar',
+                ],
+            ]
         ],
         [
-            'title' => 'Bookings',
-            'route' => 'admin.bookings.index',
-            'icon' => 'calendar',
+            'title' => 'Hotels',
+            'route' => 'admin.hotels.index',
+            'icon' => 'building',
+            'submenu' => [
+                [
+                    'title' => 'Booking',
+                    'route' => 'admin.hotels.bookings.index',
+                    'icon' => 'calendar',
+                ],
+            ]
+        ],
+        [
+            'title' => 'Tours',
+            'route' => 'admin.tours.index',
+            'icon' => 'map',
+            'submenu' => [
+                [
+                    'title' => 'Booking',
+                    'route' => 'admin.tours.bookings.index',
+                    'icon' => 'calendar',
+                ],
+            ]
+        ],
+        [
+            'title' => 'Tour Requests',
+            'route' => 'admin.tour-requests.index',
+            'icon' => 'ticket',
         ],
     ],
 

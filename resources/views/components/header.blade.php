@@ -1,26 +1,23 @@
-<header class="bg-white border-b shadow-sm">
+<header class="bg-white border-b border-gray-200">
 
-    <div class="flex justify-between items-center px-8 py-4">
+    <div class="flex justify-between items-center px-6 py-3">
 
-        <h2 class="text-xl font-semibold">
+        {{-- Collapse / toggle icon --}}
+        <button class="p-1.5 rounded hover:bg-gray-100 text-gray-500 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
 
-            @yield('page-title', 'Dashboard')
+        {{-- Right side: role badge + user name --}}
+        <div class="flex items-center gap-3">
 
-        </h2>
-
-        <div class="flex items-center gap-5">
-
-            <span class="text-gray-600">
-
-                {{ auth()->user()->name }}
-
+            <span class="bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-md">
+                {{ auth()->user()->getRoleNames()->first() }}
             </span>
 
-            <span
-                class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
-
-                {{ auth()->user()->getRoleNames()->first() }}
-
+            <span class="text-sm text-gray-600 font-medium">
+                {{ auth()->user()->name }}
             </span>
 
         </div>

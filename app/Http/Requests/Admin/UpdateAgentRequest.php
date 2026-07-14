@@ -28,6 +28,12 @@ class UpdateAgentRequest extends FormRequest
                 'required',
                 'max:255',
             ],
+            'username' => [
+                'required',
+                'max:50',
+                Rule::unique('users', 'username')->ignore($this->agent),
+                'regex:/^[a-zA-Z0-9_]+$/',
+            ],
             'email' => [
                 'required',
                 'email',
@@ -37,11 +43,20 @@ class UpdateAgentRequest extends FormRequest
                 'nullable',
                 'max:20',
             ],
-            'password' => [
+            'is_active' => [
                 'nullable',
-                'confirmed',
-                'min:8',
+                'boolean',
             ],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'username.regex' => 'Username may only contain letters, numbers, and underscores.',
         ];
     }
 }
