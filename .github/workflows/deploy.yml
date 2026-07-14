@@ -61,7 +61,4 @@ jobs:
 
             php artisan optimize
 
-            cp -R public/* ~/domains/codeyweb.com/public_html/88booking_mangement/
-            cp public/.htaccess ~/domains/codeyweb.com/public_html/88booking_mangement/
-
             php artisan up
