@@ -4,7 +4,17 @@
 
 <div class="min-h-screen bg-gray-100">
 
-    <div class="flex">
+    <div
+        x-data="{
+            sidebarOpen: JSON.parse(localStorage.getItem('sidebarOpen') ?? 'true'),
+
+            toggleSidebar() {
+                this.sidebarOpen = !this.sidebarOpen;
+                localStorage.setItem('sidebarOpen', JSON.stringify(this.sidebarOpen));
+            }
+        }"
+        class="flex h-screen"
+    >
 
         <x-sidebar />
 

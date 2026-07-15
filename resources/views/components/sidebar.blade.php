@@ -1,19 +1,34 @@
-<aside class="w-64 bg-white border-r border-gray-200 flex flex-col min-h-screen">
+<aside
+    class="bg-white border-r border-gray-200 flex flex-col min-h-screen transition-all duration-300"
+    :class="sidebarOpen ? 'w-64' : 'w-20'"
+>
 
     {{-- Logo / Brand --}}
     <div class="px-6 py-5 border-b border-gray-100">
-        <h2 class="text-lg font-bold text-gray-900 leading-tight">
-            Backoffice ERP
-        </h2>
-        <p class="text-xs text-gray-400 mt-0.5">
-            Transfers &amp; Hotels
-        </p>
+        <template x-if="sidebarOpen">
+            <div>
+                <h2 class="text-lg font-bold">{{ config('app.name') }}</h2>
+                <p class="text-xs text-gray-400">Transfers & Hotels</p>
+            </div>
+        </template>
+
+        <template x-if="!sidebarOpen">
+            <div class="flex justify-center">
+                <div
+                    class="w-10 h-10 rounded-lg bg-gray-900 text-white flex items-center justify-center font-bold">
+                    {{ strtoupper(substr(config('app.name'), 0, 2)) }}
+                </div>
+            </div>
+        </template>
     </div>
 
     {{-- Navigation --}}
     <div class="px-4 py-4 flex-1">
 
-        <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest px-2 mb-2">
+        <p
+            x-show="sidebarOpen"
+            x-transition
+            class="text-xs font-semibold text-gray-400 uppercase tracking-widest px-2 mb-2">
             Navigation
         </p>
 
@@ -50,6 +65,13 @@
                                 <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
                             </x-slot:icon>
                             {{ $item['title'] }}
+                            <x-slot:icon2>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </x-slot:icon2>
                         </x-nav-item>
 
                         <div class="pl-4 space-y-1">
@@ -87,11 +109,11 @@
     {{-- User info + Logout --}}
     <div class="px-6 py-5 border-t border-gray-100">
 
-        <p class="text-sm font-semibold text-gray-800">
+        <p x-show="sidebarOpen" class="text-sm font-semibold text-gray-800 transition group">
             {{ auth()->user()->name }}
         </p>
 
-        <p class="text-xs text-gray-400 mt-0.5">
+        <p x-show="sidebarOpen" class="text-xs text-gray-400 mt-0.5">
             {{ auth()->user()->getRoleNames()->first() }}
         </p>
 
@@ -104,7 +126,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                Logout
+                <span x-show="sidebarOpen" x-transition class="ml-3 transition group">
+                    Logout
+                </span>
             </button>
         </form>
 
