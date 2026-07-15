@@ -1,13 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
-use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
 use App\Http\Controllers\Admin\AgentController;
-use App\Http\Controllers\Admin\TourController;
-use App\Http\Controllers\Admin\TransferController;
 use App\Http\Controllers\Admin\AirportTransferRateController;
 use App\Http\Controllers\Admin\CityTransferRateController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\TourBookingController;
+use App\Http\Controllers\Admin\TourController;
+use App\Http\Controllers\Admin\TransferBookingController;
+use App\Http\Controllers\Admin\TransferController;
+use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,6 +29,16 @@ Route::middleware(['auth'])->group(function () {
 
             // Transfers
             Route::get('transfers', [TransferController::class, 'index'])->name('transfers.index');
+            Route::resource('transfers/bookings', TransferBookingController::class)
+                ->only(['index', 'show'])
+                ->names('transfers.bookings');
+            
+            // Tours
+            Route::get('Tours', [TourController::class, 'index'])->name('tours.index');
+            Route::resource('tours/bookings', TourBookingController::class)
+                ->only(['index', 'show'])
+                ->names('tours.bookings');
+            
             Route::post('transfers/city-rates', [CityTransferRateController::class, 'store'])->name('transfers.city-rates.store');
             Route::put('transfers/city-rates/{rate}', [CityTransferRateController::class, 'update'])->name('transfers.city-rates.update');
             Route::patch('transfers/city-rates/{rate}/toggle-status', [CityTransferRateController::class, 'toggleStatus'])->name('transfers.city-rates.toggle-status');
