@@ -25,18 +25,18 @@ return [
                 ],
             ]
         ],
-        [
-            'title' => 'Hotels',
-            'route' => 'admin.hotels.index',
-            'icon' => 'building',
-            'submenu' => [
-                [
-                    'title' => 'Booking',
-                    'route' => 'admin.hotels.bookings.index',
-                    'icon' => 'calendar',
-                ],
-            ]
-        ],
+        // [
+        //     'title' => 'Hotels',
+        //     'route' => 'admin.hotels.index',
+        //     'icon' => 'building',
+        //     'submenu' => [
+        //         [
+        //             'title' => 'Booking',
+        //             'route' => 'admin.hotels.bookings.index',
+        //             'icon' => 'calendar',
+        //         ],
+        //     ]
+        // ],
         [
             'title' => 'Tours',
             'route' => 'admin.tours.index',

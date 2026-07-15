@@ -77,7 +77,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {{-- Transfers --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+        <a class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition" href="{{ route('admin.transfers.index') }}">
             <div class="flex items-center gap-3 mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.8">
@@ -90,10 +90,10 @@
                 Manage city-to-city and airport transfer rates. Configure pricing,
                 vehicles, and zones.
             </p>
-        </div>
+        </a>
 
         {{-- Hotel Booking --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+        <a class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition cursor-not-allowed" href="#">
             <div class="flex items-center gap-3 mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.8">
@@ -106,7 +106,7 @@
                 Manage hotels, room inventory, and slots. Track bookings and
                 payments.
             </p>
-        </div>
+        </a>
 
     </div>
 

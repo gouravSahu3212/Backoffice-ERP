@@ -152,4 +152,9 @@ class TourService
             )
         );
     }
+
+    public function listRequests(?string $search = null)
+    {
+        return $this->repository->paginateRequests($search);
+    }
 }
