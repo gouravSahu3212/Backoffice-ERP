@@ -78,4 +78,12 @@ class TourController extends AdminController
 
         return back()->with('success', 'Tour deleted.');
     }
+
+    public function requests(Request $request)
+    {
+        $search = $request->search;
+        $requests = $this->service->listRequests($search);
+
+        return view('admin.tours.requests.index', compact('requests', 'search'));
+    }
 }

@@ -34,10 +34,12 @@ Route::middleware(['auth'])->group(function () {
                 ->names('transfers.bookings');
             
             // Tours
-            Route::get('Tours', [TourController::class, 'index'])->name('tours.index');
+            Route::get('tours', [TourController::class, 'index'])->name('tours.index');
             Route::resource('tours/bookings', TourBookingController::class)
                 ->only(['index', 'show'])
                 ->names('tours.bookings');
+
+            Route::get('tours/requests', [TourController::class, 'requests'])->name('tour-requests.index');
             
             Route::post('transfers/city-rates', [CityTransferRateController::class, 'store'])->name('transfers.city-rates.store');
             Route::put('transfers/city-rates/{rate}', [CityTransferRateController::class, 'update'])->name('transfers.city-rates.update');
