@@ -1,5 +1,5 @@
 <aside
-    class="bg-white border-r border-gray-200 flex flex-col min-h-screen transition-all duration-300"
+    class="bg-gray-100 border-r border-gray-200 flex flex-col min-h-screen transition-all duration-300"
     :class="sidebarOpen ? 'w-64' : 'w-20'"
 >
 

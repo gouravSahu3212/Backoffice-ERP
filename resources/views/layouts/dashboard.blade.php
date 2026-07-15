@@ -2,7 +2,7 @@
 
 @section('body')
 
-<div class="min-h-screen bg-gray-100">
+<div class="min-h-screen">
 
     <div
         x-data="{
