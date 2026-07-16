@@ -870,6 +870,10 @@
 
                 btn.dataset.active = data.is_active ? '1' : '0';
                 btn.title = data.is_active ? 'Deactivate' : 'Activate';
+                btn.querySelector('svg').innerHTML = data.is_active
+                    ? '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="16" cy="12" r="2"></circle>'
+                    : '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="8" cy="12" r="2"></circle>';
+                
             }
         } catch (err) {
             console.error(err);
@@ -948,20 +952,20 @@
         const to = toSel.value;
 
         // Clear previous validation
-        fromLocation.setCustomValidity('');
-        toLocation.setCustomValidity('');
+        fromSel.setCustomValidity('');
+        toSel.setCustomValidity('');
 
         if (from && to && from === to) {
 
             const message = 'From City and To City cannot be the same.';
 
-            fromLocation.setCustomValidity(message);
-            toLocation.setCustomValidity(message);
+            fromSel.setCustomValidity(message);
+            toSel.setCustomValidity(message);
 
         }
 
-        fromLocation.reportValidity();
-        toLocation.reportValidity();
+        fromSel.reportValidity();
+        toSel.reportValidity();
     }
 
     fromSel.addEventListener('change', validateLocations);
