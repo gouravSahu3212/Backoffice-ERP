@@ -942,6 +942,55 @@
         }
     });
 
+    function validateLocations() {
+
+        const from = fromSel.value;
+        const to = toSel.value;
+
+        // Clear previous validation
+        fromLocation.setCustomValidity('');
+        toLocation.setCustomValidity('');
+
+        if (from && to && from === to) {
+
+            const message = 'From City and To City cannot be the same.';
+
+            fromLocation.setCustomValidity(message);
+            toLocation.setCustomValidity(message);
+
+        }
+
+        fromLocation.reportValidity();
+        toLocation.reportValidity();
+    }
+
+    fromSel.addEventListener('change', validateLocations);
+    toSel.addEventListener('change', validateLocations);
+
+    function syncLocations() {
+
+        const selectedFrom = fromSel.value;
+
+        [...toSel.options].forEach(option => {
+            option.disabled = option.value === selectedFrom && option.value !== '';
+        });
+
+    }
+
+    fromSel.addEventListener('change', syncLocations);
+
+    function syncReverseLocations() {
+
+        const selectedTo = toSel.value;
+
+        [...fromSel.options].forEach(option => {
+            option.disabled = option.value === selectedTo && option.value !== '';
+        });
+
+    }
+
+    toSel.addEventListener('change', syncReverseLocations);
+
     // ── Add New Vehicle Type Mini Modal ───────────────────────────────────────
     const newVehicleModal   = document.getElementById('new-vehicle-modal');
     const newVehicleName    = document.getElementById('new-vehicle-name');

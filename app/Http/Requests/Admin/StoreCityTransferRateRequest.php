@@ -18,7 +18,7 @@ class StoreCityTransferRateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'from_location_id' => ['required', 'integer', 'exists:transfer_locations,id'],
+            'from_location_id' => ['required', 'integer', 'exists:transfer_locations,id', 'different:to_location_id'],
             'to_location_id'   => ['required', 'integer', 'exists:transfer_locations,id', 'different:from_location_id'],
             'vehicle_type_id'  => ['required', 'integer', 'exists:vehicle_types,id'],
             'fare_type'        => ['required', 'in:fixed,per_km,per_hr'],
@@ -26,6 +26,19 @@ class StoreCityTransferRateRequest extends FormRequest
             'currency'         => ['required', 'string', 'max:10'],
             'notes'            => ['nullable', 'string', 'max:1000'],
             'is_active'        => ['nullable', 'boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+
+            'from_location_id.different' =>
+                'From City and To City cannot be the same.',
+
+            'to_location_id.different' =>
+                'From City and To City cannot be the same.',
+
         ];
     }
 }
