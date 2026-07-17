@@ -37,6 +37,16 @@ jobs:
       - name: Build Vite Assets
         run: npm run build
 
+      - name: Copy built assets to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          source: "public/build"
+          target: "~/repositories/Backoffice-ERP"
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
         with:
