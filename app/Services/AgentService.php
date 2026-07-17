@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Notifications\AgentWelcomeNotification;
 use App\Repositories\AgentRepository;
+use Illuminate\Support\Facades\Password;
 
 class AgentService
 {
@@ -28,6 +30,11 @@ class AgentService
         ]);
 
         $agent->assignRole('Agent');
+
+        $token = Password::getRepository()->create($agent);
+        $resetUrl = route('password.reset', ['token' => $token, 'email' => $agent->email]);
+
+        $agent->notify(new AgentWelcomeNotification($resetUrl));
 
         return $agent;
     }

@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use App\Notifications\AgentWelcomeNotification;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -30,6 +32,8 @@ test('super admin can access agent create form', function () {
 });
 
 test('super admin can create agent', function () {
+    Notification::fake();
+
     $admin = User::factory()->create();
     $admin->assignRole('Super Admin');
 
@@ -48,6 +52,9 @@ test('super admin can create agent', function () {
         'email' => 'agent@example.com',
         'phone' => '+966500000000',
     ]);
+
+    $agent = User::where('email', 'agent@example.com')->first();
+    Notification::assertSentTo($agent, AgentWelcomeNotification::class);
 });
 
 test('super admin can update agent', function () {
