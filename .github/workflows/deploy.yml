@@ -38,14 +38,12 @@ jobs:
         run: npm run build
 
       - name: Copy built assets to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.PORT }}
-          source: "public/build"
-          target: "~/repositories/Backoffice-ERP"
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          scp -P ${{ secrets.PORT }} -r public/build ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/repositories/Backoffice-ERP/public/
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
