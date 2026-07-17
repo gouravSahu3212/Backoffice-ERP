@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Rules\Phone;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -42,6 +43,7 @@ class UpdateAgentRequest extends FormRequest
             'phone' => [
                 'nullable',
                 'max:20',
+                new Phone,
             ],
             'is_active' => [
                 'nullable',

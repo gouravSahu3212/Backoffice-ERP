@@ -870,6 +870,10 @@
 
                 btn.dataset.active = data.is_active ? '1' : '0';
                 btn.title = data.is_active ? 'Deactivate' : 'Activate';
+                btn.querySelector('svg').innerHTML = data.is_active
+                    ? '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="16" cy="12" r="2"></circle>'
+                    : '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="8" cy="12" r="2"></circle>';
+                
             }
         } catch (err) {
             console.error(err);
@@ -941,6 +945,55 @@
             newLocSpinner.classList.add('hidden');
         }
     });
+
+    function validateLocations() {
+
+        const from = fromSel.value;
+        const to = toSel.value;
+
+        // Clear previous validation
+        fromSel.setCustomValidity('');
+        toSel.setCustomValidity('');
+
+        if (from && to && from === to) {
+
+            const message = 'From City and To City cannot be the same.';
+
+            fromSel.setCustomValidity(message);
+            toSel.setCustomValidity(message);
+
+        }
+
+        fromSel.reportValidity();
+        toSel.reportValidity();
+    }
+
+    fromSel.addEventListener('change', validateLocations);
+    toSel.addEventListener('change', validateLocations);
+
+    function syncLocations() {
+
+        const selectedFrom = fromSel.value;
+
+        [...toSel.options].forEach(option => {
+            option.disabled = option.value === selectedFrom && option.value !== '';
+        });
+
+    }
+
+    fromSel.addEventListener('change', syncLocations);
+
+    function syncReverseLocations() {
+
+        const selectedTo = toSel.value;
+
+        [...fromSel.options].forEach(option => {
+            option.disabled = option.value === selectedTo && option.value !== '';
+        });
+
+    }
+
+    toSel.addEventListener('change', syncReverseLocations);
 
     // ── Add New Vehicle Type Mini Modal ───────────────────────────────────────
     const newVehicleModal   = document.getElementById('new-vehicle-modal');

@@ -190,6 +190,10 @@
                 <label for="c-phone" class="block text-sm font-medium text-gray-700 mb-1.5">Phone</label>
                 <input id="c-phone" type="text" name="phone" value="{{ old('phone') }}"
                     class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                @error('phone')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+                <p id="c-phone-error" class="text-red-500 text-xs mt-1 hidden"></p>
             </div>
 
             {{-- Username --}}
@@ -313,6 +317,7 @@
                 <label for="e-phone" class="block text-sm font-medium text-gray-700 mb-1.5">Phone</label>
                 <input id="e-phone" type="text" name="phone"
                     class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                <p class="edit-field-error hidden text-red-500 text-xs mt-1" data-for="phone" id="e-phone-error"></p>
             </div>
 
             {{-- Username --}}
@@ -358,6 +363,27 @@
     function openModal(el)  { el.classList.remove('hidden'); el.classList.add('flex'); document.body.classList.add('overflow-hidden'); }
     function closeModal(el) { el.classList.add('hidden'); el.classList.remove('flex'); document.body.classList.remove('overflow-hidden'); }
 
+    function validatePhoneNumber(value) {
+        if (!value) {
+            return true;
+        }
+        const normalized = value.replace(/[\s\-\(\)]+/g, '');
+        const patterns = {
+            Saudi:   /^(?:\+?966|0)?5\d{8}$/,
+            Jordon:  /^(?:\+?962|0)?7[789]\d{7}$/,
+            Morocco: /^(?:\+?212|0)?[67]\d{8}$/,
+            Egypt:   /^(?:\+?20|0)?1[0125]\d{8}$/,
+            Turkey:  /^(?:\+?90|0)?5\d{9}$/,
+            UAE:     /^(?:\+?971|0)?5[024568]\d{7}$/
+        };
+        for (const country in patterns) {
+            if (patterns[country].test(normalized)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // ── CREATE modal ───────────────────────────────────────────────────
     const createModal  = document.getElementById('create-agent-modal');
     const createForm   = document.getElementById('create-agent-form');
@@ -382,6 +408,24 @@
     @if($errors->any())
         openModal(createModal);
     @endif
+
+    createForm.addEventListener('submit', function (e) {
+        const phoneVal = document.getElementById('c-phone').value.trim();
+        const errEl = document.getElementById('c-phone-error');
+        if (errEl) {
+            errEl.textContent = '';
+            errEl.classList.add('hidden');
+        }
+
+        if (!validatePhoneNumber(phoneVal)) {
+            e.preventDefault();
+            if (errEl) {
+                errEl.textContent = 'The phone must be a valid phone number for Saudi, Jordon, Morocco, Egypt, Turkey, or UAE.';
+                errEl.classList.remove('hidden');
+            }
+            document.getElementById('c-phone').focus();
+        }
+    });
 
     // ── EDIT modal ─────────────────────────────────────────────────────
     const editModal      = document.getElementById('edit-agent-modal');
@@ -494,6 +538,18 @@
         editErrBanner.classList.add('hidden');
         editOkBanner.classList.add('hidden');
         document.querySelectorAll('.edit-field-error').forEach(el => { el.textContent = ''; el.classList.add('hidden'); });
+
+        // Frontend Phone validation
+        const phoneVal = editPhone.value.trim();
+        if (!validatePhoneNumber(phoneVal)) {
+            const errEl = document.getElementById('e-phone-error');
+            if (errEl) {
+                errEl.textContent = 'The phone must be a valid phone number for Saudi, Jordon, Morocco, Egypt, Turkey, or UAE.';
+                errEl.classList.remove('hidden');
+            }
+            editPhone.focus();
+            return;
+        }
 
         editSaveBtn.disabled = true;
         editSaveBtn.textContent = 'Saving…';
