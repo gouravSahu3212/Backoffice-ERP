@@ -36,7 +36,7 @@ class StoreAgentRequest extends FormRequest
             ],
             'email' => [
                 'required',
-                'email',
+                'email:rfc,filter',
                 'unique:users,email',
             ],
             'phone' => [

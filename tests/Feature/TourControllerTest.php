@@ -85,3 +85,53 @@ test('super admin can delete a tour', function () {
 
     $this->assertDatabaseMissing('tours', ['id' => $tour->id]);
 });
+
+test('tour creation fails if departure dates contain duplicate dates', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('Super Admin');
+
+    $response = $this->actingAs($admin)->post(route('admin.tours.store'), [
+        'title' => 'Saudi Arabia: Complete Tour',
+        'location' => 'Saudi Arabia',
+        'days' => 9,
+        'hotel_rating' => 4,
+        'currency' => 'USD',
+        'retail_price' => 4000,
+        'agent_price' => 3000,
+        'departure_months' => [
+            ['date' => '2026-10-16', 'slots' => 10],
+            ['date' => '2026-10-16', 'slots' => 5], // Duplicate date
+        ],
+    ]);
+
+    $response->assertSessionHasErrors('departure_months.1.date');
+});
+
+test('tour creation fails if retail price is not greater than agent price', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('Super Admin');
+
+    // Case 1: Retail price is equal to agent price
+    $response = $this->actingAs($admin)->post(route('admin.tours.store'), [
+        'title' => 'Saudi Arabia: Complete Tour',
+        'location' => 'Saudi Arabia',
+        'days' => 9,
+        'hotel_rating' => 4,
+        'currency' => 'USD',
+        'retail_price' => 3000,
+        'agent_price' => 3000,
+    ]);
+    $response->assertSessionHasErrors('retail_price');
+
+    // Case 2: Retail price is less than agent price
+    $response = $this->actingAs($admin)->post(route('admin.tours.store'), [
+        'title' => 'Saudi Arabia: Complete Tour',
+        'location' => 'Saudi Arabia',
+        'days' => 9,
+        'hotel_rating' => 4,
+        'currency' => 'USD',
+        'retail_price' => 2500,
+        'agent_price' => 3000,
+    ]);
+    $response->assertSessionHasErrors('retail_price');
+});

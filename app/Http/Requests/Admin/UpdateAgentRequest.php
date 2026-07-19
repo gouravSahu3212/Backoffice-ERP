@@ -37,7 +37,7 @@ class UpdateAgentRequest extends FormRequest
             ],
             'email' => [
                 'required',
-                'email',
+                'email:rfc,filter',
                 Rule::unique('users')->ignore($this->agent),
             ],
             'phone' => [

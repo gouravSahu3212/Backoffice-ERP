@@ -151,3 +151,35 @@ test('super admin can create agent with valid country phone numbers', function (
     'UAE (+971)' => '+971 50 123 4567',
     'UAE (05)' => '0541234567',
 ]);
+
+test('super admin cannot create agent with invalid email format', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('Super Admin');
+
+    $response = $this->actingAs($admin)->post(route('admin.agents.store'), [
+        'name' => 'Test Agent',
+        'username' => 'test_agent_invalid_email',
+        'email' => 'shubhamsharma403@gmail', // invalid email format without TLD
+        'phone' => '+966500000000',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ]);
+
+    $response->assertSessionHasErrors('email');
+});
+
+test('super admin cannot update agent with invalid email format', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('Super Admin');
+
+    $agent = User::factory()->create();
+    $agent->assignRole('Agent');
+
+    $response = $this->actingAs($admin)->put(route('admin.agents.update', $agent), [
+        'name' => 'Updated Agent Name',
+        'username' => 'updated_agent_invalid_email',
+        'email' => 'shubhamsharma403@gmail', // invalid email format without TLD
+    ]);
+
+    $response->assertSessionHasErrors('email');
+});
