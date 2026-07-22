@@ -11,17 +11,20 @@
 
     {{-- Tabs --}}
     <div class="flex items-center gap-0 mb-5 border border-gray-200 rounded-lg w-fit overflow-hidden">
-        <a href="{{ route('admin.transfers.index', ['tab' => 'city']) }}"
-            id="tab-city"
+        <a href="{{ route('admin.transfers.index', ['tab' => 'city']) }}" id="tab-city"
             class="tab-btn px-5 py-2 text-sm font-semibold transition-colors
                 {{ $tab === 'city' ? 'bg-white text-gray-900 shadow-sm' : 'bg-gray-50 text-gray-400 hover:text-gray-700' }}">
             City-to-City Rates
         </a>
-        <a href="{{ route('admin.transfers.index', ['tab' => 'airport']) }}"
-            id="tab-airport"
+        <a href="{{ route('admin.transfers.index', ['tab' => 'airport']) }}" id="tab-airport"
             class="tab-btn px-5 py-2 text-sm font-semibold transition-colors
                 {{ $tab === 'airport' ? 'bg-white text-gray-900 shadow-sm' : 'bg-gray-50 text-gray-400 hover:text-gray-700' }}">
             Airport Rates
+        </a>
+        <a href="{{ route('admin.transfers.index', ['tab' => 'fullday']) }}" id="tab-fullday"
+            class="tab-btn px-5 py-2 text-sm font-semibold transition-colors
+                {{ $tab === 'fullday' ? 'bg-white text-gray-900 shadow-sm' : 'bg-gray-50 text-gray-400 hover:text-gray-700' }}">
+            Full-day Booking
         </a>
     </div>
 
@@ -68,7 +71,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                                 </svg>
-                                <p class="text-gray-400 text-sm">No rates yet. Click <strong>Add Rate</strong> to create your first one.</p>
+                                <p class="text-gray-400 text-sm">No rates yet. Click <strong>Add Rate</strong> to create
+                                    your first one.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -127,7 +131,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                 </svg>
-                                <p class="text-gray-400 text-sm">No airport rates yet. Click <strong>Add Rate</strong> to create your first one.</p>
+                                <p class="text-gray-400 text-sm">No airport rates yet. Click <strong>Add Rate</strong> to
+                                    create your first one.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -137,6 +142,68 @@
             @if ($airportRates->hasPages())
                 <div class="px-4 py-3 border-t border-gray-100">
                     {{ $airportRates->links() }}
+                </div>
+            @endif
+        </div>
+
+    </div>
+
+
+    {{-- ======================================================
+         FULL-DAY BOOKING TAB
+         ====================================================== --}}
+    <div id="panel-fullday" class="{{ $tab === 'fullday' ? '' : 'hidden' }}">
+
+        {{-- Toolbar --}}
+        <div class="flex justify-end mb-4">
+            <button id="open-full-day-rate-modal" type="button"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Add Rate
+            </button>
+        </div>
+
+        {{-- Table --}}
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-gray-100">
+                        <th class="text-left py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">From</th>
+                        <th class="text-left py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">To</th>
+                        <th class="text-left py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">Vehicle</th>
+                        <th class="text-left py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">Model</th>
+                        <th class="text-left py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">Fare Type</th>
+                        <th class="text-left py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">Price</th>
+                        <th class="text-left py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">Currency</th>
+                        <th class="text-left py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">Status</th>
+                        <th class="text-right py-3.5 px-4 text-xs font-semibold uppercase tracking-wide">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="full-day-rates-tbody">
+                    @forelse ($fullDayRates as $rate)
+                        @include('admin.transfers._full_day_rate_row', ['rate' => $rate])
+                    @empty
+                        <tr id="full-day-empty-state-row">
+                            <td colspan="9" class="py-16 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p class="text-gray-400 text-sm">No full-day booking rates yet. Click <strong>Add
+                                        Rate</strong> to create your first one.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            @if ($fullDayRates->hasPages())
+                <div class="px-4 py-3 border-t border-gray-100">
+                    {{ $fullDayRates->links() }}
                 </div>
             @endif
         </div>
@@ -158,8 +225,7 @@
             {{-- Header --}}
             <div class="flex items-center justify-between px-7 pt-7 pb-4 border-b border-gray-100 flex-shrink-0">
                 <h2 id="rate-modal-title" class="text-xl font-bold text-gray-900">Add City-to-City Rate</h2>
-                <button id="close-rate-modal" type="button"
-                    class="text-gray-400 hover:text-gray-600 transition-colors">
+                <button id="close-rate-modal" type="button" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -227,8 +293,8 @@
                                 @endforeach
                             </select>
                             <button type="button" id="add-vehicle-type-btn"
-                                class="flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
-                                title="Add new vehicle type">+ New</button>
+                                class="add-inline-vehicle flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                                data-target="vehicle-type" title="Add new vehicle type">+ New</button>
                         </div>
                         <p class="field-error text-red-500 text-xs mt-1 hidden" data-field="vehicle_type_id"></p>
                     </div>
@@ -251,7 +317,8 @@
                             <label for="price" class="block text-sm font-medium text-gray-700 mb-1.5">
                                 Price <span class="text-red-500">*</span>
                             </label>
-                            <input id="price" type="number" name="price" value="0" min="0" step="0.01"
+                            <input id="price" type="number" name="price" value="0" min="0"
+                                step="0.01"
                                 class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
                             <p class="field-error text-red-500 text-xs mt-1 hidden" data-field="price"></p>
                         </div>
@@ -302,7 +369,8 @@
                     class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
                     <svg id="save-spinner" class="hidden animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
                     </svg>
                     Save
@@ -321,7 +389,8 @@
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Location</h3>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span
+                            class="text-red-500">*</span></label>
                     <input id="new-location-name" type="text"
                         class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
                         placeholder="e.g. Dubai Marina" />
@@ -335,9 +404,10 @@
                     class="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
                 <button type="button" id="save-new-location"
                     class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg id="new-location-spinner" class="hidden animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <svg id="new-location-spinner" class="hidden animate-spin w-3.5 h-3.5"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
                     </svg>
                     Add
@@ -355,11 +425,13 @@
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Vehicle Type</h3>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span
+                            class="text-red-500">*</span></label>
                     <input id="new-vehicle-name" type="text"
                         class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
                         placeholder="e.g. Limousine" />
                 </div>
+                <input type="hidden" id="new-vehicle-target" value="" />
                 <p id="new-vehicle-error" class="text-red-500 text-xs hidden"></p>
             </div>
             <div class="flex justify-end gap-3 mt-5">
@@ -367,9 +439,52 @@
                     class="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
                 <button type="button" id="save-new-vehicle"
                     class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg id="new-vehicle-spinner" class="hidden animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <svg id="new-vehicle-spinner" class="hidden animate-spin w-3.5 h-3.5"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
+                    </svg>
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- ======================================================
+         ADD NEW VEHICLE MODEL MINI MODAL
+         ====================================================== --}}
+    <div id="new-vehicle-model-modal" class="fixed inset-0 z-[60] hidden items-center justify-center">
+        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Vehicle Model</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vehicle Type <span class="text-red-500">*</span></label>
+                    <select id="new-vehicle-model-type-select" class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition bg-white">
+                        <option value="">Select Type</option>
+                        @foreach ($vehicleTypes as $vt)
+                            <option value="{{ $vt->id }}">{{ $vt->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Model Name <span class="text-red-500">*</span></label>
+                    <input id="new-vehicle-model-name" type="text"
+                        class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+                        placeholder="e.g. Camry" />
+                </div>
+                <p id="new-vehicle-model-error" class="text-red-500 text-xs hidden"></p>
+            </div>
+            <div class="flex justify-end gap-3 mt-5">
+                <button type="button" id="cancel-new-vehicle-model"
+                    class="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+                <button type="button" id="save-new-vehicle-model"
+                    class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
+                    <svg id="new-vehicle-model-spinner" class="hidden animate-spin w-3.5 h-3.5"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
                     </svg>
                     Add
@@ -382,7 +497,8 @@
     {{-- ======================================================
          ADD / EDIT AIRPORT RATE MODAL
          ====================================================== --}}
-    <div id="airport-rate-modal" class="fixed inset-0 z-50 hidden items-center justify-center" aria-modal="true" role="dialog">
+    <div id="airport-rate-modal" class="fixed inset-0 z-50 hidden items-center justify-center" aria-modal="true"
+        role="dialog">
 
         {{-- Backdrop --}}
         <div id="airport-rate-modal-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
@@ -440,7 +556,8 @@
                                 <option value="pickup">Pickup</option>
                                 <option value="drop">Drop</option>
                             </select>
-                            <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="transfer_type"></p>
+                            <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="transfer_type">
+                            </p>
                         </div>
                         <div>
                             <label for="zone-select" class="block text-sm font-medium text-gray-700 mb-1.5">
@@ -500,7 +617,8 @@
                             <label for="airport-price" class="block text-sm font-medium text-gray-700 mb-1.5">
                                 Price <span class="text-red-500">*</span>
                             </label>
-                            <input id="airport-price" type="number" name="price" value="0" min="0" step="0.01"
+                            <input id="airport-price" type="number" name="price" value="0" min="0"
+                                step="0.01"
                                 class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
                             <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="price"></p>
                         </div>
@@ -539,9 +657,193 @@
                 </button>
                 <button type="button" id="save-airport-rate-btn"
                     class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg id="airport-save-spinner" class="hidden animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <svg id="airport-save-spinner" class="hidden animate-spin w-3.5 h-3.5"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
+                    </svg>
+                    Save
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    {{-- ======================================================
+         ADD / EDIT FULL-DAY RATE MODAL
+         ====================================================== --}}
+    <div id="full-day-rate-modal" class="fixed inset-0 z-50 hidden items-center justify-center" aria-modal="true"
+        role="dialog">
+
+        {{-- Backdrop --}}
+        <div id="full-day-rate-modal-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+        {{-- Panel --}}
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 flex flex-col max-h-[90vh]">
+
+            {{-- Header --}}
+            <div class="flex items-center justify-between px-7 pt-7 pb-4 border-b border-gray-100 flex-shrink-0">
+                <h2 id="full-day-rate-modal-title" class="text-xl font-bold text-gray-900">Add Full-day Rate</h2>
+                <button id="close-full-day-rate-modal" type="button"
+                    class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Scrollable body --}}
+            <div class="overflow-y-auto flex-1 px-7 py-5">
+                <form id="full-day-rate-form" class="space-y-4">
+                    @csrf
+                    <input type="hidden" id="full-day-rate-id" name="rate_id" value="">
+
+                    {{-- From City --}}
+                    <div>
+                        <label for="full-day-from-location" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            From City <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <select id="full-day-from-location" name="from_location_id"
+                                class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                                <option value="">Select</option>
+                                @foreach ($locations as $loc)
+                                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" data-target="full-day-from-location" data-type="city"
+                                class="add-inline-location flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                                title="Add new city">+ New</button>
+                        </div>
+                        <p class="field-error-full-day text-red-500 text-xs mt-1 hidden" data-field="from_location_id">
+                        </p>
+                    </div>
+
+                    {{-- To City --}}
+                    <div>
+                        <label for="full-day-to-location" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            To City <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <select id="full-day-to-location" name="to_location_id"
+                                class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                                <option value="">Select</option>
+                                @foreach ($locations as $loc)
+                                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" data-target="full-day-to-location" data-type="city"
+                                class="add-inline-location flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                                title="Add new city">+ New</button>
+                        </div>
+                        <p class="field-error-full-day text-red-500 text-xs mt-1 hidden" data-field="to_location_id"></p>
+                    </div>
+
+                    {{-- Vehicle Type --}}
+                    <div>
+                        <label for="full-day-vehicle-select" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Vehicle Type <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <select id="full-day-vehicle-select" name="vehicle_type_id"
+                                class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                                <option value="">Select</option>
+                                @foreach ($vehicleTypes as $vt)
+                                    <option value="{{ $vt->id }}">{{ $vt->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button"
+                                class="add-inline-vehicle flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                                data-target="full-day-vehicle-select" title="Add new vehicle type">+ New</button>
+                        </div>
+                        <p class="field-error-full-day text-red-500 text-xs mt-1 hidden" data-field="vehicle_type_id"></p>
+                    </div>
+
+                    {{-- Vehicle Model --}}
+                    <div id="full-day-vehicle-model-container">
+                        <label for="full-day-model-select" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Vehicle Model <span class="text-gray-400 text-xs">(Optional)</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <select id="full-day-model-select" name="vehicle_model_id"
+                                class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                                <option value="">All Models</option>
+                                @foreach ($vehicleModels as $model)
+                                    <option value="{{ $model->id }}" data-vehicle-type="{{ $model->vehicle_type_id }}">{{ $model->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" id="add-vehicle-model-btn"
+                                class="add-inline-vehicle-model flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                                data-target="full-day-model-select" title="Add new vehicle model">+ New</button>
+                        </div>
+                        <p class="field-error-full-day text-red-500 text-xs mt-1 hidden" data-field="vehicle_model_id"></p>
+                    </div>
+
+                    {{-- Fare Type --}}
+                    <div>
+                        <label for="full-day-fare-type" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Fare Type <span class="text-red-500">*</span>
+                        </label>
+                        <select id="full-day-fare-type" name="fare_type"
+                            class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                            <option value="half_day">Half Day</option>
+                            <option value="full_day" selected>Full Day</option>
+                        </select>
+                        <p class="field-error-full-day text-red-500 text-xs mt-1 hidden" data-field="fare_type"></p>
+                    </div>
+
+                    {{-- Price + Currency --}}
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="full-day-price" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                Price <span class="text-red-500">*</span>
+                            </label>
+                            <input id="full-day-price" type="number" name="price" value="0" min="0"
+                                step="0.01"
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                            <p class="field-error-full-day text-red-500 text-xs mt-1 hidden" data-field="price"></p>
+                        </div>
+                        <div>
+                            <label for="full-day-currency" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                Currency
+                            </label>
+                            <select id="full-day-currency" name="currency"
+                                class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                                <option value="AED">AED</option>
+                                <option value="USD">USD</option>
+                                <option value="SAR">SAR</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Notes --}}
+                    <div>
+                        <label for="full-day-notes" class="block text-sm font-medium text-gray-700 mb-1.5">Notes</label>
+                        <textarea id="full-day-notes" name="notes" rows="2"
+                            class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition resize-y"></textarea>
+                    </div>
+
+                    {{-- Global error --}}
+                    <p id="full-day-form-error" class="text-red-500 text-sm hidden"></p>
+
+                </form>
+            </div>
+
+            {{-- Footer --}}
+            <div class="flex items-center justify-end gap-3 px-7 py-4 border-t border-gray-100 flex-shrink-0">
+                <button type="button" id="cancel-full-day-rate-modal"
+                    class="px-5 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" id="save-full-day-rate-btn"
+                    class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
+                    <svg id="full-day-save-spinner" class="hidden animate-spin w-3.5 h-3.5"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
                     </svg>
                     Save
@@ -560,7 +862,8 @@
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Zone</h3>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span
+                            class="text-red-500">*</span></label>
                     <input id="new-zone-name" type="text"
                         class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
                         placeholder="e.g. Palm Jumeirah" />
@@ -574,7 +877,8 @@
                     class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
                     <svg id="new-zone-spinner" class="hidden animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
                     </svg>
                     Add
@@ -592,7 +896,8 @@
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Vehicle Type</h3>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span
+                            class="text-red-500">*</span></label>
                     <input id="new-airport-vehicle-name" type="text"
                         class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
                         placeholder="e.g. Limousine" />
@@ -604,9 +909,10 @@
                     class="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
                 <button type="button" id="save-new-airport-vehicle"
                     class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg id="new-airport-vehicle-spinner" class="hidden animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <svg id="new-airport-vehicle-spinner" class="hidden animate-spin w-3.5 h-3.5"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
                     </svg>
                     Add
@@ -624,7 +930,8 @@
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Airport</h3>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name <span
+                            class="text-red-500">*</span></label>
                     <input id="new-airport-name" type="text"
                         class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
                         placeholder="e.g. Al Maktoum International (DWC)" />
@@ -636,9 +943,10 @@
                     class="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
                 <button type="button" id="save-new-airport"
                     class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg id="new-airport-spinner" class="hidden animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <svg id="new-airport-spinner" class="hidden animate-spin w-3.5 h-3.5"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 0 12 4v8z"></path>
                     </svg>
                     Add
@@ -650,762 +958,1240 @@
 @endsection
 
 @push('scripts')
-<script>
-(function () {
-    'use strict';
+    <script>
+        (function() {
+            'use strict';
 
-    // ── Routes ──────────────────────────────────────────────────────────────
-    const ROUTES = {
-        store:        '{{ route('admin.transfers.city-rates.store') }}',
-        update:       (id) => `{{ url('admin/transfers/city-rates') }}/${id}`,
-        toggle:       (id) => `{{ url('admin/transfers/city-rates') }}/${id}/toggle-status`,
-        destroy:      (id) => `{{ url('admin/transfers/city-rates') }}/${id}`,
-        storeLocation: '{{ route('admin.transfers.locations.store') }}',
-        storeVehicle:  '{{ route('admin.transfers.vehicle-types.store') }}',
-    };
+            // ── Routes ──────────────────────────────────────────────────────────────
+            const ROUTES = {
+                store: '{{ route('admin.transfers.city-rates.store') }}',
+                update: (id) => `{{ url('admin/transfers/city-rates') }}/${id}`,
+                toggle: (id) => `{{ url('admin/transfers/city-rates') }}/${id}/toggle-status`,
+                destroy: (id) => `{{ url('admin/transfers/city-rates') }}/${id}`,
+                storeLocation: '{{ route('admin.transfers.locations.store') }}',
+                storeVehicle: '{{ route('admin.transfers.vehicle-types.store') }}',
+            };
 
-    const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+            const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-    function showModal(el) {
-        el.classList.remove('hidden');
-        el.classList.add('flex');
-    }
-    function hideModal(el) {
-        el.classList.add('hidden');
-        el.classList.remove('flex');
-    }
+            // ── Helpers ──────────────────────────────────────────────────────────────
+            function showModal(el) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            }
 
-    async function apiFetch(url, method, body = null) {
-        const opts = {
-            method,
-            headers: {
-                'Accept':       'application/json',
-                'X-CSRF-TOKEN': CSRF,
-            },
-        };
-        if (body) {
-            opts.headers['Content-Type'] = 'application/json';
-            opts.body = JSON.stringify(body);
-        }
-        const res = await fetch(url, opts);
-        return res.json();
-    }
+            function hideModal(el) {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }
 
-    function clearErrors() {
-        document.querySelectorAll('.field-error').forEach(el => {
-            el.textContent = '';
-            el.classList.add('hidden');
-        });
-        const ge = document.getElementById('form-error');
-        if (ge) { ge.textContent = ''; ge.classList.add('hidden'); }
-    }
+            async function apiFetch(url, method, body = null) {
+                const opts = {
+                    method,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': CSRF,
+                    },
+                };
+                if (body) {
+                    opts.headers['Content-Type'] = 'application/json';
+                    opts.body = JSON.stringify(body);
+                }
+                const res = await fetch(url, opts);
+                return res.json();
+            }
 
-    function showErrors(errors) {
-        clearErrors();
-        if (typeof errors === 'object') {
-            Object.entries(errors).forEach(([field, msgs]) => {
-                const el = document.querySelector(`.field-error[data-field="${field}"]`);
-                if (el) {
-                    el.textContent = Array.isArray(msgs) ? msgs[0] : msgs;
-                    el.classList.remove('hidden');
+            function clearErrors() {
+                document.querySelectorAll('.field-error').forEach(el => {
+                    el.textContent = '';
+                    el.classList.add('hidden');
+                });
+                const ge = document.getElementById('form-error');
+                if (ge) {
+                    ge.textContent = '';
+                    ge.classList.add('hidden');
+                }
+            }
+
+            function showErrors(errors) {
+                clearErrors();
+                if (typeof errors === 'object') {
+                    Object.entries(errors).forEach(([field, msgs]) => {
+                        const el = document.querySelector(`.field-error[data-field="${field}"]`);
+                        if (el) {
+                            el.textContent = Array.isArray(msgs) ? msgs[0] : msgs;
+                            el.classList.remove('hidden');
+                        }
+                    });
+                } else {
+                    const ge = document.getElementById('form-error');
+                    if (ge) {
+                        ge.textContent = errors;
+                        ge.classList.remove('hidden');
+                    }
+                }
+            }
+
+            function setSelectBorder(selectEl, hasError) {
+                selectEl.classList.toggle('border-red-400', hasError);
+                selectEl.classList.toggle('border-gray-200', !hasError);
+            }
+
+            // ── Main Rate Modal ───────────────────────────────────────────────────────
+            const rateModal = document.getElementById('rate-modal');
+            const modalTitle = document.getElementById('rate-modal-title');
+            const rateIdInput = document.getElementById('rate-id');
+            const saveBtn = document.getElementById('save-rate-btn');
+            const saveSpinner = document.getElementById('save-spinner');
+
+            // Form fields
+            const fromSel = document.getElementById('from-location');
+            const toSel = document.getElementById('to-location');
+            const vehicleSel = document.getElementById('vehicle-type');
+            const fareSel = document.getElementById('fare-type');
+            const priceIn = document.getElementById('price');
+            const currSel = document.getElementById('currency');
+            const statusSel = document.getElementById('rate-status');
+            const notesIn = document.getElementById('notes');
+
+            function resetModal() {
+                rateIdInput.value = '';
+                fromSel.value = '';
+                toSel.value = '';
+                vehicleSel.value = '';
+                fareSel.value = 'fixed';
+                priceIn.value = '0';
+                currSel.value = 'AED';
+                statusSel.value = '1';
+                notesIn.value = '';
+                clearErrors();
+            }
+
+            function openAddModal() {
+                resetModal();
+                modalTitle.textContent = 'Add City-to-City Rate';
+                showModal(rateModal);
+                fromSel.focus();
+            }
+
+            function openEditModal(btn) {
+                resetModal();
+                modalTitle.textContent = 'Edit City-to-City Rate';
+                rateIdInput.value = btn.dataset.id;
+                fromSel.value = btn.dataset.from;
+                toSel.value = btn.dataset.to;
+                vehicleSel.value = btn.dataset.vehicle;
+                fareSel.value = btn.dataset.fare;
+                priceIn.value = btn.dataset.price;
+                currSel.value = btn.dataset.currency;
+                statusSel.value = btn.dataset.isActive;
+                notesIn.value = btn.dataset.notes ?? '';
+                showModal(rateModal);
+            }
+
+            document.getElementById('open-rate-modal').addEventListener('click', openAddModal);
+            document.getElementById('close-rate-modal').addEventListener('click', () => hideModal(rateModal));
+            document.getElementById('cancel-rate-modal').addEventListener('click', () => hideModal(rateModal));
+            document.getElementById('rate-modal-backdrop').addEventListener('click', () => hideModal(rateModal));
+
+            // Delegated edit button handler
+            document.getElementById('city-rates-tbody').addEventListener('click', (e) => {
+                const btn = e.target.closest('.edit-rate-btn');
+                if (btn) {
+                    openEditModal(btn);
                 }
             });
-        } else {
-            const ge = document.getElementById('form-error');
-            if (ge) { ge.textContent = errors; ge.classList.remove('hidden'); }
-        }
-    }
 
-    function setSelectBorder(selectEl, hasError) {
-        selectEl.classList.toggle('border-red-400', hasError);
-        selectEl.classList.toggle('border-gray-200', !hasError);
-    }
+            // Save (store or update)
+            saveBtn.addEventListener('click', async () => {
+                clearErrors();
+                const id = rateIdInput.value;
+                const payload = {
+                    from_location_id: fromSel.value,
+                    to_location_id: toSel.value,
+                    vehicle_type_id: vehicleSel.value,
+                    fare_type: fareSel.value,
+                    price: priceIn.value,
+                    currency: currSel.value,
+                    is_active: statusSel.value,
+                    notes: notesIn.value,
+                };
 
-    // ── Main Rate Modal ───────────────────────────────────────────────────────
-    const rateModal     = document.getElementById('rate-modal');
-    const modalTitle    = document.getElementById('rate-modal-title');
-    const rateIdInput   = document.getElementById('rate-id');
-    const saveBtn       = document.getElementById('save-rate-btn');
-    const saveSpinner   = document.getElementById('save-spinner');
+                saveBtn.disabled = true;
+                saveSpinner.classList.remove('hidden');
 
-    // Form fields
-    const fromSel    = document.getElementById('from-location');
-    const toSel      = document.getElementById('to-location');
-    const vehicleSel = document.getElementById('vehicle-type');
-    const fareSel    = document.getElementById('fare-type');
-    const priceIn    = document.getElementById('price');
-    const currSel    = document.getElementById('currency');
-    const statusSel  = document.getElementById('rate-status');
-    const notesIn    = document.getElementById('notes');
-
-    function resetModal() {
-        rateIdInput.value = '';
-        fromSel.value    = '';
-        toSel.value      = '';
-        vehicleSel.value = '';
-        fareSel.value    = 'fixed';
-        priceIn.value    = '0';
-        currSel.value    = 'AED';
-        statusSel.value  = '1';
-        notesIn.value    = '';
-        clearErrors();
-    }
-
-    function openAddModal() {
-        resetModal();
-        modalTitle.textContent = 'Add City-to-City Rate';
-        showModal(rateModal);
-        fromSel.focus();
-    }
-
-    function openEditModal(btn) {
-        resetModal();
-        modalTitle.textContent    = 'Edit City-to-City Rate';
-        rateIdInput.value         = btn.dataset.id;
-        fromSel.value             = btn.dataset.from;
-        toSel.value               = btn.dataset.to;
-        vehicleSel.value          = btn.dataset.vehicle;
-        fareSel.value             = btn.dataset.fare;
-        priceIn.value             = btn.dataset.price;
-        currSel.value             = btn.dataset.currency;
-        statusSel.value           = btn.dataset.isActive;
-        notesIn.value             = btn.dataset.notes ?? '';
-        showModal(rateModal);
-    }
-
-    document.getElementById('open-rate-modal').addEventListener('click', openAddModal);
-    document.getElementById('close-rate-modal').addEventListener('click', () => hideModal(rateModal));
-    document.getElementById('cancel-rate-modal').addEventListener('click', () => hideModal(rateModal));
-    document.getElementById('rate-modal-backdrop').addEventListener('click', () => hideModal(rateModal));
-
-    // Delegated edit button handler
-    document.getElementById('city-rates-tbody').addEventListener('click', (e) => {
-        const btn = e.target.closest('.edit-rate-btn');
-        if (btn) { openEditModal(btn); }
-    });
-
-    // Save (store or update)
-    saveBtn.addEventListener('click', async () => {
-        clearErrors();
-        const id = rateIdInput.value;
-        const payload = {
-            from_location_id: fromSel.value,
-            to_location_id:   toSel.value,
-            vehicle_type_id:  vehicleSel.value,
-            fare_type:        fareSel.value,
-            price:            priceIn.value,
-            currency:         currSel.value,
-            is_active:        statusSel.value,
-            notes:            notesIn.value,
-        };
-
-        saveBtn.disabled = true;
-        saveSpinner.classList.remove('hidden');
-
-        try {
-            let data;
-            if (id) {
-                data = await apiFetch(ROUTES.update(id), 'PUT', payload);
-            } else {
-                data = await apiFetch(ROUTES.store, 'POST', payload);
-            }
-
-            if (data.success) {
-                const tbody = document.getElementById('city-rates-tbody');
-
-                if (id) {
-                    // Replace existing row
-                    const existingRow = tbody.querySelector(`tr[data-rate-id="${id}"]`);
-                    if (existingRow) {
-                        existingRow.outerHTML = data.row_html;
+                try {
+                    let data;
+                    if (id) {
+                        data = await apiFetch(ROUTES.update(id), 'PUT', payload);
+                    } else {
+                        data = await apiFetch(ROUTES.store, 'POST', payload);
                     }
-                } else {
-                    // Remove empty state row if present
-                    const emptyRow = tbody.querySelector('#empty-state-row');
-                    if (emptyRow) { emptyRow.remove(); }
-                    // Prepend new row
-                    tbody.insertAdjacentHTML('afterbegin', data.row_html);
+
+                    if (data.success) {
+                        const tbody = document.getElementById('city-rates-tbody');
+
+                        if (id) {
+                            // Replace existing row
+                            const existingRow = tbody.querySelector(`tr[data-rate-id="${id}"]`);
+                            if (existingRow) {
+                                existingRow.outerHTML = data.row_html;
+                            }
+                        } else {
+                            // Remove empty state row if present
+                            const emptyRow = tbody.querySelector('#empty-state-row');
+                            if (emptyRow) {
+                                emptyRow.remove();
+                            }
+                            // Prepend new row
+                            tbody.insertAdjacentHTML('afterbegin', data.row_html);
+                        }
+
+                        hideModal(rateModal);
+                    } else if (data.errors) {
+                        showErrors(data.errors);
+                    } else {
+                        showErrors(data.message ?? 'An error occurred.');
+                    }
+                } catch (err) {
+                    showErrors('Network error. Please try again.');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveSpinner.classList.add('hidden');
+                }
+            });
+
+            // ── Toggle Status ─────────────────────────────────────────────────────────
+            document.getElementById('city-rates-tbody').addEventListener('click', async (e) => {
+                const btn = e.target.closest('.toggle-status-btn');
+                if (!btn) {
+                    return;
                 }
 
-                hideModal(rateModal);
-            } else if (data.errors) {
-                showErrors(data.errors);
-            } else {
-                showErrors(data.message ?? 'An error occurred.');
-            }
-        } catch (err) {
-            showErrors('Network error. Please try again.');
-        } finally {
-            saveBtn.disabled = false;
-            saveSpinner.classList.add('hidden');
-        }
-    });
+                const icon = btn.querySelector('.toggle-icon');
+                const spinner = btn.querySelector('.toggle-spinner');
 
-    // ── Toggle Status ─────────────────────────────────────────────────────────
-    document.getElementById('city-rates-tbody').addEventListener('click', async (e) => {
-        const btn = e.target.closest('.toggle-status-btn');
-        if (!btn) { return; }
+                btn.disabled = true;
+                icon.classList.add('hidden');
+                spinner.classList.remove('hidden');
 
-        const icon    = btn.querySelector('.toggle-icon');
-        const spinner = btn.querySelector('.toggle-spinner');
+                try {
+                    const data = await apiFetch(ROUTES.toggle(btn.dataset.id), 'PATCH');
+                    if (data.success) {
+                        const row = btn.closest('tr');
+                        const badge = row.querySelector('.rate-status-badge');
 
-        btn.disabled = true;
-        icon.classList.add('hidden');
-        spinner.classList.remove('hidden');
+                        if (data.is_active) {
+                            badge.textContent = 'active';
+                            badge.className =
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                        } else {
+                            badge.textContent = 'inactive';
+                            badge.className =
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                        }
 
-        try {
-            const data = await apiFetch(ROUTES.toggle(btn.dataset.id), 'PATCH');
-            if (data.success) {
-                const row   = btn.closest('tr');
-                const badge = row.querySelector('.rate-status-badge');
+                        btn.dataset.active = data.is_active ? '1' : '0';
+                        btn.title = data.is_active ? 'Deactivate' : 'Activate';
+                        btn.querySelector('svg').innerHTML = data.is_active ?
+                            '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="16" cy="12" r="2"></circle>' :
+                            '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="8" cy="12" r="2"></circle>';
 
-                if (data.is_active) {
-                    badge.textContent = 'active';
-                    badge.className   = 'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
-                } else {
-                    badge.textContent = 'inactive';
-                    badge.className   = 'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                    }
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    btn.disabled = false;
+                    icon.classList.remove('hidden');
+                    spinner.classList.add('hidden');
+                }
+            });
+
+            // ── Add New Location Mini Modal ───────────────────────────────────────────
+            const newLocModal = document.getElementById('new-location-modal');
+            const newLocName = document.getElementById('new-location-name');
+            const newLocType = document.getElementById('new-location-type');
+            const newLocTarget = document.getElementById('new-location-target');
+            const newLocError = document.getElementById('new-location-error');
+            const newLocSpinner = document.getElementById('new-location-spinner');
+
+            document.querySelectorAll('.add-inline-location').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    newLocName.value = '';
+                    newLocType.value = btn.dataset.type;
+                    newLocTarget.value = btn.dataset.target;
+                    newLocError.classList.add('hidden');
+                    showModal(newLocModal);
+                    newLocName.focus();
+                });
+            });
+
+            document.getElementById('cancel-new-location').addEventListener('click', () => hideModal(newLocModal));
+
+            document.getElementById('save-new-location').addEventListener('click', async () => {
+                const name = newLocName.value.trim();
+                const type = newLocType.value;
+                const target = newLocTarget.value;
+
+                if (!name) {
+                    newLocError.textContent = 'Name is required.';
+                    newLocError.classList.remove('hidden');
+                    return;
                 }
 
-                btn.dataset.active = data.is_active ? '1' : '0';
-                btn.title = data.is_active ? 'Deactivate' : 'Activate';
-                btn.querySelector('svg').innerHTML = data.is_active
-                    ? '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="16" cy="12" r="2"></circle>'
-                    : '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="8" cy="12" r="2"></circle>';
-                
+                newLocSpinner.classList.remove('hidden');
+
+                try {
+                    const data = await apiFetch(ROUTES.storeLocation, 'POST', {
+                        name,
+                        type
+                    });
+                    if (data.success) {
+                        const loc = data.location;
+                        const option = new Option(loc.name, loc.id);
+
+                        // Add to selects
+                        const fdFromSel = document.getElementById('full-day-from-location');
+                        const fdToSel = document.getElementById('full-day-to-location');
+                        [fromSel, toSel, fdFromSel, fdToSel].forEach(sel => {
+                            if (sel) {
+                                sel.add(option.cloneNode(true));
+                            }
+                        });
+
+                        // Select in the targeted select
+                        const targetSel = document.getElementById(target);
+                        if (targetSel) {
+                            targetSel.value = loc.id;
+                        }
+
+                        hideModal(newLocModal);
+                    } else {
+                        newLocError.textContent = data.message ?? 'Error saving location.';
+                        newLocError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    newLocError.textContent = 'Network error.';
+                    newLocError.classList.remove('hidden');
+                } finally {
+                    newLocSpinner.classList.add('hidden');
+                }
+            });
+
+            function validateLocations() {
+
+                const from = fromSel.value;
+                const to = toSel.value;
+
+                // Clear previous validation
+                fromSel.setCustomValidity('');
+                toSel.setCustomValidity('');
+
+                if (from && to && from === to) {
+
+                    const message = 'From City and To City cannot be the same.';
+
+                    fromSel.setCustomValidity(message);
+                    toSel.setCustomValidity(message);
+
+                }
+
+                fromSel.reportValidity();
+                toSel.reportValidity();
             }
-        } catch (err) {
-            console.error(err);
-        } finally {
-            btn.disabled = false;
-            icon.classList.remove('hidden');
-            spinner.classList.add('hidden');
-        }
-    });
 
-    // ── Add New Location Mini Modal ───────────────────────────────────────────
-    const newLocModal   = document.getElementById('new-location-modal');
-    const newLocName    = document.getElementById('new-location-name');
-    const newLocType    = document.getElementById('new-location-type');
-    const newLocTarget  = document.getElementById('new-location-target');
-    const newLocError   = document.getElementById('new-location-error');
-    const newLocSpinner = document.getElementById('new-location-spinner');
+            fromSel.addEventListener('change', validateLocations);
+            toSel.addEventListener('change', validateLocations);
 
-    document.querySelectorAll('.add-inline-location').forEach(btn => {
-        btn.addEventListener('click', () => {
-            newLocName.value   = '';
-            newLocType.value   = btn.dataset.type;
-            newLocTarget.value = btn.dataset.target;
-            newLocError.classList.add('hidden');
-            showModal(newLocModal);
-            newLocName.focus();
-        });
-    });
+            function syncLocations() {
 
-    document.getElementById('cancel-new-location').addEventListener('click', () => hideModal(newLocModal));
+                const selectedFrom = fromSel.value;
 
-    document.getElementById('save-new-location').addEventListener('click', async () => {
-        const name   = newLocName.value.trim();
-        const type   = newLocType.value;
-        const target = newLocTarget.value;
-
-        if (!name) {
-            newLocError.textContent = 'Name is required.';
-            newLocError.classList.remove('hidden');
-            return;
-        }
-
-        newLocSpinner.classList.remove('hidden');
-
-        try {
-            const data = await apiFetch(ROUTES.storeLocation, 'POST', { name, type });
-            if (data.success) {
-                const loc = data.location;
-                const option = new Option(loc.name, loc.id);
-
-                // Add to both from and to selects
-                [fromSel, toSel].forEach(sel => {
-                    sel.add(option.cloneNode(true));
+                [...toSel.options].forEach(option => {
+                    option.disabled = option.value === selectedFrom && option.value !== '';
                 });
 
-                // Select in the targeted select
-                const targetSel = document.getElementById(target);
-                if (targetSel) { targetSel.value = loc.id; }
-
-                hideModal(newLocModal);
-            } else {
-                newLocError.textContent = data.message ?? 'Error saving location.';
-                newLocError.classList.remove('hidden');
             }
-        } catch (err) {
-            newLocError.textContent = 'Network error.';
-            newLocError.classList.remove('hidden');
-        } finally {
-            newLocSpinner.classList.add('hidden');
-        }
-    });
 
-    function validateLocations() {
+            fromSel.addEventListener('change', syncLocations);
 
-        const from = fromSel.value;
-        const to = toSel.value;
+            function syncReverseLocations() {
 
-        // Clear previous validation
-        fromSel.setCustomValidity('');
-        toSel.setCustomValidity('');
+                const selectedTo = toSel.value;
 
-        if (from && to && from === to) {
+                [...fromSel.options].forEach(option => {
+                    option.disabled = option.value === selectedTo && option.value !== '';
+                });
 
-            const message = 'From City and To City cannot be the same.';
-
-            fromSel.setCustomValidity(message);
-            toSel.setCustomValidity(message);
-
-        }
-
-        fromSel.reportValidity();
-        toSel.reportValidity();
-    }
-
-    fromSel.addEventListener('change', validateLocations);
-    toSel.addEventListener('change', validateLocations);
-
-    function syncLocations() {
-
-        const selectedFrom = fromSel.value;
-
-        [...toSel.options].forEach(option => {
-            option.disabled = option.value === selectedFrom && option.value !== '';
-        });
-
-    }
-
-    fromSel.addEventListener('change', syncLocations);
-
-    function syncReverseLocations() {
-
-        const selectedTo = toSel.value;
-
-        [...fromSel.options].forEach(option => {
-            option.disabled = option.value === selectedTo && option.value !== '';
-        });
-
-    }
-
-    toSel.addEventListener('change', syncReverseLocations);
-
-    // ── Add New Vehicle Type Mini Modal ───────────────────────────────────────
-    const newVehicleModal   = document.getElementById('new-vehicle-modal');
-    const newVehicleName    = document.getElementById('new-vehicle-name');
-    const newVehicleError   = document.getElementById('new-vehicle-error');
-    const newVehicleSpinner = document.getElementById('new-vehicle-spinner');
-
-    document.getElementById('add-vehicle-type-btn').addEventListener('click', () => {
-        newVehicleName.value = '';
-        newVehicleError.classList.add('hidden');
-        showModal(newVehicleModal);
-        newVehicleName.focus();
-    });
-
-    document.getElementById('cancel-new-vehicle').addEventListener('click', () => hideModal(newVehicleModal));
-
-    document.getElementById('save-new-vehicle').addEventListener('click', async () => {
-        const name = newVehicleName.value.trim();
-        if (!name) {
-            newVehicleError.textContent = 'Name is required.';
-            newVehicleError.classList.remove('hidden');
-            return;
-        }
-
-        newVehicleSpinner.classList.remove('hidden');
-
-        try {
-            const data = await apiFetch(ROUTES.storeVehicle, 'POST', { name });
-            if (data.success) {
-                const vt = data.vehicle_type;
-                const option = new Option(vt.name, vt.id);
-                vehicleSel.add(option);
-                vehicleSel.value = vt.id;
-                hideModal(newVehicleModal);
-            } else {
-                newVehicleError.textContent = data.message ?? 'Error saving vehicle type.';
-                newVehicleError.classList.remove('hidden');
             }
-        } catch (err) {
-            newVehicleError.textContent = 'Network error.';
-            newVehicleError.classList.remove('hidden');
-        } finally {
-            newVehicleSpinner.classList.add('hidden');
-        }
-    });
 
-    // Close mini modals on backdrop click
-    newLocModal.querySelector('.absolute').addEventListener('click', () => hideModal(newLocModal));
-    newVehicleModal.querySelector('.absolute').addEventListener('click', () => hideModal(newVehicleModal));
+            toSel.addEventListener('change', syncReverseLocations);
 
-    // Enter key in mini modals
-    newLocName.addEventListener('keydown', (e) => { if (e.key === 'Enter') { document.getElementById('save-new-location').click(); } });
-    newVehicleName.addEventListener('keydown', (e) => { if (e.key === 'Enter') { document.getElementById('save-new-vehicle').click(); } });
+            // ── Add New Vehicle Type Mini Modal ───────────────────────────────────────
+            const newVehicleModal = document.getElementById('new-vehicle-modal');
+            const newVehicleName = document.getElementById('new-vehicle-name');
+            const newVehicleError = document.getElementById('new-vehicle-error');
+            const newVehicleSpinner = document.getElementById('new-vehicle-spinner');
 
-})();
-</script>
+            const newVehicleTarget = document.getElementById('new-vehicle-target');
 
-<script>
-(function () {
-    'use strict';
+            document.querySelectorAll('.add-inline-vehicle').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    newVehicleName.value = '';
+                    newVehicleTarget.value = btn.dataset.target || 'rate-vehicle';
+                    newVehicleError.classList.add('hidden');
+                    showModal(newVehicleModal);
+                    newVehicleName.focus();
+                });
+            });
 
-    // ── Routes ──────────────────────────────────────────────────────────────
-    const AIRPORT_ROUTES = {
-        store:        '{{ route('admin.transfers.airport-rates.store') }}',
-        update:       (id) => `{{ url('admin/transfers/airport-rates') }}/${id}`,
-        toggle:       (id) => `{{ url('admin/transfers/airport-rates') }}/${id}/toggle-status`,
-        destroy:      (id) => `{{ url('admin/transfers/airport-rates') }}/${id}`,
-        storeZone:    '{{ route('admin.transfers.zones.store') }}',
-        storeVehicle: '{{ route('admin.transfers.airport-vehicle-types.store') }}',
-    };
+            document.getElementById('cancel-new-vehicle').addEventListener('click', () => hideModal(newVehicleModal));
 
-    const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+            document.getElementById('save-new-vehicle').addEventListener('click', async () => {
+                const name = newVehicleName.value.trim();
+                if (!name) {
+                    newVehicleError.textContent = 'Name is required.';
+                    newVehicleError.classList.remove('hidden');
+                    return;
+                }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-    function showModal(el) { el.classList.remove('hidden'); el.classList.add('flex'); }
-    function hideModal(el) { el.classList.add('hidden'); el.classList.remove('flex'); }
+                newVehicleSpinner.classList.remove('hidden');
 
-    async function apiFetch(url, method, body = null) {
-        const opts = {
-            method,
-            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF },
-        };
-        if (body) {
-            opts.headers['Content-Type'] = 'application/json';
-            opts.body = JSON.stringify(body);
-        }
-        const res = await fetch(url, opts);
-        return res.json();
-    }
+                try {
+                    const data = await apiFetch(ROUTES.storeVehicle, 'POST', {
+                        name
+                    });
+                    if (data.success) {
+                        const vt = data.vehicle_type;
+                        const option = new Option(vt.name, vt.id);
 
-    function clearAirportErrors() {
-        document.querySelectorAll('.field-error-airport').forEach(el => {
-            el.textContent = '';
-            el.classList.add('hidden');
-        });
-        const ge = document.getElementById('airport-form-error');
-        if (ge) { ge.textContent = ''; ge.classList.add('hidden'); }
-    }
+                         // Add to selects
+                         const fullDayVehicleSel = document.getElementById('full-day-vehicle-select');
+                         const inlineModelTypeSel = document.getElementById('new-vehicle-model-type-select');
+                         [vehicleSel, fullDayVehicleSel, inlineModelTypeSel].forEach(sel => {
+                             if (sel) {
+                                 sel.add(option.cloneNode(true));
+                             }
+                         });
 
-    function showAirportErrors(errors) {
-        clearAirportErrors();
-        if (typeof errors === 'object') {
-            Object.entries(errors).forEach(([field, msgs]) => {
-                const el = document.querySelector(`.field-error-airport[data-field="${field}"]`);
-                if (el) {
-                    el.textContent = Array.isArray(msgs) ? msgs[0] : msgs;
-                    el.classList.remove('hidden');
+                        // Select in target
+                        const target = newVehicleTarget.value;
+                        const targetSel = document.getElementById(target);
+                        if (targetSel) {
+                            targetSel.value = vt.id;
+                        }
+
+                        hideModal(newVehicleModal);
+                    } else {
+                        newVehicleError.textContent = data.message ?? 'Error saving vehicle type.';
+                        newVehicleError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    newVehicleError.textContent = 'Network error.';
+                    newVehicleError.classList.remove('hidden');
+                } finally {
+                    newVehicleSpinner.classList.add('hidden');
                 }
             });
-        } else {
-            const ge = document.getElementById('airport-form-error');
-            if (ge) { ge.textContent = errors; ge.classList.remove('hidden'); }
-        }
-    }
 
-    // ── Airport Rate Modal ────────────────────────────────────────────────────
-    const airportRateModal   = document.getElementById('airport-rate-modal');
-    const airportModalTitle  = document.getElementById('airport-rate-modal-title');
-    const airportRateIdInput = document.getElementById('airport-rate-id');
-    const airportSaveBtn     = document.getElementById('save-airport-rate-btn');
-    const airportSaveSpinner = document.getElementById('airport-save-spinner');
+            // ── Add New Vehicle Model Mini Modal ──────────────────────────────────────
+            const newModelModal = document.getElementById('new-vehicle-model-modal');
+            const newModelName = document.getElementById('new-vehicle-model-name');
+            const newModelTypeSel = document.getElementById('new-vehicle-model-type-select');
+            const newModelError = document.getElementById('new-vehicle-model-error');
+            const newModelSpinner = document.getElementById('new-vehicle-model-spinner');
 
-    const airportSel      = document.getElementById('airport-select');
-    const transferTypeSel = document.getElementById('transfer-type-select');
-    const zoneSel         = document.getElementById('zone-select');
-    const airportVehicle  = document.getElementById('airport-vehicle-type');
-    const airportFareSel  = document.getElementById('airport-fare-type');
-    const airportPriceIn  = document.getElementById('airport-price');
-    const airportCurrSel  = document.getElementById('airport-currency');
-    const airportNotesIn  = document.getElementById('airport-notes');
+            document.querySelectorAll('.add-inline-vehicle-model').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    newModelName.value = '';
+                    const mainVehicleTypeVal = document.getElementById('full-day-vehicle-select').value;
+                    newModelTypeSel.value = mainVehicleTypeVal || '';
+                    newModelError.classList.add('hidden');
+                    showModal(newModelModal);
+                    newModelName.focus();
+                });
+            });
 
-    function resetAirportModal() {
-        airportRateIdInput.value = '';
-        airportSel.value         = '';
-        transferTypeSel.value    = 'pickup';
-        zoneSel.value            = '';
-        airportVehicle.value     = '';
-        airportFareSel.value     = 'fixed';
-        airportPriceIn.value     = '0';
-        airportCurrSel.value     = 'AED';
-        airportNotesIn.value     = '';
-        clearAirportErrors();
-    }
+            document.getElementById('cancel-new-vehicle-model').addEventListener('click', () => hideModal(newModelModal));
+            newModelModal.querySelector('.absolute').addEventListener('click', () => hideModal(newModelModal));
 
-    function openAirportAddModal() {
-        resetAirportModal();
-        airportModalTitle.textContent = 'Add Airport Rate';
-        showModal(airportRateModal);
-        airportSel.focus();
-    }
+            document.getElementById('save-new-vehicle-model').addEventListener('click', async () => {
+                const name = newModelName.value.trim();
+                const typeId = newModelTypeSel.value;
 
-    function openAirportEditModal(btn) {
-        resetAirportModal();
-        airportModalTitle.textContent = 'Edit Airport Rate';
-        airportRateIdInput.value      = btn.dataset.id;
-        airportSel.value              = btn.dataset.airport;
-        transferTypeSel.value         = btn.dataset.transferType;
-        zoneSel.value                 = btn.dataset.zone;
-        airportVehicle.value          = btn.dataset.vehicle;
-        airportFareSel.value          = btn.dataset.fare;
-        airportPriceIn.value          = btn.dataset.price;
-        airportCurrSel.value          = btn.dataset.currency;
-        airportNotesIn.value          = btn.dataset.notes ?? '';
-        showModal(airportRateModal);
-    }
-
-    document.getElementById('open-airport-rate-modal').addEventListener('click', openAirportAddModal);
-    document.getElementById('close-airport-rate-modal').addEventListener('click', () => hideModal(airportRateModal));
-    document.getElementById('cancel-airport-rate-modal').addEventListener('click', () => hideModal(airportRateModal));
-    document.getElementById('airport-rate-modal-backdrop').addEventListener('click', () => hideModal(airportRateModal));
-
-    // Delegated edit button handler
-    document.getElementById('airport-rates-tbody').addEventListener('click', (e) => {
-        const btn = e.target.closest('.edit-airport-rate-btn');
-        if (btn) { openAirportEditModal(btn); }
-    });
-
-    // Save (store or update)
-    airportSaveBtn.addEventListener('click', async () => {
-        clearAirportErrors();
-        const id = airportRateIdInput.value;
-        const payload = {
-            airport_id:      airportSel.value,
-            transfer_type:   transferTypeSel.value,
-            zone_id:         zoneSel.value,
-            vehicle_type_id: airportVehicle.value,
-            fare_type:       airportFareSel.value,
-            price:           airportPriceIn.value,
-            currency:        airportCurrSel.value,
-            notes:           airportNotesIn.value,
-        };
-
-        airportSaveBtn.disabled = true;
-        airportSaveSpinner.classList.remove('hidden');
-
-        try {
-            let data;
-            if (id) {
-                data = await apiFetch(AIRPORT_ROUTES.update(id), 'PUT', payload);
-            } else {
-                data = await apiFetch(AIRPORT_ROUTES.store, 'POST', payload);
-            }
-
-            if (data.success) {
-                const tbody = document.getElementById('airport-rates-tbody');
-
-                if (id) {
-                    const existingRow = tbody.querySelector(`tr[data-rate-id="${id}"]`);
-                    if (existingRow) { existingRow.outerHTML = data.row_html; }
-                } else {
-                    const emptyRow = tbody.querySelector('#airport-empty-state-row');
-                    if (emptyRow) { emptyRow.remove(); }
-                    tbody.insertAdjacentHTML('afterbegin', data.row_html);
+                if (!typeId) {
+                    newModelError.textContent = 'Vehicle Type is required.';
+                    newModelError.classList.remove('hidden');
+                    return;
                 }
 
-                hideModal(airportRateModal);
-            } else if (data.errors) {
-                showAirportErrors(data.errors);
-            } else {
-                showAirportErrors(data.message ?? 'An error occurred.');
-            }
-        } catch (err) {
-            showAirportErrors('Network error. Please try again.');
-        } finally {
-            airportSaveBtn.disabled = false;
-            airportSaveSpinner.classList.add('hidden');
-        }
-    });
-
-    // ── Toggle Status ─────────────────────────────────────────────────────────
-    document.getElementById('airport-rates-tbody').addEventListener('click', async (e) => {
-        const btn = e.target.closest('.airport-toggle-status-btn');
-        if (!btn) { return; }
-
-        const icon    = btn.querySelector('.toggle-icon');
-        const spinner = btn.querySelector('.toggle-spinner');
-
-        btn.disabled = true;
-        icon.classList.add('hidden');
-        spinner.classList.remove('hidden');
-
-        try {
-            const data = await apiFetch(AIRPORT_ROUTES.toggle(btn.dataset.id), 'PATCH');
-            if (data.success) {
-                const row   = btn.closest('tr');
-                const badge = row.querySelector('.airport-rate-status-badge');
-
-                if (data.is_active) {
-                    badge.textContent = 'active';
-                    badge.className   = 'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
-                } else {
-                    badge.textContent = 'inactive';
-                    badge.className   = 'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                if (!name) {
+                    newModelError.textContent = 'Model Name is required.';
+                    newModelError.classList.remove('hidden');
+                    return;
                 }
 
-                btn.dataset.active = data.is_active ? '1' : '0';
-                btn.title = data.is_active ? 'Deactivate' : 'Activate';
+                newModelSpinner.classList.remove('hidden');
+
+                try {
+                    const data = await apiFetch('{{ route('admin.transfers.vehicle-models.store') }}', 'POST', {
+                        name,
+                        vehicle_type_id: typeId
+                    });
+                    if (data.success) {
+                        const vm = data.vehicle_model;
+                        const option = new Option(vm.name, vm.id);
+                        option.setAttribute('data-vehicle-type', vm.vehicle_type_id);
+
+                        const fullDayModelSel = document.getElementById('full-day-model-select');
+                        if (fullDayModelSel) {
+                            fullDayModelSel.add(option);
+                            const mainVehicleTypeVal = document.getElementById('full-day-vehicle-select').value;
+                            if (mainVehicleTypeVal && String(mainVehicleTypeVal) === String(vm.vehicle_type_id)) {
+                                fullDayModelSel.value = vm.id;
+                            }
+                        }
+
+                        hideModal(newModelModal);
+                    } else {
+                        newModelError.textContent = data.message ?? 'Error saving vehicle model.';
+                        newModelError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    newModelError.textContent = 'Network error.';
+                    newModelError.classList.remove('hidden');
+                } finally {
+                    newModelSpinner.classList.add('hidden');
+                }
+            });
+
+            // Close mini modals on backdrop click
+            newLocModal.querySelector('.absolute').addEventListener('click', () => hideModal(newLocModal));
+            newVehicleModal.querySelector('.absolute').addEventListener('click', () => hideModal(newVehicleModal));
+
+            // Enter key in mini modals
+            newLocName.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('save-new-location').click();
+                }
+            });
+            newVehicleName.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('save-new-vehicle').click();
+                }
+            });
+
+        })();
+    </script>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── Routes ──────────────────────────────────────────────────────────────
+            const AIRPORT_ROUTES = {
+                store: '{{ route('admin.transfers.airport-rates.store') }}',
+                update: (id) => `{{ url('admin/transfers/airport-rates') }}/${id}`,
+                toggle: (id) => `{{ url('admin/transfers/airport-rates') }}/${id}/toggle-status`,
+                destroy: (id) => `{{ url('admin/transfers/airport-rates') }}/${id}`,
+                storeZone: '{{ route('admin.transfers.zones.store') }}',
+                storeVehicle: '{{ route('admin.transfers.airport-vehicle-types.store') }}',
+            };
+
+            const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+            // ── Helpers ──────────────────────────────────────────────────────────────
+            function showModal(el) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
             }
-        } catch (err) {
-            console.error(err);
-        } finally {
-            btn.disabled = false;
-            icon.classList.remove('hidden');
-            spinner.classList.add('hidden');
-        }
-    });
 
-    // ── Add New Zone Mini Modal ───────────────────────────────────────────────
-    const newZoneModal   = document.getElementById('new-zone-modal');
-    const newZoneName    = document.getElementById('new-zone-name');
-    const newZoneError   = document.getElementById('new-zone-error');
-    const newZoneSpinner = document.getElementById('new-zone-spinner');
-
-    document.getElementById('add-zone-btn').addEventListener('click', () => {
-        newZoneName.value = '';
-        newZoneError.classList.add('hidden');
-        showModal(newZoneModal);
-        newZoneName.focus();
-    });
-
-    document.getElementById('cancel-new-zone').addEventListener('click', () => hideModal(newZoneModal));
-    newZoneModal.querySelector('.absolute').addEventListener('click', () => hideModal(newZoneModal));
-
-    document.getElementById('save-new-zone').addEventListener('click', async () => {
-        const name = newZoneName.value.trim();
-        if (!name) {
-            newZoneError.textContent = 'Name is required.';
-            newZoneError.classList.remove('hidden');
-            return;
-        }
-
-        newZoneSpinner.classList.remove('hidden');
-
-        try {
-            const data = await apiFetch(AIRPORT_ROUTES.storeZone, 'POST', { name });
-            if (data.success) {
-                const zone   = data.zone;
-                const option = new Option(zone.name, zone.id);
-                zoneSel.add(option);
-                zoneSel.value = zone.id;
-                hideModal(newZoneModal);
-            } else {
-                newZoneError.textContent = data.message ?? 'Error saving zone.';
-                newZoneError.classList.remove('hidden');
+            function hideModal(el) {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
             }
-        } catch (err) {
-            newZoneError.textContent = 'Network error.';
-            newZoneError.classList.remove('hidden');
-        } finally {
-            newZoneSpinner.classList.add('hidden');
-        }
-    });
 
-    newZoneName.addEventListener('keydown', (e) => { if (e.key === 'Enter') { document.getElementById('save-new-zone').click(); } });
-
-    // ── Add New Airport Vehicle Type Mini Modal ───────────────────────────────
-    const newAirportVehicleModal   = document.getElementById('new-airport-vehicle-modal');
-    const newAirportVehicleName    = document.getElementById('new-airport-vehicle-name');
-    const newAirportVehicleError   = document.getElementById('new-airport-vehicle-error');
-    const newAirportVehicleSpinner = document.getElementById('new-airport-vehicle-spinner');
-
-    document.getElementById('add-airport-vehicle-type-btn').addEventListener('click', () => {
-        newAirportVehicleName.value = '';
-        newAirportVehicleError.classList.add('hidden');
-        showModal(newAirportVehicleModal);
-        newAirportVehicleName.focus();
-    });
-
-    document.getElementById('cancel-new-airport-vehicle').addEventListener('click', () => hideModal(newAirportVehicleModal));
-    newAirportVehicleModal.querySelector('.absolute').addEventListener('click', () => hideModal(newAirportVehicleModal));
-
-    document.getElementById('save-new-airport-vehicle').addEventListener('click', async () => {
-        const name = newAirportVehicleName.value.trim();
-        if (!name) {
-            newAirportVehicleError.textContent = 'Name is required.';
-            newAirportVehicleError.classList.remove('hidden');
-            return;
-        }
-
-        newAirportVehicleSpinner.classList.remove('hidden');
-
-        try {
-            const data = await apiFetch(AIRPORT_ROUTES.storeVehicle, 'POST', { name });
-            if (data.success) {
-                const vt     = data.vehicle_type;
-                const option = new Option(vt.name, vt.id);
-                airportVehicle.add(option);
-                airportVehicle.value = vt.id;
-                hideModal(newAirportVehicleModal);
-            } else {
-                newAirportVehicleError.textContent = data.message ?? 'Error saving vehicle type.';
-                newAirportVehicleError.classList.remove('hidden');
+            async function apiFetch(url, method, body = null) {
+                const opts = {
+                    method,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': CSRF
+                    },
+                };
+                if (body) {
+                    opts.headers['Content-Type'] = 'application/json';
+                    opts.body = JSON.stringify(body);
+                }
+                const res = await fetch(url, opts);
+                return res.json();
             }
-        } catch (err) {
-            newAirportVehicleError.textContent = 'Network error.';
-            newAirportVehicleError.classList.remove('hidden');
-        } finally {
-            newAirportVehicleSpinner.classList.add('hidden');
-        }
-    });
 
-    newAirportVehicleName.addEventListener('keydown', (e) => { if (e.key === 'Enter') { document.getElementById('save-new-airport-vehicle').click(); } });
-
-    // ── Add New Airport Mini Modal ────────────────────────────────────────────
-    const newAirportModal   = document.getElementById('new-airport-modal');
-    const newAirportName    = document.getElementById('new-airport-name');
-    const newAirportError   = document.getElementById('new-airport-error');
-    const newAirportSpinner = document.getElementById('new-airport-spinner');
-    const storeLocationUrl  = '{{ route('admin.transfers.locations.store') }}';
-
-    document.getElementById('add-airport-btn').addEventListener('click', () => {
-        newAirportName.value = '';
-        newAirportError.classList.add('hidden');
-        showModal(newAirportModal);
-        newAirportName.focus();
-    });
-
-    document.getElementById('cancel-new-airport').addEventListener('click', () => hideModal(newAirportModal));
-    newAirportModal.querySelector('.absolute').addEventListener('click', () => hideModal(newAirportModal));
-
-    document.getElementById('save-new-airport').addEventListener('click', async () => {
-        const name = newAirportName.value.trim();
-        if (!name) {
-            newAirportError.textContent = 'Name is required.';
-            newAirportError.classList.remove('hidden');
-            return;
-        }
-
-        newAirportSpinner.classList.remove('hidden');
-
-        try {
-            const data = await apiFetch(storeLocationUrl, 'POST', { name, type: 'airport' });
-            if (data.success) {
-                const loc    = data.location;
-                const option = new Option(loc.name, loc.id);
-                airportSel.add(option);
-                airportSel.value = loc.id;
-                hideModal(newAirportModal);
-            } else {
-                newAirportError.textContent = data.message ?? 'Error saving airport.';
-                newAirportError.classList.remove('hidden');
+            function clearAirportErrors() {
+                document.querySelectorAll('.field-error-airport').forEach(el => {
+                    el.textContent = '';
+                    el.classList.add('hidden');
+                });
+                const ge = document.getElementById('airport-form-error');
+                if (ge) {
+                    ge.textContent = '';
+                    ge.classList.add('hidden');
+                }
             }
-        } catch (err) {
-            newAirportError.textContent = 'Network error.';
-            newAirportError.classList.remove('hidden');
-        } finally {
-            newAirportSpinner.classList.add('hidden');
-        }
-    });
 
-    newAirportName.addEventListener('keydown', (e) => { if (e.key === 'Enter') { document.getElementById('save-new-airport').click(); } });
+            function showAirportErrors(errors) {
+                clearAirportErrors();
+                if (typeof errors === 'object') {
+                    Object.entries(errors).forEach(([field, msgs]) => {
+                        const el = document.querySelector(`.field-error-airport[data-field="${field}"]`);
+                        if (el) {
+                            el.textContent = Array.isArray(msgs) ? msgs[0] : msgs;
+                            el.classList.remove('hidden');
+                        }
+                    });
+                } else {
+                    const ge = document.getElementById('airport-form-error');
+                    if (ge) {
+                        ge.textContent = errors;
+                        ge.classList.remove('hidden');
+                    }
+                }
+            }
 
-})();
-</script>
+            // ── Airport Rate Modal ────────────────────────────────────────────────────
+            const airportRateModal = document.getElementById('airport-rate-modal');
+            const airportModalTitle = document.getElementById('airport-rate-modal-title');
+            const airportRateIdInput = document.getElementById('airport-rate-id');
+            const airportSaveBtn = document.getElementById('save-airport-rate-btn');
+            const airportSaveSpinner = document.getElementById('airport-save-spinner');
+
+            const airportSel = document.getElementById('airport-select');
+            const transferTypeSel = document.getElementById('transfer-type-select');
+            const zoneSel = document.getElementById('zone-select');
+            const airportVehicle = document.getElementById('airport-vehicle-type');
+            const airportFareSel = document.getElementById('airport-fare-type');
+            const airportPriceIn = document.getElementById('airport-price');
+            const airportCurrSel = document.getElementById('airport-currency');
+            const airportNotesIn = document.getElementById('airport-notes');
+
+            function resetAirportModal() {
+                airportRateIdInput.value = '';
+                airportSel.value = '';
+                transferTypeSel.value = 'pickup';
+                zoneSel.value = '';
+                airportVehicle.value = '';
+                airportFareSel.value = 'fixed';
+                airportPriceIn.value = '0';
+                airportCurrSel.value = 'AED';
+                airportNotesIn.value = '';
+                clearAirportErrors();
+            }
+
+            function openAirportAddModal() {
+                resetAirportModal();
+                airportModalTitle.textContent = 'Add Airport Rate';
+                showModal(airportRateModal);
+                airportSel.focus();
+            }
+
+            function openAirportEditModal(btn) {
+                resetAirportModal();
+                airportModalTitle.textContent = 'Edit Airport Rate';
+                airportRateIdInput.value = btn.dataset.id;
+                airportSel.value = btn.dataset.airport;
+                transferTypeSel.value = btn.dataset.transferType;
+                zoneSel.value = btn.dataset.zone;
+                airportVehicle.value = btn.dataset.vehicle;
+                airportFareSel.value = btn.dataset.fare;
+                airportPriceIn.value = btn.dataset.price;
+                airportCurrSel.value = btn.dataset.currency;
+                airportNotesIn.value = btn.dataset.notes ?? '';
+                showModal(airportRateModal);
+            }
+
+            document.getElementById('open-airport-rate-modal').addEventListener('click', openAirportAddModal);
+            document.getElementById('close-airport-rate-modal').addEventListener('click', () => hideModal(
+                airportRateModal));
+            document.getElementById('cancel-airport-rate-modal').addEventListener('click', () => hideModal(
+                airportRateModal));
+            document.getElementById('airport-rate-modal-backdrop').addEventListener('click', () => hideModal(
+                airportRateModal));
+
+            // Delegated edit button handler
+            document.getElementById('airport-rates-tbody').addEventListener('click', (e) => {
+                const btn = e.target.closest('.edit-airport-rate-btn');
+                if (btn) {
+                    openAirportEditModal(btn);
+                }
+            });
+
+            // Save (store or update)
+            airportSaveBtn.addEventListener('click', async () => {
+                clearAirportErrors();
+                const id = airportRateIdInput.value;
+                const payload = {
+                    airport_id: airportSel.value,
+                    transfer_type: transferTypeSel.value,
+                    zone_id: zoneSel.value,
+                    vehicle_type_id: airportVehicle.value,
+                    fare_type: airportFareSel.value,
+                    price: airportPriceIn.value,
+                    currency: airportCurrSel.value,
+                    notes: airportNotesIn.value,
+                };
+
+                airportSaveBtn.disabled = true;
+                airportSaveSpinner.classList.remove('hidden');
+
+                try {
+                    let data;
+                    if (id) {
+                        data = await apiFetch(AIRPORT_ROUTES.update(id), 'PUT', payload);
+                    } else {
+                        data = await apiFetch(AIRPORT_ROUTES.store, 'POST', payload);
+                    }
+
+                    if (data.success) {
+                        const tbody = document.getElementById('airport-rates-tbody');
+
+                        if (id) {
+                            const existingRow = tbody.querySelector(`tr[data-rate-id="${id}"]`);
+                            if (existingRow) {
+                                existingRow.outerHTML = data.row_html;
+                            }
+                        } else {
+                            const emptyRow = tbody.querySelector('#airport-empty-state-row');
+                            if (emptyRow) {
+                                emptyRow.remove();
+                            }
+                            tbody.insertAdjacentHTML('afterbegin', data.row_html);
+                        }
+
+                        hideModal(airportRateModal);
+                    } else if (data.errors) {
+                        showAirportErrors(data.errors);
+                    } else {
+                        showAirportErrors(data.message ?? 'An error occurred.');
+                    }
+                } catch (err) {
+                    showAirportErrors('Network error. Please try again.');
+                } finally {
+                    airportSaveBtn.disabled = false;
+                    airportSaveSpinner.classList.add('hidden');
+                }
+            });
+
+            // ── Toggle Status ─────────────────────────────────────────────────────────
+            document.getElementById('airport-rates-tbody').addEventListener('click', async (e) => {
+                const btn = e.target.closest('.airport-toggle-status-btn');
+                if (!btn) {
+                    return;
+                }
+
+                const icon = btn.querySelector('.toggle-icon');
+                const spinner = btn.querySelector('.toggle-spinner');
+
+                btn.disabled = true;
+                icon.classList.add('hidden');
+                spinner.classList.remove('hidden');
+
+                try {
+                    const data = await apiFetch(AIRPORT_ROUTES.toggle(btn.dataset.id), 'PATCH');
+                    if (data.success) {
+                        const row = btn.closest('tr');
+                        const badge = row.querySelector('.airport-rate-status-badge');
+
+                        if (data.is_active) {
+                            badge.textContent = 'active';
+                            badge.className =
+                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                        } else {
+                            badge.textContent = 'inactive';
+                            badge.className =
+                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                        }
+
+                        btn.dataset.active = data.is_active ? '1' : '0';
+                        btn.title = data.is_active ? 'Deactivate' : 'Activate';
+                    }
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    btn.disabled = false;
+                    icon.classList.remove('hidden');
+                    spinner.classList.add('hidden');
+                }
+            });
+
+            // ── Add New Zone Mini Modal ───────────────────────────────────────────────
+            const newZoneModal = document.getElementById('new-zone-modal');
+            const newZoneName = document.getElementById('new-zone-name');
+            const newZoneError = document.getElementById('new-zone-error');
+            const newZoneSpinner = document.getElementById('new-zone-spinner');
+
+            document.getElementById('add-zone-btn').addEventListener('click', () => {
+                newZoneName.value = '';
+                newZoneError.classList.add('hidden');
+                showModal(newZoneModal);
+                newZoneName.focus();
+            });
+
+            document.getElementById('cancel-new-zone').addEventListener('click', () => hideModal(newZoneModal));
+            newZoneModal.querySelector('.absolute').addEventListener('click', () => hideModal(newZoneModal));
+
+            document.getElementById('save-new-zone').addEventListener('click', async () => {
+                const name = newZoneName.value.trim();
+                if (!name) {
+                    newZoneError.textContent = 'Name is required.';
+                    newZoneError.classList.remove('hidden');
+                    return;
+                }
+
+                newZoneSpinner.classList.remove('hidden');
+
+                try {
+                    const data = await apiFetch(AIRPORT_ROUTES.storeZone, 'POST', {
+                        name
+                    });
+                    if (data.success) {
+                        const zone = data.zone;
+                        const option = new Option(zone.name, zone.id);
+                        zoneSel.add(option);
+                        zoneSel.value = zone.id;
+                        hideModal(newZoneModal);
+                    } else {
+                        newZoneError.textContent = data.message ?? 'Error saving zone.';
+                        newZoneError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    newZoneError.textContent = 'Network error.';
+                    newZoneError.classList.remove('hidden');
+                } finally {
+                    newZoneSpinner.classList.add('hidden');
+                }
+            });
+
+            newZoneName.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('save-new-zone').click();
+                }
+            });
+
+            // ── Add New Airport Vehicle Type Mini Modal ───────────────────────────────
+            const newAirportVehicleModal = document.getElementById('new-airport-vehicle-modal');
+            const newAirportVehicleName = document.getElementById('new-airport-vehicle-name');
+            const newAirportVehicleError = document.getElementById('new-airport-vehicle-error');
+            const newAirportVehicleSpinner = document.getElementById('new-airport-vehicle-spinner');
+
+            document.getElementById('add-airport-vehicle-type-btn').addEventListener('click', () => {
+                newAirportVehicleName.value = '';
+                newAirportVehicleError.classList.add('hidden');
+                showModal(newAirportVehicleModal);
+                newAirportVehicleName.focus();
+            });
+
+            document.getElementById('cancel-new-airport-vehicle').addEventListener('click', () => hideModal(
+                newAirportVehicleModal));
+            newAirportVehicleModal.querySelector('.absolute').addEventListener('click', () => hideModal(
+                newAirportVehicleModal));
+
+            document.getElementById('save-new-airport-vehicle').addEventListener('click', async () => {
+                const name = newAirportVehicleName.value.trim();
+                if (!name) {
+                    newAirportVehicleError.textContent = 'Name is required.';
+                    newAirportVehicleError.classList.remove('hidden');
+                    return;
+                }
+
+                newAirportVehicleSpinner.classList.remove('hidden');
+
+                try {
+                    const data = await apiFetch(AIRPORT_ROUTES.storeVehicle, 'POST', {
+                        name
+                    });
+                    if (data.success) {
+                        const vt = data.vehicle_type;
+                        const option = new Option(vt.name, vt.id);
+                        airportVehicle.add(option);
+                        airportVehicle.value = vt.id;
+                        hideModal(newAirportVehicleModal);
+                    } else {
+                        newAirportVehicleError.textContent = data.message ?? 'Error saving vehicle type.';
+                        newAirportVehicleError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    newAirportVehicleError.textContent = 'Network error.';
+                    newAirportVehicleError.classList.remove('hidden');
+                } finally {
+                    newAirportVehicleSpinner.classList.add('hidden');
+                }
+            });
+
+            newAirportVehicleName.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('save-new-airport-vehicle').click();
+                }
+            });
+
+            // ── Add New Airport Mini Modal ────────────────────────────────────────────
+            const newAirportModal = document.getElementById('new-airport-modal');
+            const newAirportName = document.getElementById('new-airport-name');
+            const newAirportError = document.getElementById('new-airport-error');
+            const newAirportSpinner = document.getElementById('new-airport-spinner');
+            const storeLocationUrl = '{{ route('admin.transfers.locations.store') }}';
+
+            document.getElementById('add-airport-btn').addEventListener('click', () => {
+                newAirportName.value = '';
+                newAirportError.classList.add('hidden');
+                showModal(newAirportModal);
+                newAirportName.focus();
+            });
+
+            document.getElementById('cancel-new-airport').addEventListener('click', () => hideModal(newAirportModal));
+            newAirportModal.querySelector('.absolute').addEventListener('click', () => hideModal(newAirportModal));
+
+            document.getElementById('save-new-airport').addEventListener('click', async () => {
+                const name = newAirportName.value.trim();
+                if (!name) {
+                    newAirportError.textContent = 'Name is required.';
+                    newAirportError.classList.remove('hidden');
+                    return;
+                }
+
+                newAirportSpinner.classList.remove('hidden');
+
+                try {
+                    const data = await apiFetch(storeLocationUrl, 'POST', {
+                        name,
+                        type: 'airport'
+                    });
+                    if (data.success) {
+                        const loc = data.location;
+                        const option = new Option(loc.name, loc.id);
+                        airportSel.add(option);
+                        airportSel.value = loc.id;
+                        hideModal(newAirportModal);
+                    } else {
+                        newAirportError.textContent = data.message ?? 'Error saving airport.';
+                        newAirportError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    newAirportError.textContent = 'Network error.';
+                    newAirportError.classList.remove('hidden');
+                } finally {
+                    newAirportSpinner.classList.add('hidden');
+                }
+            });
+
+            newAirportName.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('save-new-airport').click();
+                }
+            });
+
+        })();
+    </script>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── Routes ──────────────────────────────────────────────────────────────
+            const FULL_DAY_ROUTES = {
+                store: '{{ route('admin.transfers.full-day-rates.store') }}',
+                update: (id) => `{{ url('admin/transfers/full-day-rates') }}/${id}`,
+                toggle: (id) => `{{ url('admin/transfers/full-day-rates') }}/${id}/toggle-status`,
+                destroy: (id) => `{{ url('admin/transfers/full-day-rates') }}/${id}`,
+            };
+
+            // ── Elements ────────────────────────────────────────────────────────────
+            const fullDayRateModal = document.getElementById('full-day-rate-modal');
+            const fullDayModalTitle = document.getElementById('full-day-rate-modal-title');
+            const fullDayRateForm = document.getElementById('full-day-rate-form');
+            const fullDayRateId = document.getElementById('full-day-rate-id');
+
+            const fromSel = document.getElementById('full-day-from-location');
+            const toSel = document.getElementById('full-day-to-location');
+            const vehicleSel = document.getElementById('full-day-vehicle-select');
+            const modelSel = document.getElementById('full-day-model-select');
+            const fareTypeSel = document.getElementById('full-day-fare-type');
+            const priceInput = document.getElementById('full-day-price');
+            const currencySel = document.getElementById('full-day-currency');
+            const notesInput = document.getElementById('full-day-notes');
+
+            const saveSpinner = document.getElementById('full-day-save-spinner');
+            const saveBtn = document.getElementById('save-full-day-rate-btn');
+            const formError = document.getElementById('full-day-form-error');
+
+            const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+            // Helper functions
+            function clearErrors() {
+                formError.classList.add('hidden');
+                formError.textContent = '';
+                fullDayRateForm.querySelectorAll('.field-error-full-day').forEach(el => {
+                    el.classList.add('hidden');
+                    el.textContent = '';
+                });
+            }
+
+            function showErrors(errors) {
+                clearErrors();
+                if (typeof errors === 'string') {
+                    formError.textContent = errors;
+                    formError.classList.remove('hidden');
+                } else {
+                    Object.keys(errors).forEach(field => {
+                        const el = fullDayRateForm.querySelector(
+                            `.field-error-full-day[data-field="${field}"]`);
+                        if (el) {
+                            el.textContent = errors[field][0];
+                            el.classList.remove('hidden');
+                        }
+                    });
+                }
+            }
+
+            function showModal(el) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            }
+
+            function hideModal(el) {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }
+
+            function filterVehicleModels() {
+                const selectedVehicleType = vehicleSel.value;
+                const currentModelVal = modelSel.value;
+                let matchedModelExists = false;
+
+                [...modelSel.options].forEach(option => {
+                    const optVehicleType = option.getAttribute('data-vehicle-type');
+                    if (!optVehicleType) {
+                        option.hidden = false;
+                        option.disabled = false;
+                    } else if (selectedVehicleType && optVehicleType === selectedVehicleType) {
+                        option.hidden = false;
+                        option.disabled = false;
+                        if (option.value === currentModelVal) {
+                            matchedModelExists = true;
+                        }
+                    } else {
+                        option.hidden = true;
+                        option.disabled = true;
+                    }
+                });
+
+                if (!matchedModelExists) {
+                    modelSel.value = '';
+                }
+            }
+
+            vehicleSel.addEventListener('change', filterVehicleModels);
+
+            function openAddModal() {
+                clearErrors();
+                fullDayRateForm.reset();
+                fullDayRateId.value = '';
+                fareTypeSel.value = 'full_day';
+                filterVehicleModels();
+                fullDayModalTitle.textContent = 'Add Full-day Rate';
+                showModal(fullDayRateModal);
+                fromSel.focus();
+            }
+
+            function openEditModal(btn) {
+                clearErrors();
+                fullDayRateId.value = btn.dataset.id;
+                fromSel.value = btn.dataset.from;
+                toSel.value = btn.dataset.to;
+                vehicleSel.value = btn.dataset.vehicle;
+                modelSel.value = btn.dataset.vehicleModel || '';
+                filterVehicleModels();
+                fareTypeSel.value = btn.dataset.fare;
+                priceInput.value = btn.dataset.price;
+                currencySel.value = btn.dataset.currency;
+                notesInput.value = btn.dataset.notes || '';
+
+                fullDayModalTitle.textContent = 'Edit Full-day Rate';
+                showModal(fullDayRateModal);
+            }
+
+            async function apiFetch(url, method, body = null) {
+                const opts = {
+                    method,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': CSRF
+                    },
+                };
+                if (body) {
+                    opts.headers['Content-Type'] = 'application/json';
+                    opts.body = JSON.stringify(body);
+                }
+                const res = await fetch(url, opts);
+                return res.json();
+            }
+
+            // Event Listeners
+            document.getElementById('open-full-day-rate-modal').addEventListener('click', openAddModal);
+            document.getElementById('close-full-day-rate-modal').addEventListener('click', () => hideModal(
+                fullDayRateModal));
+            document.getElementById('cancel-full-day-rate-modal').addEventListener('click', () => hideModal(
+                fullDayRateModal));
+            document.getElementById('full-day-rate-modal-backdrop').addEventListener('click', () => hideModal(
+                fullDayRateModal));
+
+            // Handle Edit Click (Delegated)
+            document.getElementById('full-day-rates-tbody').addEventListener('click', (e) => {
+                const btn = e.target.closest('.edit-full-day-rate-btn');
+                if (btn) {
+                    openEditModal(btn);
+                }
+            });
+
+            // Same Location Validation
+            function validateLocations() {
+                const from = fromSel.value;
+                const to = toSel.value;
+
+                fromSel.setCustomValidity('');
+                toSel.setCustomValidity('');
+
+                if (from && to && from === to) {
+                    const message = 'From City and To City cannot be the same.';
+                    fromSel.setCustomValidity(message);
+                    toSel.setCustomValidity(message);
+                }
+
+                fromSel.reportValidity();
+                toSel.reportValidity();
+            }
+
+            fromSel.addEventListener('change', validateLocations);
+            toSel.addEventListener('change', validateLocations);
+
+            function syncLocations() {
+                const selectedFrom = fromSel.value;
+                [...toSel.options].forEach(option => {
+                    option.disabled = option.value === selectedFrom && option.value !== '';
+                });
+            }
+
+            fromSel.addEventListener('change', syncLocations);
+
+            function syncReverseLocations() {
+                const selectedTo = toSel.value;
+                [...fromSel.options].forEach(option => {
+                    option.disabled = option.value === selectedTo && option.value !== '';
+                });
+            }
+
+            toSel.addEventListener('change', syncReverseLocations);
+
+            // Save Rate (Store or Update)
+            saveBtn.addEventListener('click', async () => {
+                clearErrors();
+                const id = fullDayRateId.value;
+                const url = id ? FULL_DAY_ROUTES.update(id) : FULL_DAY_ROUTES.store;
+                const method = id ? 'PUT' : 'POST';
+
+                const payload = {
+                    from_location_id: fromSel.value,
+                    to_location_id: toSel.value,
+                    vehicle_type_id: vehicleSel.value,
+                    vehicle_model_id: modelSel.value || null,
+                    fare_type: fareTypeSel.value,
+                    price: priceInput.value,
+                    currency: currencySel.value,
+                    notes: notesInput.value,
+                };
+
+                saveBtn.disabled = true;
+                saveSpinner.classList.remove('hidden');
+
+                try {
+                    const data = await apiFetch(url, method, payload);
+                    if (data.success) {
+                        const tbody = document.getElementById('full-day-rates-tbody');
+
+                        if (id) {
+                            const existingRow = tbody.querySelector(`tr[data-rate-id="${id}"]`);
+                            if (existingRow) {
+                                existingRow.outerHTML = data.row_html;
+                            }
+                        } else {
+                            const emptyRow = tbody.querySelector('#full-day-empty-state-row');
+                            if (emptyRow) {
+                                emptyRow.remove();
+                            }
+                            tbody.insertAdjacentHTML('afterbegin', data.row_html);
+                        }
+
+                        hideModal(fullDayRateModal);
+                    } else if (data.errors) {
+                        showErrors(data.errors);
+                    } else {
+                        showErrors(data.message ?? 'An error occurred.');
+                    }
+                } catch (err) {
+                    showErrors('Network error. Please try again.');
+                    console.log(err);
+                } finally {
+                    saveBtn.disabled = false;
+                    saveSpinner.classList.add('hidden');
+                }
+            });
+
+            // Toggle Status
+            document.getElementById('full-day-rates-tbody').addEventListener('click', async (e) => {
+                const btn = e.target.closest('.toggle-full-day-status-btn');
+                if (!btn) {
+                    return;
+                }
+
+                const icon = btn.querySelector('.toggle-icon');
+                const spinner = btn.querySelector('.toggle-spinner');
+
+                btn.disabled = true;
+                icon.classList.add('hidden');
+                spinner.classList.remove('hidden');
+
+                try {
+                    const data = await apiFetch(FULL_DAY_ROUTES.toggle(btn.dataset.id), 'PATCH');
+                    if (data.success) {
+                        const row = btn.closest('tr');
+                        const badge = row.querySelector('.rate-status-badge');
+
+                        if (data.is_active) {
+                            badge.textContent = 'active';
+                            badge.className =
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                        } else {
+                            badge.textContent = 'inactive';
+                            badge.className =
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                        }
+
+                        btn.dataset.active = data.is_active ? '1' : '0';
+                        btn.title = data.is_active ? 'Deactivate' : 'Activate';
+
+                        // Switch icons
+                        btn.querySelector('.toggle-icon').outerHTML = data.is_active ?
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toggle-icon lucide lucide-toggle-right h-4 w-4"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="16" cy="12" r="2"></circle></svg>' :
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toggle-icon lucide lucide-toggle-left h-4 w-4"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="8" cy="12" r="2"></circle></svg>';
+                    }
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    btn.disabled = false;
+                    icon.classList.remove('hidden');
+                    spinner.classList.add('hidden');
+                }
+            });
+
+        })();
+    </script>
 @endpush
