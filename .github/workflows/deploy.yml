@@ -40,10 +40,13 @@ jobs:
       - name: Copy built assets to server
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          cat << 'EOF' > ~/.ssh/id_rsa
+          ${{ secrets.SSH_PRIVATE_KEY }}
+          EOF
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
-          scp -P ${{ secrets.PORT }} -r public/build ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/repositories/Backoffice-ERP/public/
+          PORT_VAL="${{ secrets.PORT }}"
+          PORT_VAL="${PORT_VAL:-22}"
+          scp -o StrictHostKeyChecking=no -P "$PORT_VAL" -r public/build ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/repositories/Backoffice-ERP/public/
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
