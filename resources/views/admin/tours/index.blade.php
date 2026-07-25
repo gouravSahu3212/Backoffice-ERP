@@ -54,7 +54,7 @@
         <div class="create-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
         {{-- Panel --}}
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-7">
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 px-3 py-5">
 
             {{-- Close --}}
             <button class="close-create-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors"
@@ -64,9 +64,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Add Tour</h2>
+            <h2 class="text-xl font-bold text-gray-900">Add Tour</h2>
 
-            <div class="overflow-y-auto flex-1 px-7 py-5 max-h-[80vh]">
+            <div class="overflow-y-auto flex-1 px-3 py-5 max-h-[80vh]">
                 <form id="create-tour-form" method="POST" action="{{ route('admin.tours.store') }}" class="space-y-4"
                     enctype="multipart/form-data">
                     @csrf
@@ -305,7 +305,7 @@
 
         <div class="edit-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-7">
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 px-3 py-5">
             <button class="close-edit-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors"
                 type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -313,9 +313,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Edit Tour</h2>
+            <h2 class="text-xl font-bold text-gray-900 px-3 py-5">Edit Tour</h2>
 
-            <div class="overflow-y-auto flex-1 px-7 py-5 max-h-[80vh]">
+            <div class="overflow-y-auto flex-1 px-3 py-5 max-h-[80vh]">
                 <form id="edit-tour-form" method="POST" action="" class="space-y-4"
                     enctype="multipart/form-data">
                     @csrf

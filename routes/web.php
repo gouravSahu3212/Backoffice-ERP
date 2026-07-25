@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\TourController;
 use App\Http\Controllers\Admin\TransferBookingController;
 use App\Http\Controllers\Admin\TransferController;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
+use App\Http\Controllers\Agent\TourController as AgentTourController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -70,6 +71,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('agent.')
         ->group(function () {
             Route::get('/dashboard', AgentDashboard::class)->name('dashboard');
+            Route::get('tours', [AgentTourController::class, 'index'])->name('tours.index');
+            Route::get('tours/search', [AgentTourController::class, 'search'])->name('tours.search');
+            Route::get('tours/{tour}', [AgentTourController::class, 'show'])->name('tours.show');
+            Route::get('tours/{tour}/availability', [AgentTourController::class, 'availability'])->name('tours.availability');
         });
 
 });
