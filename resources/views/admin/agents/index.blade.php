@@ -479,12 +479,16 @@
     // ── TOGGLE STATUS (AJAX) ───────────────────────────────────────────
     const TOGGLE_RIGHT_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-toggle-right h-4 w-4"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="16" cy="12" r="2"></circle></svg>';
     const TOGGLE_LEFT_SVG  = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-toggle-left h-4 w-4"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="8" cy="12" r="2"></circle></svg>';
+    const SPINNER_SVG      = '<svg class="animate-spin h-4 w-4 text-gray-500 toggle-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><radialGradient id="a18" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="currentColor"></stop><stop offset=".3" stop-color="currentColor" stop-opacity=".9"></stop><stop offset=".6" stop-color="currentColor" stop-opacity=".6"></stop><stop offset=".8" stop-color="currentColor" stop-opacity=".3"></stop><stop offset="1" stop-color="currentColor" stop-opacity="0"></stop></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a18)" stroke-width="15" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="currentColor" stroke-width="15" stroke-linecap="round" cx="100" cy="100" r="70"></circle></svg>';
 
     document.querySelectorAll('.toggle-status-btn').forEach(function (btn) {
         btn.addEventListener('click', async function () {
             const url     = btn.dataset.toggleUrl;
             const agentId = btn.dataset.id;
+            // Remember current icon so we can restore it on failure
+            const previousIcon = btn.innerHTML;
             btn.disabled  = true;
+            btn.innerHTML = SPINNER_SVG;
 
             try {
                 const res  = await fetch(url, {
@@ -506,7 +510,7 @@
                     btn.dataset.isActive = isActive ? '1' : '0';
                     btn.title = isActive ? 'Deactivate' : 'Activate';
 
-                    // Swap icon
+                    // Swap to correct icon
                     btn.innerHTML = isActive ? TOGGLE_RIGHT_SVG : TOGGLE_LEFT_SVG;
 
                     // Update status badge in the same row
@@ -521,9 +525,13 @@
                     // Sync edit-button data-is-active so modal opens correctly
                     const editBtn = row ? row.querySelector('.open-edit-modal') : null;
                     if (editBtn) editBtn.dataset.isActive = isActive ? '1' : '0';
+                } else {
+                    // Restore previous icon on failure
+                    btn.innerHTML = previousIcon;
                 }
             } catch (err) {
                 console.error('Toggle failed', err);
+                btn.innerHTML = previousIcon;
             } finally {
                 btn.disabled = false;
             }

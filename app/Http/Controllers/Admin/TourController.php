@@ -24,7 +24,15 @@ class TourController extends AdminController
 
     public function store(StoreTourRequest $request)
     {
-        $this->service->create($request->validated());
+        $tour = $this->service->create($request->validated());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Tour created successfully.',
+                'tour' => ['id' => $tour->id],
+            ]);
+        }
 
         return redirect()
             ->route('admin.tours.index')

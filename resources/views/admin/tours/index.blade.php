@@ -270,6 +270,9 @@
                         </select>
                     </div>
 
+                    {{-- Inline validation errors --}}
+                    <div id="create-form-errors" class="hidden rounded-lg bg-red-50 border border-red-200 p-3 space-y-1"></div>
+
                     {{-- Hidden submit for Enter key --}}
                     <button type="submit" class="hidden"></button>
 
@@ -465,6 +468,9 @@
                         </select>
                     </div>
 
+                    {{-- Inline validation errors --}}
+                    <div id="edit-form-errors" class="hidden rounded-lg bg-red-50 border border-red-200 p-3 space-y-1"></div>
+
                     <button type="submit" class="hidden"></button>
                 </form>
 
@@ -633,40 +639,120 @@
                     addDepartureRow(createDepartureContainer);
                 });
 
-                createForm.addEventListener('submit', function () {
-                    if (!createDepartureContainer) {
-                        return;
+                createForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    // Remove incomplete departure rows before submitting
+                    if (createDepartureContainer) {
+                        refreshDepartureRowNames(createDepartureContainer);
+                        Array.from(createDepartureContainer.querySelectorAll('.departure-row')).forEach(function (row) {
+                            const dateInput = row.querySelector('input[data-role="departure-date"]');
+                            const slotsInput = row.querySelector('input[data-role="departure-slots"]');
+                            if (dateInput && slotsInput && (!dateInput.value || !slotsInput.value)) {
+                                row.remove();
+                            }
+                        });
                     }
 
-                    refreshDepartureRowNames(createDepartureContainer);
+                    const errorBox = document.getElementById('create-form-errors');
+                    errorBox.classList.add('hidden');
+                    errorBox.innerHTML = '';
 
-                    const rows = Array.from(createDepartureContainer.querySelectorAll('.departure-row'));
-                    rows.forEach(function (row) {
-                        const dateInput = row.querySelector('input[data-role="departure-date"]');
-                        const slotsInput = row.querySelector('input[data-role="departure-slots"]');
+                    const submitBtn = document.querySelector('[form="create-tour-form"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving…';
 
-                        if (dateInput && slotsInput && (!dateInput.value || !slotsInput.value)) {
-                            row.remove();
+                    try {
+                        const res = await fetch(createForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: new FormData(createForm),
+                        });
+
+                        const data = await res.json();
+
+                        if (res.ok && data.success) {
+                            submitBtn.textContent = '✓ Saved!';
+                            errorBox.className = 'rounded-lg bg-green-50 border border-green-200 p-3 space-y-1';
+                            errorBox.innerHTML = `<p class="text-sm text-green-700 font-medium">${data.message || 'Tour created successfully.'}</p>`;
+                            errorBox.classList.remove('hidden');
+                            setTimeout(function () { window.location.reload(); }, 1200);
+                        } else {
+                            const messages = data.errors
+                                ? Object.values(data.errors).flat()
+                                : [data.message || 'Something went wrong. Please try again.'];
+                            errorBox.innerHTML = messages.map(m => `<p class="text-sm text-red-700">${m}</p>`).join('');
+                            errorBox.classList.remove('hidden');
                         }
-                    });
+                    } catch (err) {
+                        errorBox.innerHTML = '<p class="text-sm text-red-700">An unexpected error occurred. Please try again.</p>';
+                        errorBox.classList.remove('hidden');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
                 });
 
-                editForm?.addEventListener('submit', function () {
-                    if (!editDepartureContainer) {
-                        return;
+                editForm?.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    // Remove incomplete departure rows before submitting
+                    if (editDepartureContainer) {
+                        refreshDepartureRowNames(editDepartureContainer);
+                        Array.from(editDepartureContainer.querySelectorAll('.departure-row')).forEach(function (row) {
+                            const dateInput = row.querySelector('input[data-role="departure-date"]');
+                            const slotsInput = row.querySelector('input[data-role="departure-slots"]');
+                            if (dateInput && slotsInput && (!dateInput.value || !slotsInput.value)) {
+                                row.remove();
+                            }
+                        });
                     }
 
-                    refreshDepartureRowNames(editDepartureContainer);
+                    const errorBox = document.getElementById('edit-form-errors');
+                    errorBox.classList.add('hidden');
+                    errorBox.innerHTML = '';
 
-                    const rows = Array.from(editDepartureContainer.querySelectorAll('.departure-row'));
-                    rows.forEach(function (row) {
-                        const dateInput = row.querySelector('input[data-role="departure-date"]');
-                        const slotsInput = row.querySelector('input[data-role="departure-slots"]');
+                    const submitBtn = document.querySelector('[form="edit-tour-form"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving…';
 
-                        if (dateInput && slotsInput && (!dateInput.value || !slotsInput.value)) {
-                            row.remove();
+                    try {
+                        const res = await fetch(editForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: new FormData(editForm),
+                        });
+
+                        const data = await res.json();
+
+                        if (res.ok && data.success) {
+                            submitBtn.textContent = '✓ Saved!';
+                            errorBox.className = 'rounded-lg bg-green-50 border border-green-200 p-3 space-y-1';
+                            errorBox.innerHTML = `<p class="text-sm text-green-700 font-medium">${data.message || 'Tour updated successfully.'}</p>`;
+                            errorBox.classList.remove('hidden');
+                            setTimeout(function () { window.location.reload(); }, 1200);
+                        } else {
+                            const messages = data.errors
+                                ? Object.values(data.errors).flat()
+                                : [data.message || 'Something went wrong. Please try again.'];
+                            errorBox.innerHTML = messages.map(m => `<p class="text-sm text-red-700">${m}</p>`).join('');
+                            errorBox.classList.remove('hidden');
                         }
-                    });
+                    } catch (err) {
+                        errorBox.innerHTML = '<p class="text-sm text-red-700">An unexpected error occurred. Please try again.</p>';
+                        errorBox.classList.remove('hidden');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
                 });
 
                 addDepartureRowEdit?.addEventListener('click', function () {
@@ -681,10 +767,6 @@
                         imageFilesList.textContent = files.length ? files.map(file => file.name).join(', ') : 'No files selected.';
                     });
                 }
-
-                @if ($errors->any())
-                    openModal(createModal);
-                @endif
 
                 // ── DELETE modal ────────────────────────────────────────────────────
                 const deleteModal = document.getElementById('delete-tour-modal');
