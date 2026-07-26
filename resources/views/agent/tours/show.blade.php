@@ -6,7 +6,7 @@
 
 {{-- Back Button --}}
 <div class="mb-6">
-    <a href="{{ route('agent.tours.index') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">
+    <a href="{{ route('agent.tours.index') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition shadow-sm">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
@@ -28,14 +28,12 @@
             @endfor
         </div>
         <a href="#" class="text-gray-500 hover:text-gray-700 underline">38 traveler reviews</a>
-        <span class="text-gray-300">•</span>
         <span class="flex items-center gap-1">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             {{ $tour->days }} days
         </span>
-        <span class="text-gray-300">•</span>
         <span class="flex items-center gap-1">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -62,7 +60,7 @@
         
         {{-- Hero Gallery --}}
         <div>
-            <div class="w-full h-[400px] md:h-[450px] bg-gray-100 rounded-2xl overflow-hidden shadow-sm relative mb-4">
+            <div class="w-full h-[400px] md:h-[450px] bg-gray-100 rounded-lg overflow-hidden shadow-sm relative mb-4">
                 @if($mainImage)
                     <img id="main-hero-image" src="{{ $mainImage }}" alt="{{ $tour->title }}" class="w-full h-full object-cover transition-opacity duration-300">
                 @else
@@ -78,7 +76,7 @@
             @if($images->count() > 1)
                 <div class="flex gap-3 overflow-x-auto pb-2">
                     @foreach($images as $index => $img)
-                        <button type="button" class="gallery-thumb w-24 h-18 rounded-xl overflow-hidden border-2 {{ $index === 0 ? 'border-gray-900 opacity-100' : 'border-transparent opacity-70 hover:opacity-100' }} transition-all shrink-0" data-src="{{ $img }}">
+                        <button type="button" class="gallery-thumb w-24 h-18 rounded-lg overflow-hidden border-2 {{ $index === 0 ? 'border-gray-900 opacity-100' : 'border-transparent opacity-70 hover:opacity-100' }} transition-all shrink-0" data-src="{{ $img }}">
                             <img src="{{ $img }}" alt="Thumbnail {{ $index + 1 }}" class="w-full h-full object-cover">
                         </button>
                     @endforeach
@@ -87,8 +85,8 @@
         </div>
 
         {{-- Tour Description Card --}}
-        <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <h2 class="text-lg font-bold text-gray-900 mb-3">Tour Description</h2>
+        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <h2 class="font-bold text-gray-900 mb-3">Tour Description</h2>
             <p class="text-sm text-gray-600 leading-relaxed">
                 {{ $tour->description ?: ($tour->summary ?: 'Experience the very best of this escort tour. Explore breathtaking landmarks, enjoy thrilling local safaris, and relax at world-class resorts.') }}
             </p>
@@ -98,8 +96,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {{-- Highlights Card --}}
-            <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                <h2 class="text-lg font-bold text-gray-900 mb-4">Highlights</h2>
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <h2 class="font-bold text-gray-900 mb-4">Highlights</h2>
                 @php
                     $highlightsList = is_array($tour->highlights) ? $tour->highlights : (trim($tour->highlights) ? explode("\n", $tour->highlights) : []);
                 @endphp
@@ -122,8 +120,8 @@
             </div>
 
             {{-- What's Included Card --}}
-            <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                <h2 class="text-lg font-bold text-gray-900 mb-4">What's Included</h2>
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <h2 class="font-bold text-gray-900 mb-4">What's Included</h2>
                 @php
                     $includedList = is_array($tour->whats_included) ? $tour->whats_included : (trim($tour->whats_included) ? explode("\n", $tour->whats_included) : []);
                 @endphp
@@ -148,8 +146,8 @@
         </div>
 
         {{-- Itinerary Card --}}
-        <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <h2 class="text-lg font-bold text-gray-900 mb-3">Itinerary</h2>
+        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <h2 class="font-bold text-gray-900 mb-3">Itinerary</h2>
             <p class="text-sm text-gray-600 leading-relaxed mb-4">
                 {{ $tour->itinerary ?: 'Day-by-day itinerary will be provided. A detailed PDF itinerary can be downloaded below. Each day includes guided sightseeing, comfortable transfers and selected meals.' }}
             </p>
@@ -160,8 +158,8 @@
                         ? $tour->itinerary_pdf
                         : Storage::url($tour->itinerary_pdf);
                 @endphp
-                <div class="pt-4 border-t border-gray-100">
-                    <a href="{{ $pdfUrl }}" target="_blank" download class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0B1527] hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
+                <div class="pt-4 border-t border-gray-200">
+                    <a href="{{ $pdfUrl }}" target="_blank" download class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0B1527] hover:bg-slate-800 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
@@ -175,29 +173,27 @@
 
     {{-- Right Column: Availability Sidebar --}}
     <div class="lg:col-span-4 sticky top-6">
-        <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-6">
+        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm space-y-6">
             
             {{-- Price Summary --}}
             <div>
-                <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
+                <div class="flex items-center text-xs text-gray-500 mb-1 gap-2">
                     <span>Retail</span>
                     <span class="line-through">{{ $tour->currency === 'SAR' ? 'SAR ' : 'US$ ' }}{{ number_format($tour->retail_price ?: ($tour->agent_price * 1.25), 0) }}</span>
                 </div>
-                <div class="flex items-baseline justify-between">
+                <div class="flex items-baseline gap-2">
                     <span class="text-sm font-semibold text-gray-900">Agent</span>
-                    <div class="text-right">
-                        <span class="text-2xl font-bold text-gray-900 tracking-tight">
-                            {{ $tour->currency === 'SAR' ? 'SAR ' : 'US$ ' }}{{ number_format($tour->agent_price, 0) }}
-                        </span>
-                        <span class="text-xs text-gray-400 block">per person</span>
-                    </div>
+                    <span class="text-2xl font-bold text-gray-900 tracking-tight">
+                        {{ $tour->currency === 'SAR' ? 'SAR ' : 'US$ ' }}{{ number_format($tour->agent_price, 0) }}
+                    </span>
+                    <span class="text-xs text-gray-400 block">per person</span>
                 </div>
             </div>
 
-            <hr class="border-gray-100">
+            <hr class="border-gray-200">
 
             {{-- Check Availability Form --}}
-            <div>
+            <div class="!mt-3">
                 <h3 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -208,8 +204,8 @@
                 <div class="space-y-4">
                     {{-- Month --}}
                     <div>
-                        <label for="side-month" class="block text-xs font-semibold text-gray-700 mb-1.5">Month</label>
-                        <select id="side-month" class="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                        <label for="side-month" class="block text-sm font-semibold mb-1.5">Month</label>
+                        <select id="side-month" class="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
                             <option value="">Any month</option>
                             @foreach($months as $m)
                                 <option value="{{ $m['value'] }}">{{ $m['label'] }}</option>
@@ -219,26 +215,26 @@
 
                     {{-- Travellers --}}
                     <div>
-                        <label for="side-travellers" class="block text-xs font-semibold text-gray-700 mb-1.5">Travellers</label>
+                        <label for="side-travellers" class="block text-sm font-semibold mb-1.5">Travellers</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                 </svg>
                             </div>
-                            <input type="number" id="side-travellers" min="1" value="2" class="w-full border border-gray-200 rounded-xl pl-9 pr-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                            <input type="number" id="side-travellers" min="1" value="2" class="w-full border border-gray-200 rounded-lg pl-9 pr-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
                         </div>
                     </div>
 
                     {{-- Submit Button --}}
-                    <button id="side-check-btn" type="button" class="w-full bg-[#0B1527] hover:bg-slate-800 text-white font-semibold text-sm py-3 rounded-xl transition-colors shadow-sm inline-flex items-center justify-center gap-2">
+                    <button id="side-check-btn" type="button" class="w-full bg-[#0B1527] hover:bg-slate-800 text-white font-semibold text-sm py-3 rounded-lg transition-colors shadow-sm inline-flex items-center justify-center gap-2">
                         <span>Check Availability</span>
                     </button>
                 </div>
             </div>
 
             {{-- Availability Results List (Shown under button as requested) --}}
-            <div id="side-availability-results" class="space-y-4 pt-2">
+            <div id="side-availability-results" class="space-y-4">
                 {{-- Loaded via JS on clicking Check Availability --}}
             </div>
 
@@ -308,7 +304,7 @@
             if (res.ok && data.success) {
                 if (!data.departures || data.departures.length === 0) {
                     resultsContainer.innerHTML = `
-                        <div class="p-4 bg-gray-50 border border-gray-100 rounded-xl text-center text-xs text-gray-500">
+                        <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs text-gray-500">
                             No departures found matching your criteria.
                         </div>
                     `;
@@ -318,7 +314,7 @@
                 let html = `<p class="text-xs text-gray-500 mb-3 font-medium">${data.count} departure${data.count > 1 ? 's' : ''} found</p>`;
 
                 html += data.departures.map(dep => `
-                    <div class="border border-gray-200 rounded-xl p-4 bg-white shadow-2xs space-y-3">
+                    <div class="border border-gray-200 rounded-lg p-4 bg-white shadow-2xs space-y-3">
                         <div class="flex items-start justify-between">
                             <div>
                                 <h4 class="text-sm font-bold text-gray-900">${dep.month_name}</h4>
@@ -333,7 +329,7 @@
                             ${dep.seats_text}
                         </p>
 
-                        <hr class="border-gray-100">
+                        <hr class="border-gray-200">
 
                         <div class="space-y-1 text-xs">
                             <div class="flex items-center justify-between text-gray-400">
@@ -357,7 +353,7 @@
         } catch (err) {
             console.error('Availability check failed', err);
             resultsContainer.innerHTML = `
-                <div class="p-3 bg-red-50 text-red-600 text-xs rounded-xl border border-red-100">
+                <div class="p-3 bg-red-50 text-red-600 text-xs rounded-lg border border-red-100">
                     Failed to fetch availability. Please try again.
                 </div>
             `;

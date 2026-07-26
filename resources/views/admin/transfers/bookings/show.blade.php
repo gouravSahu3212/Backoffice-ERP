@@ -14,7 +14,7 @@
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-gray-100 shadow-sm overflow-hidden">
             <div class="border-b border-gray-100 px-6 py-4">
                 <div class="flex items-center justify-between">
                     <div>
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div class="bg-white rounded-md border border-gray-100 shadow-sm p-6">
             <h3 class="text-lg font-semibold text-gray-900">Notes</h3>
             <p class="mt-3 text-sm text-gray-600 whitespace-pre-line">
                 {{ $booking->notes ?: 'No notes were provided for this booking.' }}

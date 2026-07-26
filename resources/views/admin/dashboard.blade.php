@@ -12,7 +12,7 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
 
         {{-- Agents --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-md p-5 flex items-center gap-4 shadow-sm">
             <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.5">
@@ -27,7 +27,7 @@
         </div>
 
         {{-- Total Bookings --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-md p-5 flex items-center gap-4 shadow-sm">
             <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.5">
@@ -42,7 +42,7 @@
         </div>
 
         {{-- Hotels --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-md p-5 flex items-center gap-4 shadow-sm">
             <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.5">
@@ -57,7 +57,7 @@
         </div>
 
         {{-- Transfer Rates --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-md p-5 flex items-center gap-4 shadow-sm">
             <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.5">
@@ -77,7 +77,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {{-- Transfers --}}
-        <a class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition" href="{{ route('admin.transfers.index') }}">
+        <a class="bg-white border border-gray-100 rounded-md p-6 shadow-sm hover:shadow-md transition" href="{{ route('admin.transfers.index') }}">
             <div class="flex items-center gap-3 mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.8">
@@ -93,7 +93,7 @@
         </a>
 
         {{-- Hotel Booking --}}
-        <a class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition cursor-not-allowed" href="#">
+        <a class="bg-white border border-gray-100 rounded-md p-6 shadow-sm hover:shadow-md transition cursor-not-allowed" href="#">
             <div class="flex items-center gap-3 mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.8">

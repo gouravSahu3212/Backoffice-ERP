@@ -17,7 +17,7 @@
         </form>
     </div>
 
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-md border border-gray-100 shadow-sm overflow-hidden">
         <table class="min-w-full divide-y divide-gray-100">
             <thead class="bg-gray-50">
                 <tr>

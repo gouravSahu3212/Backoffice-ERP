@@ -11,14 +11,14 @@
 </div>
 
 {{-- Search & Filters Card --}}
-<div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mb-8">
+<div class="bg-white border border-gray-100 rounded-lg p-6 shadow-sm mb-5">
     <form id="tour-filter-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end" onsubmit="return false;">
         
         {{-- Location Filter --}}
         <div>
             <label for="filter-location" class="block text-sm font-semibold text-gray-900 mb-2">Location</label>
             <div class="relative">
-                <select id="filter-location" name="location" class="w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition pr-10 cursor-pointer">
+                <select id="filter-location" name="location" class="w-full appearance-none bg-white border border-gray-200 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition pr-10 cursor-pointer">
                     <option value="">Any destination</option>
                     @foreach($locations as $loc)
                         <option value="{{ $loc }}">{{ $loc }}</option>
@@ -33,7 +33,7 @@
         <div>
             <label for="filter-month" class="block text-sm font-semibold text-gray-900 mb-2">Month</label>
             <div class="relative">
-                <select id="filter-month" name="month" class="w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition pr-10 cursor-pointer">
+                <select id="filter-month" name="month" class="w-full appearance-none bg-white border border-gray-200 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition pr-10 cursor-pointer">
                     <option value="">Any month</option>
                     @foreach($months as $m)
                         <option value="{{ $m['value'] }}">{{ $m['label'] }}</option>
@@ -48,12 +48,12 @@
         <div>
             <label for="filter-travellers" class="block text-sm font-semibold text-gray-900 mb-2">Travellers</label>
             <input type="number" id="filter-travellers" name="travellers" min="1" placeholder="2" value="2"
-                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                class="w-full border border-gray-200 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
         </div>
 
         {{-- Search Button --}}
         <div>
-            <button id="search-tours-btn" type="button" class="w-full bg-[#0B1527] hover:bg-slate-800 text-white text-sm font-semibold px-5 py-3 rounded-xl transition-colors inline-flex items-center justify-center gap-2 shadow-sm">
+            <button id="search-tours-btn" type="button" class="w-full bg-[#0B1527] hover:bg-slate-800 text-white text-sm font-semibold px-5 py-3 rounded-md transition-colors inline-flex items-center justify-center gap-2 shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -108,7 +108,7 @@
         container.innerHTML = `
             <div class="space-y-6 animate-pulse">
                 ${[1, 2].map(() => `
-                    <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col md:flex-row h-64">
+                    <div class="bg-white border border-gray-100 rounded-lg overflow-hidden flex flex-col md:flex-row h-64">
                         <div class="bg-gray-200 w-full md:w-80 h-full shrink-0"></div>
                         <div class="p-6 flex-1 space-y-4">
                             <div class="h-6 bg-gray-200 rounded w-3/4"></div>
@@ -134,7 +134,7 @@
             if (res.ok && data.success) {
                 if (data.tours.length === 0) {
                     container.innerHTML = `
-                        <div class="bg-white border border-gray-100 rounded-2xl p-12 text-center">
+                        <div class="bg-white border border-gray-100 rounded-lg p-12 text-center">
                             <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -148,7 +148,7 @@
                 }
 
                 container.innerHTML = data.tours.map(tour => `
-                    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
+                    <div class="bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
                         <!-- Image -->
                         <div class="w-full md:w-80 h-56 md:h-auto shrink-0 bg-gray-100 relative overflow-hidden">
                             ${tour.image_url ? `
@@ -209,7 +209,7 @@
                         </div>
 
                         <!-- Price & Action -->
-                        <div class="p-6 md:w-64 border-t md:border-t-0 md:border-l border-gray-100 flex flex-col items-end justify-between shrink-0 bg-gray-50/30">
+                        <div class="p-6 border-t md:border-t-0 md:border-l border-gray-100 flex flex-col items-end justify-between shrink-0 bg-gray-50/30">
                             <div class="text-right w-full">
                                 <span class="text-xs text-gray-400 block mb-1">From</span>
                                 <div class="text-2xl font-bold text-gray-900 tracking-tight">
@@ -218,7 +218,7 @@
                                 <span class="text-xs text-gray-400 block mt-0.5">per person</span>
                             </div>
 
-                            <a href="${showUrlTemplate.replace('TOUR_ID', tour.id)}" class="w-full md:w-auto mt-6 bg-[#0B1527] hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-2 shadow-sm group">
+                            <a href="${showUrlTemplate.replace('TOUR_ID', tour.id)}" class="w-full md:w-auto mt-6 bg-[#0B1527] hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-md transition-colors inline-flex items-center justify-center gap-2 shadow-sm group">
                                 <span>View Details</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />

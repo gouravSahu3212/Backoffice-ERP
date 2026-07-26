@@ -9,7 +9,7 @@
         }
     @endphp
 
-    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
+    <div class="bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
         {{-- Image --}}
         <div class="w-full md:w-80 h-56 md:h-auto shrink-0 bg-gray-100 relative overflow-hidden">
             @if($imageUrl)
@@ -74,7 +74,7 @@
         </div>
 
         {{-- Price & Action --}}
-        <div class="p-6 md:w-64 border-t md:border-t-0 md:border-l border-gray-100 flex flex-col items-end justify-between shrink-0 bg-gray-50/30">
+        <div class="p-6 border-t md:border-t-0 md:border-l border-gray-100 flex flex-col items-end justify-between shrink-0 bg-gray-50/30">
             <div class="text-right w-full">
                 <span class="text-xs text-gray-400 block mb-1">From</span>
                 <div class="text-2xl font-bold text-gray-900 tracking-tight">
@@ -83,7 +83,7 @@
                 <span class="text-xs text-gray-400 block mt-0.5">per person</span>
             </div>
 
-            <a href="{{ route('agent.tours.show', $tour) }}" class="w-full md:w-auto mt-6 bg-[#0B1527] hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-2 shadow-sm group">
+            <a href="{{ route('agent.tours.show', $tour) }}" class="w-full md:w-auto mt-6 bg-[#0B1527] hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-md transition-colors inline-flex items-center justify-center gap-2 shadow-sm group">
                 <span>View Details</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -92,7 +92,7 @@
         </div>
     </div>
 @empty
-    <div class="bg-white border border-gray-100 rounded-2xl p-12 text-center">
+    <div class="bg-white border border-gray-100 rounded-lg p-12 text-center">
         <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

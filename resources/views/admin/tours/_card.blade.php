@@ -1,5 +1,5 @@
 <div id="tour-card-{{ $tour->id }}"
-    class="bg-white border border-gray-100 rounded-xl shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
+    class="bg-white border border-gray-100 rounded-md shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
 
     {{-- Header: title + status badge --}}
     <div class="flex items-start justify-between gap-3">

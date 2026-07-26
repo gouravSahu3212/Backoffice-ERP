@@ -22,7 +22,7 @@
 </div>
 
 {{-- Agents table --}}
-<div class="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
+<div class="bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden">
 
     <table class="w-full text-sm">
 
@@ -147,7 +147,7 @@
     <div class="create-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
     {{-- Panel --}}
-    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-7">
+    <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 p-7">
 
         {{-- Close --}}
         <button class="close-create-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors" type="button">
@@ -268,7 +268,7 @@
     <div class="edit-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
     {{-- Panel --}}
-    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-7">
+    <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 p-7">
 
         {{-- Close --}}
         <button class="close-edit-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors" type="button">

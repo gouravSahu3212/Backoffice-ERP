@@ -22,7 +22,7 @@
 
     {{-- Tour cards grid --}}
     @if ($tours->isEmpty())
-        <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-16 text-center">
+        <div class="bg-white border border-gray-100 rounded-md shadow-sm p-16 text-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -54,7 +54,7 @@
         <div class="create-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
         {{-- Panel --}}
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 px-3 py-5">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 px-3 py-5">
 
             {{-- Close --}}
             <button class="close-create-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors"
@@ -305,7 +305,7 @@
 
         <div class="edit-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 px-3 py-5">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 px-3 py-5">
             <button class="close-edit-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors"
                 type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -495,7 +495,7 @@
     <div id="delete-tour-modal" class="fixed inset-0 z-50 hidden items-center justify-center" aria-modal="true"
         role="dialog">
         <div class="delete-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-7">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-sm mx-4 p-7">
             <h2 class="text-lg font-bold text-gray-900 mb-2">Delete Tour?</h2>
             <p class="text-sm text-gray-500 mb-6" id="delete-modal-msg">This action cannot be undone.</p>
             <div class="flex justify-end gap-3">
