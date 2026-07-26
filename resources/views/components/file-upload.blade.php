@@ -29,7 +29,7 @@
     <div @dragover.prevent="dragging = true" @dragleave.prevent="dragging = false"
         @drop.prevent="dropFile($event)"
         :class="dragging ? 'border-gray-900 bg-gray-50 shadow-sm' : 'border-gray-200 bg-white'"
-        class="relative rounded-3xl border border-gray-200 p-5 transition duration-200 hover:border-gray-300">
+        class="relative rounded-lg border border-gray-200 p-5 transition duration-200 hover:border-gray-300">
 
         <input x-ref="input" type="file" name="{{ $name }}"
             @if ($accept) accept="{{ $accept }}" @endif @if ($multiple) multiple @endif
@@ -51,18 +51,18 @@
                 <p class="text-xs text-gray-500" x-text="helpText"></p>
             </div>
             <button type="button" @click="openFileBrowser()"
-                class="rounded-full border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
+                class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
                 {{ $multiple ? 'Add files' : 'Choose file' }}
             </button>
         </div>
         <p class="text-xs text-gray-500">Drag & drop files here or use the button to add them one by one.</p>
 
         <template x-if="existingItems.length">
-            <div class="mt-4 rounded-3xl border border-gray-200 bg-gray-50 p-4">
+            <div class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div class="flex items-center justify-between text-xs font-medium text-gray-600">
                     <span x-text="existingItems.length + (existingItems.length === 1 ? ' existing file' : ' existing files')"></span>
                     <button type="button" @click.stop.prevent="removeAllExisting()"
-                        class="rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-100">
+                        class="rounded-lg border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-100">
                         Clear
                     </button>
                 </div>
@@ -113,11 +113,11 @@
         </template>
 
         <template x-if="files.length">
-            <div class="mt-4 rounded-3xl border border-gray-200 bg-gray-50 p-4">
+            <div class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div class="flex items-center justify-between text-xs font-medium text-gray-600">
                     <span x-text="files.length + (multiple ? ' new files selected' : ' new file selected')"></span>
                     <button type="button" @click.stop.prevent="removeAll()"
-                        class="rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-100">
+                        class="rounded-lg border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-100">
                         Clear
                     </button>
                 </div>

@@ -18,7 +18,7 @@
         {{ $rate->currency }}
     </td>
     <td class="py-3.5 px-4">
-        <span class="rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+        <span class="rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
             {{ $rate->is_active ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-500' }}">
             {{ $rate->is_active ? 'active' : 'inactive' }}
         </span>

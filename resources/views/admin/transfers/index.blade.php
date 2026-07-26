@@ -1184,11 +1184,11 @@
                         if (data.is_active) {
                             badge.textContent = 'active';
                             badge.className =
-                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-900 text-white';
                         } else {
                             badge.textContent = 'inactive';
                             badge.className =
-                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-200 text-gray-500';
                         }
 
                         btn.dataset.active = data.is_active ? '1' : '0';
@@ -1704,11 +1704,11 @@
                         if (data.is_active) {
                             badge.textContent = 'active';
                             badge.className =
-                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-900 text-white';
                         } else {
                             badge.textContent = 'inactive';
                             badge.className =
-                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-200 text-gray-500';
                         }
 
                         btn.dataset.active = data.is_active ? '1' : '0';
@@ -2168,11 +2168,11 @@
                         if (data.is_active) {
                             badge.textContent = 'active';
                             badge.className =
-                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-900 text-white';
                         } else {
                             badge.textContent = 'inactive';
                             badge.className =
-                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-200 text-gray-500';
                         }
 
                         btn.dataset.active = data.is_active ? '1' : '0';

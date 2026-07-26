@@ -21,7 +21,7 @@
                         <p class="text-sm text-gray-500">Booking reference</p>
                         <h2 class="text-xl font-semibold text-gray-900">{{ $booking->booking_reference }}</h2>
                     </div>
-                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold capitalize
+                    <span class="inline-flex rounded-lg px-3 py-1 text-xs font-semibold capitalize
                         {{ $booking->status === 'confirmed' ? 'bg-emerald-50 text-emerald-700' : ($booking->status === 'cancelled' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700') }}">
                         {{ $booking->status }}
                     </span>

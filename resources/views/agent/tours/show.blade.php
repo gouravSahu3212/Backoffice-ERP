@@ -320,7 +320,7 @@
                                 <h4 class="text-sm font-bold text-gray-900">${dep.month_name}</h4>
                                 <p class="text-xs text-gray-400 mt-0.5">${dep.subtitle}</p>
                             </div>
-                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${dep.badge_class}">
+                            <span class="text-xs px-2.5 py-1 rounded-lg font-semibold ${dep.badge_class}">
                                 ${dep.status_badge}
                             </span>
                         </div>

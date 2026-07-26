@@ -57,11 +57,11 @@
 
                     <td class="px-6 py-4" data-field="status">
                         @if($agent->is_active)
-                            <span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-full">
+                            <span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-lg">
                                 active
                             </span>
                         @else
-                            <span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-full">
+                            <span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-lg">
                                 inactive
                             </span>
                         @endif
@@ -518,8 +518,8 @@
                     const statusCell = row ? row.querySelector('[data-field="status"]') : null;
                     if (statusCell) {
                         statusCell.innerHTML = isActive
-                            ? '<span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-full">active</span>'
-                            : '<span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-full">inactive</span>';
+                            ? '<span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-lg">active</span>'
+                            : '<span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-lg">inactive</span>';
                     }
 
                     // Sync edit-button data-is-active so modal opens correctly
@@ -589,9 +589,9 @@
 
                     const statusCell = row.querySelector('[data-field="status"]');
                     if (data.agent.is_active) {
-                        statusCell.innerHTML = '<span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-full">active</span>';
+                        statusCell.innerHTML = '<span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-lg">active</span>';
                     } else {
-                        statusCell.innerHTML = '<span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-full">inactive</span>';
+                        statusCell.innerHTML = '<span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-lg">inactive</span>';
                     }
 
                     // Sync the edit button data attrs for next open

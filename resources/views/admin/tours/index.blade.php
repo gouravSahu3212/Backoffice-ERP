@@ -222,7 +222,7 @@
                                 Departure Dates & Slots
                             </label>
                             <button type="button" id="add-departure-row-create"
-                                class="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition">
+                                class="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition">
                                 Add date
                             </button>
                         </div>
@@ -254,7 +254,7 @@
                                     class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
                                     placeholder="Slots">
                             </div>
-                            <button type="button" class="remove-departure-row rounded-full border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition">
+                            <button type="button" class="remove-departure-row rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition">
                                 Remove
                             </button>
                         </div>
@@ -313,7 +313,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <h2 class="text-xl font-bold text-gray-900 px-3 py-5">Edit Tour</h2>
+            <h2 class="text-xl font-bold text-gray-900 px-3">Edit Tour</h2>
 
             <div class="overflow-y-auto flex-1 px-3 py-5 max-h-[80vh]">
                 <form id="edit-tour-form" method="POST" action="" class="space-y-4"
@@ -434,7 +434,7 @@
                                 Departure Dates & Slots
                             </label>
                             <button type="button" id="add-departure-row-edit"
-                                class="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition">
+                                class="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition">
                                 Add date
                             </button>
                         </div>
@@ -915,7 +915,7 @@
                                     if (badge) {
                                         badge.textContent = isActive ? 'active' : 'inactive';
                                         badge.className =
-                                            'tour-status-badge inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full ' +
+                                            'tour-status-badge inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-lg ' +
                                             (isActive ? 'bg-gray-900 text-white' :
                                                 'bg-gray-100 text-gray-500');
                                     }

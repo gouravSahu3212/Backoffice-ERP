@@ -44,7 +44,7 @@
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-700">{{ optional($booking->tour_date)->format('d M Y') ?? 'TBD' }}</td>
                         <td class="px-4 py-3 text-sm">
-                            <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold capitalize
+                            <span class="inline-flex rounded-lg px-2.5 py-1 text-xs font-semibold capitalize
                                 {{ $booking->status === 'confirmed' ? 'bg-emerald-50 text-emerald-700' : ($booking->status === 'cancelled' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700') }}">
                                 {{ $booking->status }}
                             </span>
