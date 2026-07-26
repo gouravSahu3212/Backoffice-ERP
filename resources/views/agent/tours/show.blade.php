@@ -202,6 +202,19 @@
                 </h3>
 
                 <div class="space-y-4">
+                    {{-- Departure Date Picker (Calendar with only admin-entered dates enabled) --}}
+                    <div>
+                        <label for="side-date" class="block text-sm font-semibold mb-1.5">Departure Date</label>
+                        <div class="relative">
+                            <input type="text" id="side-date" placeholder="Select Departure Date" readonly class="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition cursor-pointer pr-10">
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
                     {{-- Month --}}
                     <div>
                         <label for="side-month" class="block text-sm font-semibold mb-1.5">Month</label>
@@ -234,7 +247,7 @@
             </div>
 
             {{-- Availability Results List (Shown under button as requested) --}}
-            <div id="side-availability-results" class="space-y-4">
+            <div id="side-availability-results" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
                 {{-- Loaded via JS on clicking Check Availability --}}
             </div>
 
@@ -244,8 +257,35 @@
 </div>
 
 @push('scripts')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
 (function() {
+    // Available Departure Dates configured by admin for this tour
+    @php
+        $availableDates = collect($tour->departure_months ?? [])->pluck('date')->filter()->values();
+    @endphp
+    const availableDates = @json($availableDates);
+
+    // Initialize Flatpickr calendar restricting selection ONLY to admin departure dates
+    const fp = flatpickr('#side-date', {
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'M j, Y',
+        altInputClass: 'w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition cursor-pointer',
+        enable: availableDates.length > 0 ? availableDates : [],
+        onChange: function(selectedDates, dateStr) {
+            if (dateStr) {
+                // Automatically set month dropdown if date is selected
+                const monthVal = dateStr.substring(0, 7);
+                if (sideMonth) {
+                    sideMonth.value = monthVal;
+                }
+            }
+        }
+    });
+
     // Thumbnail Gallery Switcher
     const mainHero = document.getElementById('main-hero-image');
     const thumbs = document.querySelectorAll('.gallery-thumb');
@@ -266,6 +306,7 @@
     });
 
     // Availability Checker
+    const sideDate = document.getElementById('side-date');
     const sideMonth = document.getElementById('side-month');
     const sideTravellers = document.getElementById('side-travellers');
     const sideCheckBtn = document.getElementById('side-check-btn');
@@ -279,6 +320,7 @@
     }
 
     async function loadAvailability() {
+        const dateVal = sideDate.value;
         const monthVal = sideMonth.value;
         const travVal = sideTravellers.value || 1;
 
@@ -292,7 +334,13 @@
         `;
 
         try {
-            const res = await fetch(`${availUrl}?month=${encodeURIComponent(monthVal)}&travellers=${encodeURIComponent(travVal)}`, {
+            const queryParams = new URLSearchParams({
+                date: dateVal,
+                month: monthVal,
+                travellers: travVal
+            });
+
+            const res = await fetch(`${availUrl}?${queryParams.toString()}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -317,7 +365,7 @@
                     <div class="border border-gray-200 rounded-lg p-4 bg-white shadow-2xs space-y-3">
                         <div class="flex items-start justify-between">
                             <div>
-                                <h4 class="text-sm font-bold text-gray-900">${dep.month_name}</h4>
+                                <h4 class="text-sm font-bold text-gray-900">${dep.date_label || dep.month_name}</h4>
                                 <p class="text-xs text-gray-400 mt-0.5">${dep.subtitle}</p>
                             </div>
                             <span class="text-xs px-2.5 py-1 rounded-lg font-semibold ${dep.badge_class}">

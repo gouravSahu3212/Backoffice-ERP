@@ -41,10 +41,6 @@ class TourController
             $query->where('departure_months', 'like', '%'.$request->month.'%');
         }
 
-        if ($request->filled('travellers') && (int) $request->travellers > 0) {
-            $query->where('max_capacity', '>=', (int) $request->travellers);
-        }
-
         if ($request->filled('search')) {
             $term = $request->search;
             $query->where(function ($q) use ($term) {
@@ -53,12 +49,28 @@ class TourController
             });
         }
 
-        $tours = $query->get()->map(fn (Tour $tour) => $this->formatTour($tour));
+        $tours = $query->get();
+
+        if ($request->filled('travellers') && (int) $request->travellers > 0) {
+            $travellers = (int) $request->travellers;
+            $tours = $tours->filter(function (Tour $tour) use ($travellers) {
+                $departureMonths = collect($tour->departure_months ?? []);
+                if ($departureMonths->isEmpty()) {
+                    return (int) ($tour->max_capacity ?? 0) >= $travellers;
+                }
+
+                return $departureMonths->contains(function ($item) use ($travellers) {
+                    return (int) data_get($item, 'slots', 0) >= $travellers;
+                });
+            });
+        }
+
+        $formattedTours = $tours->values()->map(fn (Tour $tour) => $this->formatTour($tour));
 
         return response()->json([
             'success' => true,
-            'count'   => $tours->count(),
-            'tours'   => $tours,
+            'count' => $formattedTours->count(),
+            'tours' => $formattedTours,
         ]);
     }
 
@@ -105,7 +117,14 @@ class TourController
     {
         $departureMonths = collect($tour->departure_months ?? []);
 
-        if ($request->filled('month')) {
+        if ($request->filled('date')) {
+            $dateFilter = $request->date;
+            $departureMonths = $departureMonths->filter(function ($item) use ($dateFilter) {
+                $date = data_get($item, 'date');
+
+                return $date && (string) $date === (string) $dateFilter;
+            });
+        } elseif ($request->filled('month')) {
             $monthFilter = $request->month;
             $departureMonths = $departureMonths->filter(function ($item) use ($monthFilter) {
                 $date = data_get($item, 'date');
@@ -115,6 +134,14 @@ class TourController
         }
 
         $travellers = (int) $request->get('travellers', 1);
+
+        if ($travellers > 0) {
+            $departureMonths = $departureMonths->filter(function ($item) use ($travellers) {
+                $slots = (int) data_get($item, 'slots', 0);
+
+                return $slots >= $travellers;
+            });
+        }
 
         $departures = $departureMonths->map(function ($item) use ($tour, $travellers) {
             $dateStr = data_get($item, 'date');
@@ -127,6 +154,7 @@ class TourController
                 // Ignore parse errors
             }
 
+            $dateLabel = $carbonDate ? $carbonDate->format('M d, Y') : $dateStr;
             $monthName = $carbonDate ? $carbonDate->format('F Y') : $dateStr;
             $isAvailable = $slots >= $travellers && $slots > 0;
 
@@ -136,15 +164,16 @@ class TourController
             if ($slots <= 0) {
                 $statusBadge = 'Sold Out';
                 $badgeClass = 'border border-gray-200 text-gray-500';
-            } elseif ($slots <= 3 || ! $isAvailable) {
+            } elseif ($slots < $travellers || $slots <= 3) {
                 $statusBadge = 'Limited';
                 $badgeClass = 'bg-gray-100 text-gray-700';
             }
 
             return [
                 'date' => $dateStr,
+                'date_label' => $dateLabel,
                 'month_name' => $monthName,
-                'subtitle' => $monthName.' – escorted group',
+                'subtitle' => $dateLabel.' – escorted group',
                 'slots' => $slots,
                 'seats_text' => $slots > 0 ? ($slots.' seats left') : 'No seats available',
                 'status_badge' => $statusBadge,
