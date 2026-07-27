@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\AirportTransferRateController;
 use App\Http\Controllers\Admin\CityTransferRateController;
@@ -64,6 +65,9 @@ Route::middleware(['auth'])->group(function () {
             Route::patch('transfers/full-day-rates/{rate}/toggle-status', [FullDayTransferRateController::class, 'toggleStatus'])->name('transfers.full-day-rates.toggle-status');
             Route::delete('transfers/full-day-rates/{rate}', [FullDayTransferRateController::class, 'destroy'])->name('transfers.full-day-rates.destroy');
             Route::post('transfers/vehicle-models', [FullDayTransferRateController::class, 'storeVehicleModel'])->name('transfers.vehicle-models.store');
+
+            // Activity Logs
+            Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         });
 
     Route::middleware('role:Agent')

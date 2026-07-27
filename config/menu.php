@@ -23,7 +23,7 @@ return [
                     'route' => 'admin.transfers.bookings.index',
                     'icon' => 'calendar',
                 ],
-            ]
+            ],
         ],
         // [
         //     'title' => 'Hotels',
@@ -47,12 +47,17 @@ return [
                     'route' => 'admin.tours.bookings.index',
                     'icon' => 'calendar',
                 ],
-            ]
+            ],
         ],
         [
             'title' => 'Tour Requests',
             'route' => 'admin.tour-requests.index',
             'icon' => 'ticket',
+        ],
+        [
+            'title' => 'Activity Log',
+            'route' => 'admin.activity-logs.index',
+            'icon' => 'arrow-path',
         ],
     ],
 
@@ -60,27 +65,27 @@ return [
         [
             'title' => 'Dashboard',
             'route' => 'agent.dashboard',
-            'icon'  => 'home',
+            'icon' => 'home',
         ],
         [
             'title' => 'Hotels',
             'route' => 'agent.hotels.index',
-            'icon'  => 'building',
+            'icon' => 'building',
         ],
         [
             'title' => 'Transfers',
             'route' => 'agent.transfers.index',
-            'icon'  => 'truck',
+            'icon' => 'truck',
         ],
         [
             'title' => 'Tours',
             'route' => 'agent.tours.index',
-            'icon'  => 'map',
+            'icon' => 'map',
         ],
         [
             'title' => 'Bookings',
             'route' => 'agent.bookings.index',
-            'icon'  => 'calendar',
+            'icon' => 'calendar',
         ],
     ],
 ];
