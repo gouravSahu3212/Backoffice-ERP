@@ -8,10 +8,12 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\FullDayTransferRateController;
 use App\Http\Controllers\Admin\TourBookingController;
 use App\Http\Controllers\Admin\TourController;
+use App\Http\Controllers\Admin\TourRequestController as AdminTourRequestController;
 use App\Http\Controllers\Admin\TransferBookingController;
 use App\Http\Controllers\Admin\TransferController;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
 use App\Http\Controllers\Agent\TourController as AgentTourController;
+use App\Http\Controllers\Agent\TourRequestController as AgentTourRequestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -42,7 +44,8 @@ Route::middleware(['auth'])->group(function () {
                 ->only(['index', 'show'])
                 ->names('tours.bookings');
 
-            Route::get('tours/requests', [TourController::class, 'requests'])->name('tour-requests.index');
+            Route::get('tours/requests', [AdminTourRequestController::class, 'index'])->name('tour-requests.index');
+            Route::patch('tours/requests/{tourRequest}/status', [AdminTourRequestController::class, 'updateStatus'])->name('tour-requests.update-status');
 
             Route::post('transfers/city-rates', [CityTransferRateController::class, 'store'])->name('transfers.city-rates.store');
             Route::put('transfers/city-rates/{rate}', [CityTransferRateController::class, 'update'])->name('transfers.city-rates.update');
@@ -79,6 +82,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('tours/search', [AgentTourController::class, 'search'])->name('tours.search');
             Route::get('tours/{tour}', [AgentTourController::class, 'show'])->name('tours.show');
             Route::get('tours/{tour}/availability', [AgentTourController::class, 'availability'])->name('tours.availability');
+            Route::post('tours/{tour}/enquire', [AgentTourController::class, 'enquire'])->name('tours.enquire');
+            Route::get('tour-requests', [AgentTourRequestController::class, 'index'])->name('tour-requests.index');
         });
 
 });

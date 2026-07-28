@@ -1,16 +1,16 @@
 @extends('layouts.dashboard')
 
-@section('page-title', 'Tour Requests')
+@section('page-title', 'My Tour Enquiries')
 
 @section('content')
     <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Tour Requests</h1>
-            <p class="text-sm text-gray-500 mt-1">Enquiries submitted by agents from the tours module.</p>
+            <h1 class="text-2xl font-bold text-gray-900">My Tour Enquiries</h1>
+            <p class="text-sm text-gray-500 mt-1">Track enquiries you have submitted for escorted tours.</p>
         </div>
 
-        <form method="GET" action="{{ route('admin.tour-requests.index') }}" class="w-full lg:w-72">
-            <label for="requests-search" class="sr-only">Search requests</label>
+        <form method="GET" action="{{ route('agent.tour-requests.index') }}" class="w-full lg:w-72">
+            <label for="requests-search" class="sr-only">Search enquiries</label>
             <input id="requests-search" name="search" value="{{ $search ?? '' }}" type="search"
                 placeholder="Search reference, customer, passport…"
                 class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
@@ -28,7 +28,6 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Passport</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Departure</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Pax</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Agent</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Price</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
@@ -43,10 +42,12 @@
                             </td>
 
                             {{-- Tour --}}
-                            <td class="px-4 py-3 text-sm text-gray-700 max-w-[180px]">
-                                <span class="block truncate text-[#0B1527] font-medium" title="{{ $req->tour?->title }}">
+                            <td class="px-4 py-3 text-sm text-gray-700 max-w-[200px]">
+                                <a href="{{ route('agent.tours.show', $req->tour) }}"
+                                    class="block truncate text-[#0B1527] font-medium hover:underline"
+                                    title="{{ $req->tour?->title }}">
                                     {{ $req->tour?->title ?? '—' }}
-                                </span>
+                                </a>
                             </td>
 
                             {{-- Customer --}}
@@ -70,11 +71,6 @@
                                 {{ $req->pax }}
                             </td>
 
-                            {{-- Agent --}}
-                            <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                                {{ $req->agent?->name ?? '—' }}
-                            </td>
-
                             {{-- Price --}}
                             <td class="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
                                 {{ $req->currency }}
@@ -86,25 +82,28 @@
                                 {{ $req->created_at->format('Y-m-d') }}
                             </td>
 
-                            {{-- Status Dropdown --}}
+                            {{-- Status Badge --}}
                             <td class="px-4 py-3 text-sm">
-                                <select
-                                    class="status-select border border-gray-200 rounded-md px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition cursor-pointer"
-                                    data-id="{{ $req->id }}"
-                                    data-current="{{ $req->status }}"
-                                >
-                                    @foreach(['new', 'contacted', 'confirmed', 'closed'] as $statusOption)
-                                        <option value="{{ $statusOption }}" {{ $req->status === $statusOption ? 'selected' : '' }}>
-                                            {{ ucfirst($statusOption) }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                @php
+                                    $statusColors = [
+                                        'new' => 'bg-blue-50 text-blue-700',
+                                        'contacted' => 'bg-amber-50 text-amber-700',
+                                        'confirmed' => 'bg-emerald-50 text-emerald-700',
+                                        'closed' => 'bg-gray-100 text-gray-500',
+                                    ];
+                                    $colorClass = $statusColors[$req->status] ?? 'bg-gray-100 text-gray-500';
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold {{ $colorClass }}">
+                                    {{ ucfirst($req->status) }}
+                                </span>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="px-4 py-16 text-center text-sm text-gray-500">
-                                No tour requests yet.
+                            <td colspan="9" class="px-4 py-16 text-center text-sm text-gray-500">
+                                No enquiries submitted yet. Go to
+                                <a href="{{ route('agent.tours.index') }}" class="text-[#0B1527] font-medium hover:underline">Tours</a>
+                                and click <strong>Enquire</strong> on an available departure.
                             </td>
                         </tr>
                     @endforelse
@@ -118,50 +117,5 @@
             </div>
         @endif
     </div>
-
-@push('scripts')
-<script>
-(function() {
-    const statusUrl = @json(url('admin/tours/requests'));
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
-    document.querySelectorAll('.status-select').forEach(function(select) {
-        select.addEventListener('change', async function() {
-            const id = this.dataset.id;
-            const status = this.value;
-            const previous = this.dataset.current;
-
-            try {
-                const res = await fetch(`${statusUrl}/${id}/status`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: JSON.stringify({ status }),
-                });
-
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    this.dataset.current = status;
-
-                    // Brief visual feedback
-                    this.classList.add('ring-2', 'ring-emerald-400');
-                    setTimeout(() => this.classList.remove('ring-2', 'ring-emerald-400'), 1200);
-                } else {
-                    this.value = previous;
-                    alert('Failed to update status. Please try again.');
-                }
-            } catch (err) {
-                this.value = previous;
-                console.error('Status update failed', err);
-            }
-        });
-    });
-})();
-</script>
-@endpush
 
 @endsection

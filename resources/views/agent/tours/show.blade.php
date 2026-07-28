@@ -202,7 +202,7 @@
                 </h3>
 
                 <div class="space-y-4">
-                    {{-- Departure Date Picker (Calendar with only admin-entered dates enabled) --}}
+                    {{-- Departure Date Picker --}}
                     <div>
                         <label for="side-date" class="block text-sm font-semibold mb-1.5">Departure Date</label>
                         <div class="relative">
@@ -246,7 +246,7 @@
                 </div>
             </div>
 
-            {{-- Availability Results List (Shown under button as requested) --}}
+            {{-- Availability Results List --}}
             <div id="side-availability-results" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
                 {{-- Loaded via JS on clicking Check Availability --}}
             </div>
@@ -254,6 +254,100 @@
         </div>
     </div>
 
+</div>
+
+{{-- ============================================================
+     TOUR ENQUIRY MODAL
+     ============================================================ --}}
+<div id="enquiry-modal" class="fixed inset-0 z-50 hidden items-center justify-center" aria-modal="true" role="dialog">
+
+    {{-- Backdrop --}}
+    <div id="enquiry-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+    {{-- Panel --}}
+    <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+
+        {{-- Header --}}
+        <div class="px-6 pt-6 pb-4 border-b border-gray-100">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">Tour Enquiry</h2>
+                    <p id="enquiry-subtitle" class="text-sm text-gray-500 mt-0.5"></p>
+                </div>
+                <button id="enquiry-close" type="button" class="text-gray-400 hover:text-gray-600 transition-colors ml-4 mt-0.5 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        {{-- Body --}}
+        <div class="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+
+            {{-- Customer Name --}}
+            <div>
+                <label for="enq-customer-name" class="block text-sm font-semibold text-gray-700 mb-1.5">Customer Name <span class="text-red-500">*</span></label>
+                <input type="text" id="enq-customer-name" placeholder="Enter customer name"
+                    class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                <p id="err-customer-name" class="text-red-500 text-xs mt-1 hidden"></p>
+            </div>
+
+            {{-- Date of Birth --}}
+            <div>
+                <label for="enq-dob" class="block text-sm font-semibold text-gray-700 mb-1.5">Date of Birth <span class="text-red-500">*</span></label>
+                <input type="date" id="enq-dob"
+                    class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                <p id="err-dob" class="text-red-500 text-xs mt-1 hidden"></p>
+            </div>
+
+            {{-- Passport Number --}}
+            <div>
+                <label for="enq-passport" class="block text-sm font-semibold text-gray-700 mb-1.5">Passport Number <span class="text-red-500">*</span></label>
+                <input type="text" id="enq-passport" placeholder="Enter passport number"
+                    class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                <p id="err-passport" class="text-red-500 text-xs mt-1 hidden"></p>
+            </div>
+
+            {{-- Number of People --}}
+            <div>
+                <label for="enq-pax" class="block text-sm font-semibold text-gray-700 mb-1.5">Number of People <span class="text-red-500">*</span></label>
+                <input type="number" id="enq-pax" min="1"
+                    class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                <p id="enq-capacity-note" class="text-xs text-gray-500 mt-1.5 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span id="enq-capacity-text"></span>
+                </p>
+                <p id="err-pax" class="text-red-500 text-xs mt-1 hidden"></p>
+            </div>
+
+            {{-- Price Summary --}}
+            <div class="bg-gray-50 border border-gray-100 rounded-lg px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600">Enquiry Total</span>
+                    <span id="enq-price-display" class="text-base font-bold text-gray-900"></span>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">
+                    <span id="enq-price-breakdown"></span>
+                </p>
+            </div>
+
+        </div>
+
+        {{-- Footer --}}
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3">
+            <button id="enquiry-cancel" type="button"
+                class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancel
+            </button>
+            <button id="enquiry-submit" type="button"
+                class="px-5 py-2.5 text-sm font-semibold text-white bg-[#0B1527] hover:bg-slate-800 rounded-lg transition-colors shadow-sm inline-flex items-center gap-2">
+                <span id="enquiry-submit-label">Submit</span>
+            </button>
+        </div>
+    </div>
 </div>
 
 @push('scripts')
@@ -267,8 +361,11 @@
         $availableDates = collect($tour->departure_months ?? [])->pluck('date')->filter()->values();
     @endphp
     const availableDates = @json($availableDates);
+    const tourTitle = @json($tour->title);
+    const enquireUrl = @json(route('agent.tours.enquire', $tour));
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-    // Initialize Flatpickr calendar restricting selection ONLY to admin departure dates
+    // Initialize Flatpickr calendar
     const fp = flatpickr('#side-date', {
         dateFormat: 'Y-m-d',
         altInput: true,
@@ -277,11 +374,8 @@
         enable: availableDates.length > 0 ? availableDates : [],
         onChange: function(selectedDates, dateStr) {
             if (dateStr) {
-                // Automatically set month dropdown if date is selected
                 const monthVal = dateStr.substring(0, 7);
-                if (sideMonth) {
-                    sideMonth.value = monthVal;
-                }
+                if (sideMonth) { sideMonth.value = monthVal; }
             }
         }
     });
@@ -298,10 +392,7 @@
             });
             this.classList.remove('border-transparent', 'opacity-70');
             this.classList.add('border-gray-900', 'opacity-100');
-
-            if (mainHero) {
-                mainHero.src = this.dataset.src;
-            }
+            if (mainHero) { mainHero.src = this.dataset.src; }
         });
     });
 
@@ -311,7 +402,6 @@
     const sideTravellers = document.getElementById('side-travellers');
     const sideCheckBtn = document.getElementById('side-check-btn');
     const resultsContainer = document.getElementById('side-availability-results');
-
     const availUrl = @json(route('agent.tours.availability', $tour));
 
     function formatPrice(currency, amount) {
@@ -334,19 +424,10 @@
         `;
 
         try {
-            const queryParams = new URLSearchParams({
-                date: dateVal,
-                month: monthVal,
-                travellers: travVal
-            });
-
+            const queryParams = new URLSearchParams({ date: dateVal, month: monthVal, travellers: travVal });
             const res = await fetch(`${availUrl}?${queryParams.toString()}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
             });
-
             const data = await res.json();
 
             if (res.ok && data.success) {
@@ -365,7 +446,7 @@
                     <div class="border border-gray-200 rounded-lg p-4 bg-white shadow-2xs space-y-3">
                         <div class="flex items-start justify-between">
                             <div>
-                                <h4 class="text-sm font-bold text-gray-900">${dep.date_label || dep.month_name}</h4>
+                                <h4 class="text-sm font-bold text-gray-900">${dep.date_label}</h4>
                                 <p class="text-xs text-gray-400 mt-0.5">${dep.subtitle}</p>
                             </div>
                             <span class="text-xs px-2.5 py-1 rounded-lg font-semibold ${dep.badge_class}">
@@ -388,15 +469,43 @@
                                 <span>Agent price</span>
                                 <span>${formatPrice(dep.currency, dep.agent_price)}</span>
                             </div>
+                            <div class="flex items-center justify-between text-gray-600 font-semibold pt-1 border-t border-gray-100 mt-1">
+                                <span>Total (${travVal} pax)</span>
+                                <span>${formatPrice(dep.currency, dep.agent_price * parseInt(travVal))}</span>
+                            </div>
                         </div>
 
-                        <button type="button" class="w-full mt-2 bg-[#0B1527] hover:bg-slate-800 text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-2xs cursor-pointer">
-                            Enquire
+                        <button
+                            type="button"
+                            class="enquire-btn w-full mt-2 ${dep.slots > 0 ? 'bg-[#0B1527] hover:bg-slate-800 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'} text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-2xs"
+                            ${dep.slots <= 0 ? 'disabled' : ''}
+                            data-date="${dep.date}"
+                            data-date-label="${dep.date_label}"
+                            data-slots="${dep.slots}"
+                            data-agent-price="${dep.agent_price}"
+                            data-currency="${dep.currency}"
+                            data-max-capacity="${dep.max_capacity}"
+                        >
+                            ${dep.slots > 0 ? 'Enquire' : 'Sold Out'}
                         </button>
                     </div>
                 `).join('');
 
                 resultsContainer.innerHTML = html;
+
+                // Bind enquire buttons
+                resultsContainer.querySelectorAll('.enquire-btn[data-date]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        openEnquiryModal({
+                            date: this.dataset.date,
+                            dateLabel: this.dataset.dateLabel,
+                            slots: parseInt(this.dataset.slots),
+                            agentPrice: parseFloat(this.dataset.agentPrice),
+                            currency: this.dataset.currency,
+                            maxCapacity: parseInt(this.dataset.maxCapacity),
+                        });
+                    });
+                });
             }
         } catch (err) {
             console.error('Availability check failed', err);
@@ -412,6 +521,204 @@
     }
 
     sideCheckBtn.addEventListener('click', loadAvailability);
+
+    // ============================================================
+    // ENQUIRY MODAL
+    // ============================================================
+    const modal = document.getElementById('enquiry-modal');
+    const backdrop = document.getElementById('enquiry-backdrop');
+    const closeBtn = document.getElementById('enquiry-close');
+    const cancelBtn = document.getElementById('enquiry-cancel');
+    const submitBtn = document.getElementById('enquiry-submit');
+    const submitLabel = document.getElementById('enquiry-submit-label');
+
+    const fCustomerName = document.getElementById('enq-customer-name');
+    const fDob = document.getElementById('enq-dob');
+    const fPassport = document.getElementById('enq-passport');
+    const fPax = document.getElementById('enq-pax');
+    const capacityText = document.getElementById('enq-capacity-text');
+    const priceDisplay = document.getElementById('enq-price-display');
+    const priceBreakdown = document.getElementById('enq-price-breakdown');
+    const subtitle = document.getElementById('enquiry-subtitle');
+
+    // Hidden state for current enquiry
+    let currentEnquiry = {};
+
+    function openEnquiryModal({ date, dateLabel, slots, agentPrice, currency, maxCapacity }) {
+        currentEnquiry = { date, dateLabel, slots, agentPrice, currency, maxCapacity };
+
+        // Reset form
+        fCustomerName.value = '';
+        fDob.value = '';
+        fPassport.value = '';
+
+        // Default pax to current travellers value (clamped to allowed max)
+        const travellersInput = parseInt(sideTravellers.value) || 1;
+        const maxAllowed = Math.min(slots, maxCapacity);
+        fPax.min = 1;
+        fPax.max = maxAllowed;
+        fPax.value = Math.min(travellersInput, maxAllowed);
+
+        // Subtitle
+        subtitle.textContent = `${tourTitle} — ${dateLabel} departure`;
+
+        // Capacity note
+        capacityText.textContent = `Max capacity: ${maxCapacity} seats. Available slots: ${slots}.`;
+
+        // Hide all errors
+        ['enq-customer-name', 'enq-dob', 'enq-passport', 'enq-pax'].forEach(id => {
+            const el = document.getElementById('err-' + id.replace('enq-', ''));
+            if (el) { el.classList.add('hidden'); el.textContent = ''; }
+        });
+
+        updatePriceDisplay();
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEnquiryModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    function updatePriceDisplay() {
+        const pax = parseInt(fPax.value) || 1;
+        const total = (currentEnquiry.agentPrice || 0) * pax;
+        const symbol = currentEnquiry.currency === 'SAR' ? 'SAR ' : 'US$ ';
+        priceDisplay.textContent = symbol + total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        priceBreakdown.textContent = `${symbol}${Number(currentEnquiry.agentPrice || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} × ${pax} person${pax > 1 ? 's' : ''}`;
+    }
+
+    fPax.addEventListener('input', function() {
+        const maxAllowed = Math.min(currentEnquiry.slots || 1, currentEnquiry.maxCapacity || 1);
+        if (parseInt(this.value) > maxAllowed) {
+            this.value = maxAllowed;
+        }
+        if (parseInt(this.value) < 1 || this.value === '') {
+            this.value = 1;
+        }
+        updatePriceDisplay();
+    });
+
+    closeBtn.addEventListener('click', closeEnquiryModal);
+    cancelBtn.addEventListener('click', closeEnquiryModal);
+    backdrop.addEventListener('click', closeEnquiryModal);
+
+    function showFieldError(fieldId, message) {
+        const el = document.getElementById('err-' + fieldId);
+        if (el) {
+            el.textContent = message;
+            el.classList.remove('hidden');
+        }
+    }
+
+    function clearErrors() {
+        document.querySelectorAll('[id^="err-"]').forEach(el => {
+            el.classList.add('hidden');
+            el.textContent = '';
+        });
+    }
+
+    function validateForm() {
+        clearErrors();
+        let valid = true;
+
+        if (!fCustomerName.value.trim()) {
+            showFieldError('customer-name', 'Customer name is required.');
+            valid = false;
+        }
+        if (!fDob.value) {
+            showFieldError('dob', 'Date of birth is required.');
+            valid = false;
+        }
+        if (!fPassport.value.trim()) {
+            showFieldError('passport', 'Passport number is required.');
+            valid = false;
+        }
+        const paxVal = parseInt(fPax.value);
+        if (!paxVal || paxVal < 1) {
+            showFieldError('pax', 'At least 1 person is required.');
+            valid = false;
+        }
+        const maxAllowed = Math.min(currentEnquiry.slots || 1, currentEnquiry.maxCapacity || 1);
+        if (paxVal > maxAllowed) {
+            showFieldError('pax', `Cannot exceed ${maxAllowed} people (slots available).`);
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    submitBtn.addEventListener('click', async function() {
+        if (!validateForm()) { return; }
+
+        submitBtn.disabled = true;
+        submitLabel.textContent = 'Submitting…';
+
+        const pax = parseInt(fPax.value);
+        const totalPrice = (currentEnquiry.agentPrice || 0) * pax;
+
+        try {
+            const res = await fetch(enquireUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({
+                    customer_name: fCustomerName.value.trim(),
+                    date_of_birth: fDob.value,
+                    passport_number: fPassport.value.trim(),
+                    departure_date: currentEnquiry.date,
+                    pax: pax,
+                    total_price: totalPrice,
+                    currency: currentEnquiry.currency,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                closeEnquiryModal();
+                // Show a brief success banner
+                const banner = document.createElement('div');
+                banner.className = 'fixed top-5 right-5 z-[9999] bg-emerald-600 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 animate-fade-in';
+                banner.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Enquiry submitted! Reference: <strong>${data.reference}</strong>
+                `;
+                document.body.appendChild(banner);
+                setTimeout(() => banner.remove(), 5000);
+            } else {
+                // Show validation errors from server
+                if (data.errors) {
+                    Object.entries(data.errors).forEach(([field, msgs]) => {
+                        const map = {
+                            customer_name: 'customer-name',
+                            date_of_birth: 'dob',
+                            passport_number: 'passport',
+                            pax: 'pax',
+                        };
+                        if (map[field]) {
+                            showFieldError(map[field], Array.isArray(msgs) ? msgs[0] : msgs);
+                        }
+                    });
+                }
+            }
+        } catch (err) {
+            console.error('Enquiry submit failed', err);
+        } finally {
+            submitBtn.disabled = false;
+            submitLabel.textContent = 'Submit';
+        }
+    });
+
 })();
 </script>
 @endpush
