@@ -1,11 +1,11 @@
 <div id="tour-card-{{ $tour->id }}"
-    class="bg-white border border-gray-100 rounded-xl shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
+    class="bg-white border rounded-md shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
 
     {{-- Header: title + status badge --}}
     <div class="flex items-start justify-between gap-3">
         <h3 class="text-sm font-semibold text-gray-900 leading-snug">{{ $tour->title }}</h3>
         <span
-            class="tour-status-badge shrink-0 inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full
+            class="tour-status-badge shrink-0 inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-lg
             {{ $tour->is_active ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500' }}">
             {{ $tour->is_active ? 'active' : 'inactive' }}
         </span>
@@ -13,7 +13,7 @@
 
     {{-- Location · Days · Rating --}}
     <div class="flex items-center gap-2 text-xs text-gray-500">
-        <span class="text-gray-400 font-medium">{{ $tour->location }}</span>
+        <span class="text-[13px]">{{ $tour->location }}</span>
         <span class="text-gray-300">·</span>
         <span>{{ $tour->days }} {{ Str::plural('day', $tour->days) }}</span>
         @if ($tour->hotel_rating)
@@ -32,9 +32,9 @@
 
     {{-- Pricing --}}
     <div class="text-xs text-gray-600 space-y-0.5">
-        <p><span class="text-gray-400">Retail:</span> <span class="font-semibold">{{ $tour->currency }}
+        <p><span class="text-black">Retail:</span> <span class="font-semibold text-black">{{ $tour->currency }}
                 {{ number_format($tour->retail_price) }}</span></p>
-        <p><span class="text-gray-400">Agent:</span> <span class="font-semibold text-gray-700">{{ $tour->currency }}
+        <p><span class="text-black">Agent:</span> <span class="font-semibold text-black">{{ $tour->currency }}
                 {{ number_format($tour->agent_price) }}</span> <span class="text-gray-400">per person</span></p>
     </div>
 
@@ -95,7 +95,7 @@
 
         {{-- Edit (opens modal) --}}
         <button type="button" title="Edit tour"
-            class="open-edit-modal p-1.5 text-gray-400 hover:text-gray-700 transition-colors"
+            class="open-edit-modal p-1.5"
             data-tour='{{ json_encode($tourData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) }}'
             data-update-url="{{ route('admin.tours.update', $tour) }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -110,7 +110,7 @@
 
         {{-- Toggle Status (AJAX) --}}
         <button type="button" title="{{ $tour->is_active ? 'Deactivate' : 'Activate' }}"
-            class="tour-toggle-status-btn p-1.5 text-gray-400 hover:text-gray-700 transition-colors"
+            class="tour-toggle-status-btn p-1.5"
             data-id="{{ $tour->id }}" data-is-active="{{ $tour->is_active ? '1' : '0' }}"
             data-toggle-url="{{ route('admin.tours.toggle-status', $tour) }}">
             @if ($tour->is_active)
@@ -132,14 +132,15 @@
 
         {{-- Delete --}}
         <button type="button" title="Delete tour"
-            class="open-delete-modal p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+            class="open-delete-modal p-1.5 text-red-600"
             data-id="{{ $tour->id }}" data-title="{{ $tour->title }}"
             data-delete-url="{{ route('admin.tours.destroy', $tour) }}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2 h-4 w-4 text-destructive">
                 <path d="M3 6h18"></path>
                 <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
                 <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                <line x1="10" x2="10" y1="11" y2="17"></line>
+                <line x1="14" x2="14" y1="11" y2="17"></line>
             </svg>
         </button>
 

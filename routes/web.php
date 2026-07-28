@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\AirportTransferRateController;
 use App\Http\Controllers\Admin\CityTransferRateController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin\TourController;
 use App\Http\Controllers\Admin\TransferBookingController;
 use App\Http\Controllers\Admin\TransferController;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
+use App\Http\Controllers\Agent\TourController as AgentTourController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -63,6 +65,9 @@ Route::middleware(['auth'])->group(function () {
             Route::patch('transfers/full-day-rates/{rate}/toggle-status', [FullDayTransferRateController::class, 'toggleStatus'])->name('transfers.full-day-rates.toggle-status');
             Route::delete('transfers/full-day-rates/{rate}', [FullDayTransferRateController::class, 'destroy'])->name('transfers.full-day-rates.destroy');
             Route::post('transfers/vehicle-models', [FullDayTransferRateController::class, 'storeVehicleModel'])->name('transfers.vehicle-models.store');
+
+            // Activity Logs
+            Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         });
 
     Route::middleware('role:Agent')
@@ -70,6 +75,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('agent.')
         ->group(function () {
             Route::get('/dashboard', AgentDashboard::class)->name('dashboard');
+            Route::get('tours', [AgentTourController::class, 'index'])->name('tours.index');
+            Route::get('tours/search', [AgentTourController::class, 'search'])->name('tours.search');
+            Route::get('tours/{tour}', [AgentTourController::class, 'show'])->name('tours.show');
+            Route::get('tours/{tour}/availability', [AgentTourController::class, 'availability'])->name('tours.availability');
         });
 
 });

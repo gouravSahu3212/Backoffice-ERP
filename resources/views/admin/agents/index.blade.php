@@ -22,7 +22,7 @@
 </div>
 
 {{-- Agents table --}}
-<div class="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
+<div class="bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden">
 
     <table class="w-full text-sm">
 
@@ -57,11 +57,11 @@
 
                     <td class="px-6 py-4" data-field="status">
                         @if($agent->is_active)
-                            <span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-full">
+                            <span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-lg">
                                 active
                             </span>
                         @else
-                            <span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-full">
+                            <span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-lg">
                                 inactive
                             </span>
                         @endif
@@ -147,7 +147,7 @@
     <div class="create-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
     {{-- Panel --}}
-    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-7">
+    <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 p-7">
 
         {{-- Close --}}
         <button class="close-create-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors" type="button">
@@ -268,7 +268,7 @@
     <div class="edit-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
     {{-- Panel --}}
-    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-7">
+    <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 p-7">
 
         {{-- Close --}}
         <button class="close-edit-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors" type="button">
@@ -479,12 +479,16 @@
     // ── TOGGLE STATUS (AJAX) ───────────────────────────────────────────
     const TOGGLE_RIGHT_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-toggle-right h-4 w-4"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="16" cy="12" r="2"></circle></svg>';
     const TOGGLE_LEFT_SVG  = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-toggle-left h-4 w-4"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect><circle cx="8" cy="12" r="2"></circle></svg>';
+    const SPINNER_SVG      = '<svg class="animate-spin h-4 w-4 text-gray-500 toggle-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><radialGradient id="a18" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="currentColor"></stop><stop offset=".3" stop-color="currentColor" stop-opacity=".9"></stop><stop offset=".6" stop-color="currentColor" stop-opacity=".6"></stop><stop offset=".8" stop-color="currentColor" stop-opacity=".3"></stop><stop offset="1" stop-color="currentColor" stop-opacity="0"></stop></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a18)" stroke-width="15" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="currentColor" stroke-width="15" stroke-linecap="round" cx="100" cy="100" r="70"></circle></svg>';
 
     document.querySelectorAll('.toggle-status-btn').forEach(function (btn) {
         btn.addEventListener('click', async function () {
             const url     = btn.dataset.toggleUrl;
             const agentId = btn.dataset.id;
+            // Remember current icon so we can restore it on failure
+            const previousIcon = btn.innerHTML;
             btn.disabled  = true;
+            btn.innerHTML = SPINNER_SVG;
 
             try {
                 const res  = await fetch(url, {
@@ -506,7 +510,7 @@
                     btn.dataset.isActive = isActive ? '1' : '0';
                     btn.title = isActive ? 'Deactivate' : 'Activate';
 
-                    // Swap icon
+                    // Swap to correct icon
                     btn.innerHTML = isActive ? TOGGLE_RIGHT_SVG : TOGGLE_LEFT_SVG;
 
                     // Update status badge in the same row
@@ -514,16 +518,20 @@
                     const statusCell = row ? row.querySelector('[data-field="status"]') : null;
                     if (statusCell) {
                         statusCell.innerHTML = isActive
-                            ? '<span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-full">active</span>'
-                            : '<span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-full">inactive</span>';
+                            ? '<span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-lg">active</span>'
+                            : '<span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-lg">inactive</span>';
                     }
 
                     // Sync edit-button data-is-active so modal opens correctly
                     const editBtn = row ? row.querySelector('.open-edit-modal') : null;
                     if (editBtn) editBtn.dataset.isActive = isActive ? '1' : '0';
+                } else {
+                    // Restore previous icon on failure
+                    btn.innerHTML = previousIcon;
                 }
             } catch (err) {
                 console.error('Toggle failed', err);
+                btn.innerHTML = previousIcon;
             } finally {
                 btn.disabled = false;
             }
@@ -581,9 +589,9 @@
 
                     const statusCell = row.querySelector('[data-field="status"]');
                     if (data.agent.is_active) {
-                        statusCell.innerHTML = '<span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-full">active</span>';
+                        statusCell.innerHTML = '<span class="inline-flex items-center bg-gray-900 text-white text-xs font-medium px-2.5 py-1 rounded-lg">active</span>';
                     } else {
-                        statusCell.innerHTML = '<span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-full">inactive</span>';
+                        statusCell.innerHTML = '<span class="inline-flex items-center bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-lg">inactive</span>';
                     }
 
                     // Sync the edit button data attrs for next open

@@ -9,7 +9,8 @@ use Illuminate\Http\UploadedFile;
 class TourService
 {
     public function __construct(
-        protected TourRepository $repository
+        protected TourRepository $repository,
+        protected ActivityLogService $activityLog
     ) {}
 
     public function list(?string $search, int $perPage = 12)
@@ -19,22 +20,36 @@ class TourService
 
     public function create(array $data): Tour
     {
-        return $this->repository->create($this->buildPayload($data));
+        $tour = $this->repository->create($this->buildPayload($data));
+
+        $this->activityLog->log('created', "created tour \"{$tour->title}\"", $tour);
+
+        return $tour;
     }
 
     public function update(Tour $tour, array $data): Tour
     {
-        return $this->repository->update($tour, $this->buildPayload($data, $tour));
+        $tour = $this->repository->update($tour, $this->buildPayload($data, $tour));
+
+        $this->activityLog->log('updated', "updated tour \"{$tour->title}\"", $tour);
+
+        return $tour;
     }
 
     public function toggleStatus(Tour $tour): void
     {
         $tour->update(['is_active' => ! $tour->is_active]);
+
+        $status = $tour->is_active ? 'activated' : 'deactivated';
+        $this->activityLog->log('toggled_status', "{$status} tour \"{$tour->title}\"", $tour);
     }
 
     public function delete(Tour $tour): void
     {
+        $title = $tour->title;
         $this->repository->delete($tour);
+
+        $this->activityLog->log('deleted', "deleted tour \"{$title}\"");
     }
 
     /**
@@ -73,8 +88,7 @@ class TourService
     /**
      * Store uploaded image files and keep existing values when no new files are provided.
      *
-     * @param mixed $value
-     * @param array<int, string> $existing
+     * @param  array<int, string>  $existing
      * @return array<int, string>
      */
     private function normalizeImageUrls(mixed $value, array $existing = []): array
@@ -136,6 +150,7 @@ class TourService
         if (is_string($value) && trim($value) !== '') {
             return array_values(array_filter(array_map(function (string $line) {
                 $date = trim($line);
+
                 return $date === '' ? null : ['date' => $date, 'slots' => 1];
             }, explode("\n", $value)), fn ($item) => $item !== null));
         }

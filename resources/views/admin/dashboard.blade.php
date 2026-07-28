@@ -12,7 +12,7 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
 
         {{-- Agents --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-md p-5 flex items-center gap-4 shadow-sm">
             <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.5">
@@ -27,7 +27,7 @@
         </div>
 
         {{-- Total Bookings --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-md p-5 flex items-center gap-4 shadow-sm">
             <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.5">
@@ -42,7 +42,7 @@
         </div>
 
         {{-- Hotels --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-md p-5 flex items-center gap-4 shadow-sm">
             <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.5">
@@ -57,7 +57,7 @@
         </div>
 
         {{-- Transfer Rates --}}
-        <div class="bg-white border border-gray-100 rounded-xl p-5 flex items-center gap-4 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-md p-5 flex items-center gap-4 shadow-sm">
             <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.5">
@@ -77,7 +77,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {{-- Transfers --}}
-        <a class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition" href="{{ route('admin.transfers.index') }}">
+        <a class="bg-white border border-gray-100 rounded-md p-6 shadow-sm hover:shadow-md transition" href="{{ route('admin.transfers.index') }}">
             <div class="flex items-center gap-3 mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.8">
@@ -93,7 +93,7 @@
         </a>
 
         {{-- Hotel Booking --}}
-        <a class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition cursor-not-allowed" href="#">
+        <a class="bg-white border border-gray-100 rounded-md p-6 shadow-sm hover:shadow-md transition cursor-not-allowed" href="#">
             <div class="flex items-center gap-3 mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.8">
@@ -108,6 +108,58 @@
             </p>
         </a>
 
+    </div>
+
+    {{-- Recent Activity --}}
+    <div class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Activity</h2>
+            <a href="{{ route('admin.activity-logs.index') }}" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                View all →
+            </a>
+        </div>
+
+        <div class="bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden">
+            @forelse($recentActivities as $activity)
+                <div class="flex items-start gap-4 px-6 py-4 {{ !$loop->last ? 'border-b border-gray-50' : '' }} hover:bg-gray-50/60 transition-colors">
+
+                    {{-- Avatar --}}
+                    <div class="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                        {{ $activity->user ? strtoupper(substr($activity->user->name, 0, 2)) : 'SY' }}
+                    </div>
+
+                    {{-- Content --}}
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-900">
+                            <span class="font-medium">{{ $activity->user->name ?? 'System' }}</span>
+                            <span class="text-gray-500">{{ $activity->description }}</span>
+                        </p>
+                        <div class="flex items-center gap-2 mt-1">
+                            @php
+                                $actionColors = [
+                                    'created' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                    'updated' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                    'deleted' => 'bg-red-50 text-red-700 border-red-200',
+                                    'toggled_status' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                    'logged_in' => 'bg-violet-50 text-violet-700 border-violet-200',
+                                    'logged_out' => 'bg-gray-50 text-gray-600 border-gray-200',
+                                ];
+                                $colorClass = $actionColors[$activity->action] ?? 'bg-gray-50 text-gray-600 border-gray-200';
+                            @endphp
+                            <span class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded border {{ $colorClass }}">
+                                {{ str_replace('_', ' ', $activity->action) }}
+                            </span>
+                            <span class="text-xs text-gray-400">{{ $activity->created_at->diffForHumans() }}</span>
+                        </div>
+                    </div>
+
+                </div>
+            @empty
+                <div class="px-6 py-12 text-center text-gray-400 text-sm">
+                    No recent activity yet.
+                </div>
+            @endforelse
+        </div>
     </div>
 
 @endsection

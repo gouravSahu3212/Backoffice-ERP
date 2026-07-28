@@ -22,7 +22,7 @@
 
     {{-- Tour cards grid --}}
     @if ($tours->isEmpty())
-        <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-16 text-center">
+        <div class="bg-white border border-gray-100 rounded-md shadow-sm p-16 text-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -54,7 +54,7 @@
         <div class="create-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
         {{-- Panel --}}
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-7">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 px-3 py-5">
 
             {{-- Close --}}
             <button class="close-create-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors"
@@ -64,9 +64,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Add Tour</h2>
+            <h2 class="text-xl font-bold text-gray-900">Add Tour</h2>
 
-            <div class="overflow-y-auto flex-1 px-7 py-5 max-h-[80vh]">
+            <div class="overflow-y-auto flex-1 px-3 py-5 max-h-[80vh]">
                 <form id="create-tour-form" method="POST" action="{{ route('admin.tours.store') }}" class="space-y-4"
                     enctype="multipart/form-data">
                     @csrf
@@ -222,7 +222,7 @@
                                 Departure Dates & Slots
                             </label>
                             <button type="button" id="add-departure-row-create"
-                                class="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition">
+                                class="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition">
                                 Add date
                             </button>
                         </div>
@@ -254,7 +254,7 @@
                                     class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
                                     placeholder="Slots">
                             </div>
-                            <button type="button" class="remove-departure-row rounded-full border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition">
+                            <button type="button" class="remove-departure-row rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition">
                                 Remove
                             </button>
                         </div>
@@ -269,6 +269,9 @@
                             <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Inactive</option>
                         </select>
                     </div>
+
+                    {{-- Inline validation errors --}}
+                    <div id="create-form-errors" class="hidden rounded-lg bg-red-50 border border-red-200 p-3 space-y-1"></div>
 
                     {{-- Hidden submit for Enter key --}}
                     <button type="submit" class="hidden"></button>
@@ -302,7 +305,7 @@
 
         <div class="edit-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-7">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 px-3 py-5">
             <button class="close-edit-modal absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors"
                 type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -310,9 +313,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Edit Tour</h2>
+            <h2 class="text-xl font-bold text-gray-900 px-3">Edit Tour</h2>
 
-            <div class="overflow-y-auto flex-1 px-7 py-5 max-h-[80vh]">
+            <div class="overflow-y-auto flex-1 px-3 py-5 max-h-[80vh]">
                 <form id="edit-tour-form" method="POST" action="" class="space-y-4"
                     enctype="multipart/form-data">
                     @csrf
@@ -431,7 +434,7 @@
                                 Departure Dates & Slots
                             </label>
                             <button type="button" id="add-departure-row-edit"
-                                class="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition">
+                                class="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition">
                                 Add date
                             </button>
                         </div>
@@ -465,6 +468,9 @@
                         </select>
                     </div>
 
+                    {{-- Inline validation errors --}}
+                    <div id="edit-form-errors" class="hidden rounded-lg bg-red-50 border border-red-200 p-3 space-y-1"></div>
+
                     <button type="submit" class="hidden"></button>
                 </form>
 
@@ -489,7 +495,7 @@
     <div id="delete-tour-modal" class="fixed inset-0 z-50 hidden items-center justify-center" aria-modal="true"
         role="dialog">
         <div class="delete-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-7">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-sm mx-4 p-7">
             <h2 class="text-lg font-bold text-gray-900 mb-2">Delete Tour?</h2>
             <p class="text-sm text-gray-500 mb-6" id="delete-modal-msg">This action cannot be undone.</p>
             <div class="flex justify-end gap-3">
@@ -633,40 +639,120 @@
                     addDepartureRow(createDepartureContainer);
                 });
 
-                createForm.addEventListener('submit', function () {
-                    if (!createDepartureContainer) {
-                        return;
+                createForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    // Remove incomplete departure rows before submitting
+                    if (createDepartureContainer) {
+                        refreshDepartureRowNames(createDepartureContainer);
+                        Array.from(createDepartureContainer.querySelectorAll('.departure-row')).forEach(function (row) {
+                            const dateInput = row.querySelector('input[data-role="departure-date"]');
+                            const slotsInput = row.querySelector('input[data-role="departure-slots"]');
+                            if (dateInput && slotsInput && (!dateInput.value || !slotsInput.value)) {
+                                row.remove();
+                            }
+                        });
                     }
 
-                    refreshDepartureRowNames(createDepartureContainer);
+                    const errorBox = document.getElementById('create-form-errors');
+                    errorBox.classList.add('hidden');
+                    errorBox.innerHTML = '';
 
-                    const rows = Array.from(createDepartureContainer.querySelectorAll('.departure-row'));
-                    rows.forEach(function (row) {
-                        const dateInput = row.querySelector('input[data-role="departure-date"]');
-                        const slotsInput = row.querySelector('input[data-role="departure-slots"]');
+                    const submitBtn = document.querySelector('[form="create-tour-form"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving…';
 
-                        if (dateInput && slotsInput && (!dateInput.value || !slotsInput.value)) {
-                            row.remove();
+                    try {
+                        const res = await fetch(createForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: new FormData(createForm),
+                        });
+
+                        const data = await res.json();
+
+                        if (res.ok && data.success) {
+                            submitBtn.textContent = '✓ Saved!';
+                            errorBox.className = 'rounded-lg bg-green-50 border border-green-200 p-3 space-y-1';
+                            errorBox.innerHTML = `<p class="text-sm text-green-700 font-medium">${data.message || 'Tour created successfully.'}</p>`;
+                            errorBox.classList.remove('hidden');
+                            setTimeout(function () { window.location.reload(); }, 1200);
+                        } else {
+                            const messages = data.errors
+                                ? Object.values(data.errors).flat()
+                                : [data.message || 'Something went wrong. Please try again.'];
+                            errorBox.innerHTML = messages.map(m => `<p class="text-sm text-red-700">${m}</p>`).join('');
+                            errorBox.classList.remove('hidden');
                         }
-                    });
+                    } catch (err) {
+                        errorBox.innerHTML = '<p class="text-sm text-red-700">An unexpected error occurred. Please try again.</p>';
+                        errorBox.classList.remove('hidden');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
                 });
 
-                editForm?.addEventListener('submit', function () {
-                    if (!editDepartureContainer) {
-                        return;
+                editForm?.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    // Remove incomplete departure rows before submitting
+                    if (editDepartureContainer) {
+                        refreshDepartureRowNames(editDepartureContainer);
+                        Array.from(editDepartureContainer.querySelectorAll('.departure-row')).forEach(function (row) {
+                            const dateInput = row.querySelector('input[data-role="departure-date"]');
+                            const slotsInput = row.querySelector('input[data-role="departure-slots"]');
+                            if (dateInput && slotsInput && (!dateInput.value || !slotsInput.value)) {
+                                row.remove();
+                            }
+                        });
                     }
 
-                    refreshDepartureRowNames(editDepartureContainer);
+                    const errorBox = document.getElementById('edit-form-errors');
+                    errorBox.classList.add('hidden');
+                    errorBox.innerHTML = '';
 
-                    const rows = Array.from(editDepartureContainer.querySelectorAll('.departure-row'));
-                    rows.forEach(function (row) {
-                        const dateInput = row.querySelector('input[data-role="departure-date"]');
-                        const slotsInput = row.querySelector('input[data-role="departure-slots"]');
+                    const submitBtn = document.querySelector('[form="edit-tour-form"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving…';
 
-                        if (dateInput && slotsInput && (!dateInput.value || !slotsInput.value)) {
-                            row.remove();
+                    try {
+                        const res = await fetch(editForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: new FormData(editForm),
+                        });
+
+                        const data = await res.json();
+
+                        if (res.ok && data.success) {
+                            submitBtn.textContent = '✓ Saved!';
+                            errorBox.className = 'rounded-lg bg-green-50 border border-green-200 p-3 space-y-1';
+                            errorBox.innerHTML = `<p class="text-sm text-green-700 font-medium">${data.message || 'Tour updated successfully.'}</p>`;
+                            errorBox.classList.remove('hidden');
+                            setTimeout(function () { window.location.reload(); }, 1200);
+                        } else {
+                            const messages = data.errors
+                                ? Object.values(data.errors).flat()
+                                : [data.message || 'Something went wrong. Please try again.'];
+                            errorBox.innerHTML = messages.map(m => `<p class="text-sm text-red-700">${m}</p>`).join('');
+                            errorBox.classList.remove('hidden');
                         }
-                    });
+                    } catch (err) {
+                        errorBox.innerHTML = '<p class="text-sm text-red-700">An unexpected error occurred. Please try again.</p>';
+                        errorBox.classList.remove('hidden');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
                 });
 
                 addDepartureRowEdit?.addEventListener('click', function () {
@@ -681,10 +767,6 @@
                         imageFilesList.textContent = files.length ? files.map(file => file.name).join(', ') : 'No files selected.';
                     });
                 }
-
-                @if ($errors->any())
-                    openModal(createModal);
-                @endif
 
                 // ── DELETE modal ────────────────────────────────────────────────────
                 const deleteModal = document.getElementById('delete-tour-modal');
@@ -833,7 +915,7 @@
                                     if (badge) {
                                         badge.textContent = isActive ? 'active' : 'inactive';
                                         badge.className =
-                                            'tour-status-badge inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full ' +
+                                            'tour-status-badge inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-lg ' +
                                             (isActive ? 'bg-gray-900 text-white' :
                                                 'bg-gray-100 text-gray-500');
                                     }

@@ -46,7 +46,7 @@
         </div>
 
         {{-- Table --}}
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-gray-100 shadow-sm overflow-hidden">
             <table class="w-full">
                 <thead>
                     <tr class="border-b border-gray-100">
@@ -106,7 +106,7 @@
         </div>
 
         {{-- Table --}}
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-gray-100 shadow-sm overflow-hidden">
             <table class="w-full">
                 <thead>
                     <tr class="border-b border-gray-100">
@@ -167,7 +167,7 @@
         </div>
 
         {{-- Table --}}
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-gray-100 shadow-sm overflow-hidden">
             <table class="w-full">
                 <thead>
                     <tr class="border-b border-gray-100">
@@ -220,7 +220,7 @@
         <div id="rate-modal-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
         {{-- Panel --}}
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 flex flex-col max-h-[90vh]">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 flex flex-col max-h-[90vh]">
 
             {{-- Header --}}
             <div class="flex items-center justify-between px-7 pt-7 pb-4 border-b border-gray-100 flex-shrink-0">
@@ -385,7 +385,7 @@
          ====================================================== --}}
     <div id="new-location-modal" class="fixed inset-0 z-[60] hidden items-center justify-center">
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+        <div class="relative bg-white rounded-md shadow-xl w-full max-w-sm mx-4 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Location</h3>
             <div class="space-y-3">
                 <div>
@@ -421,7 +421,7 @@
          ====================================================== --}}
     <div id="new-vehicle-modal" class="fixed inset-0 z-[60] hidden items-center justify-center">
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+        <div class="relative bg-white rounded-md shadow-xl w-full max-w-sm mx-4 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Vehicle Type</h3>
             <div class="space-y-3">
                 <div>
@@ -456,7 +456,7 @@
          ====================================================== --}}
     <div id="new-vehicle-model-modal" class="fixed inset-0 z-[60] hidden items-center justify-center">
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+        <div class="relative bg-white rounded-md shadow-xl w-full max-w-sm mx-4 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Vehicle Model</h3>
             <div class="space-y-3">
                 <div>
@@ -504,7 +504,7 @@
         <div id="airport-rate-modal-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
         {{-- Panel --}}
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 flex flex-col max-h-[90vh]">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 flex flex-col max-h-[90vh]">
 
             {{-- Header --}}
             <div class="flex items-center justify-between px-7 pt-7 pb-4 border-b border-gray-100 flex-shrink-0">
@@ -680,7 +680,7 @@
         <div id="full-day-rate-modal-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
         {{-- Panel --}}
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 flex flex-col max-h-[90vh]">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 flex flex-col max-h-[90vh]">
 
             {{-- Header --}}
             <div class="flex items-center justify-between px-7 pt-7 pb-4 border-b border-gray-100 flex-shrink-0">
@@ -858,7 +858,7 @@
          ====================================================== --}}
     <div id="new-zone-modal" class="fixed inset-0 z-[60] hidden items-center justify-center">
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+        <div class="relative bg-white rounded-md shadow-xl w-full max-w-sm mx-4 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Zone</h3>
             <div class="space-y-3">
                 <div>
@@ -892,7 +892,7 @@
          ====================================================== --}}
     <div id="new-airport-vehicle-modal" class="fixed inset-0 z-[60] hidden items-center justify-center">
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+        <div class="relative bg-white rounded-md shadow-xl w-full max-w-sm mx-4 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Vehicle Type</h3>
             <div class="space-y-3">
                 <div>
@@ -926,7 +926,7 @@
          ====================================================== --}}
     <div id="new-airport-modal" class="fixed inset-0 z-[60] hidden items-center justify-center">
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+        <div class="relative bg-white rounded-md shadow-xl w-full max-w-sm mx-4 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Add New Airport</h3>
             <div class="space-y-3">
                 <div>
@@ -1184,11 +1184,11 @@
                         if (data.is_active) {
                             badge.textContent = 'active';
                             badge.className =
-                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-900 text-white';
                         } else {
                             badge.textContent = 'inactive';
                             badge.className =
-                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-200 text-gray-500';
                         }
 
                         btn.dataset.active = data.is_active ? '1' : '0';
@@ -1704,11 +1704,11 @@
                         if (data.is_active) {
                             badge.textContent = 'active';
                             badge.className =
-                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-900 text-white';
                         } else {
                             badge.textContent = 'inactive';
                             badge.className =
-                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                                'airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-200 text-gray-500';
                         }
 
                         btn.dataset.active = data.is_active ? '1' : '0';
@@ -2168,11 +2168,11 @@
                         if (data.is_active) {
                             badge.textContent = 'active';
                             badge.className =
-                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900 text-white';
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-900 text-white';
                         } else {
                             badge.textContent = 'inactive';
                             badge.className =
-                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-500';
+                                'rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-200 text-gray-500';
                         }
 
                         btn.dataset.active = data.is_active ? '1' : '0';

@@ -14,14 +14,14 @@
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-gray-100 shadow-sm overflow-hidden">
             <div class="border-b border-gray-100 px-6 py-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-500">Booking reference</p>
                         <h2 class="text-xl font-semibold text-gray-900">{{ $booking->booking_reference }}</h2>
                     </div>
-                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold capitalize
+                    <span class="inline-flex rounded-lg px-3 py-1 text-xs font-semibold capitalize
                         {{ $booking->status === 'confirmed' ? 'bg-emerald-50 text-emerald-700' : ($booking->status === 'cancelled' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700') }}">
                         {{ $booking->status }}
                     </span>
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div class="bg-white rounded-md border border-gray-100 shadow-sm p-6">
             <h3 class="text-lg font-semibold text-gray-900">Notes</h3>
             <p class="mt-3 text-sm text-gray-600 whitespace-pre-line">
                 {{ $booking->notes ?: 'No notes were provided for this booking.' }}

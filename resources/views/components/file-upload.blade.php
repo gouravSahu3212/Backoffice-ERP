@@ -29,7 +29,7 @@
     <div @dragover.prevent="dragging = true" @dragleave.prevent="dragging = false"
         @drop.prevent="dropFile($event)"
         :class="dragging ? 'border-gray-900 bg-gray-50 shadow-sm' : 'border-gray-200 bg-white'"
-        class="relative rounded-3xl border border-gray-200 p-5 transition duration-200 hover:border-gray-300">
+        class="relative rounded-lg border border-gray-200 p-5 transition duration-200 hover:border-gray-300">
 
         <input x-ref="input" type="file" name="{{ $name }}"
             @if ($accept) accept="{{ $accept }}" @endif @if ($multiple) multiple @endif
@@ -38,7 +38,7 @@
 
         <div class="flex items-center gap-4">
             <div
-                class="flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 text-gray-900">
+                class="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-gray-900">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
                     <path d="M12 3v13"></path>
@@ -51,30 +51,30 @@
                 <p class="text-xs text-gray-500" x-text="helpText"></p>
             </div>
             <button type="button" @click="openFileBrowser()"
-                class="rounded-full border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
+                class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
                 {{ $multiple ? 'Add files' : 'Choose file' }}
             </button>
         </div>
         <p class="text-xs text-gray-500">Drag & drop files here or use the button to add them one by one.</p>
 
         <template x-if="existingItems.length">
-            <div class="mt-4 rounded-3xl border border-gray-200 bg-gray-50 p-4">
+            <div class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div class="flex items-center justify-between text-xs font-medium text-gray-600">
                     <span x-text="existingItems.length + (existingItems.length === 1 ? ' existing file' : ' existing files')"></span>
                     <button type="button" @click.stop.prevent="removeAllExisting()"
-                        class="rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-100">
+                        class="rounded-lg border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-100">
                         Clear
                     </button>
                 </div>
                 <ul class="mt-3 grid grid-cols-1 gap-2 text-sm text-gray-700">
                     <template x-for="(item, index) in existingItems" :key="'existing-' + index">
-                        <li class="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white px-3 py-2">
+                        <li class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white px-3 py-2">
                             <div class="flex items-center gap-3">
                                 <template x-if="item.name.toLowerCase().endsWith('.pdf')">
                                     <a :href="item.url" target="_blank" rel="noopener noreferrer"
                                         @click.stop
-                                        class="flex items-center gap-3 rounded-xl border border-gray-200 bg-red-50 px-3 py-2 hover:bg-red-100 transition">
-                                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-200 bg-red-100 text-red-700">
+                                        class="flex items-center gap-3 rounded-md border border-gray-200 bg-red-50 px-3 py-2 hover:bg-red-100 transition">
+                                        <div class="flex h-12 w-12 items-center justify-center rounded-lg border border-red-200 bg-red-100 text-red-700">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                 class="h-5 w-5">
@@ -94,7 +94,7 @@
                                 <template x-if="!item.name.toLowerCase().endsWith('.pdf')">
                                     <template x-if="item.url">
                                         <img :src="item.url"
-                                            class="h-12 w-12 rounded-xl object-cover border border-gray-200" />
+                                            class="h-12 w-12 rounded-md object-cover border border-gray-200" />
                                     </template>
                                     <span class="truncate" x-text="item.name"></span>
                                 </template>
@@ -113,17 +113,17 @@
         </template>
 
         <template x-if="files.length">
-            <div class="mt-4 rounded-3xl border border-gray-200 bg-gray-50 p-4">
+            <div class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div class="flex items-center justify-between text-xs font-medium text-gray-600">
                     <span x-text="files.length + (multiple ? ' new files selected' : ' new file selected')"></span>
                     <button type="button" @click.stop.prevent="removeAll()"
-                        class="rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-100">
+                        class="rounded-lg border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-100">
                         Clear
                     </button>
                 </div>
                 <ul class="mt-3 space-y-2 text-sm text-gray-700">
                     <template x-for="(file, index) in files" :key="index">
-                        <li class="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white px-3 py-2">
+                        <li class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white px-3 py-2">
                             <span class="truncate" x-text="file.name"></span>
                             <span class="text-xs text-gray-500" x-text="formatSize(file.size)"></span>
                         </li>

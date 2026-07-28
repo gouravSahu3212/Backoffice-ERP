@@ -3,7 +3,7 @@
         {{ $rate->airport->name }}
     </td>
     <td class="py-3.5 px-4">
-        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
             {{ $rate->transfer_type === 'pickup' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-amber-50 text-amber-700 border border-amber-200' }}">
             {{ $rate->transfer_type }}
         </span>
@@ -21,7 +21,7 @@
         {{ $rate->currency }}
     </td>
     <td class="py-3.5 px-4">
-        <span class="airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+        <span class="airport-rate-status-badge inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
             {{ $rate->is_active ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-500' }}">
             {{ $rate->is_active ? 'active' : 'inactive' }}
         </span>

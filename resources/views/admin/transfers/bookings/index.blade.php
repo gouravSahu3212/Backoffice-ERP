@@ -17,7 +17,7 @@
         </form>
     </div>
 
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-md border border-gray-100 shadow-sm overflow-hidden">
         <table class="min-w-full divide-y divide-gray-100">
             <thead class="bg-gray-50">
                 <tr>
@@ -44,7 +44,7 @@
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-700">{{ optional($booking->transfer_date)->format('d M Y') ?? 'TBD' }}</td>
                         <td class="px-4 py-3 text-sm">
-                            <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold capitalize
+                            <span class="inline-flex rounded-lg px-2.5 py-1 text-xs font-semibold capitalize
                                 {{ $booking->status === 'confirmed' ? 'bg-emerald-50 text-emerald-700' : ($booking->status === 'cancelled' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700') }}">
                                 {{ $booking->status }}
                             </span>
