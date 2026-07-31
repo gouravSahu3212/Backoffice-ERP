@@ -41,7 +41,9 @@ class TourRequestService
         $this->activityLog->log(
             'created',
             "submitted tour enquiry {$reference} for \"{$tour->title}\"",
-            $tourRequest
+            $tourRequest,
+            null,
+            $agent->id
         );
 
         return $tourRequest;
@@ -73,7 +75,9 @@ class TourRequestService
         $this->activityLog->log(
             'updated',
             "changed tour request {$tourRequest->request_reference} status to \"{$status}\"",
-            $tourRequest
+            $tourRequest,
+            null,
+            $tourRequest->agent_id
         );
 
         return $tourRequest->fresh();

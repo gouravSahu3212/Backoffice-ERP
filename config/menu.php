@@ -99,5 +99,10 @@ return [
             'route' => 'agent.bookings.index',
             'icon' => 'calendar',
         ],
+        [
+            'title' => 'Activity Log',
+            'route' => 'agent.activity-logs.index',
+            'icon' => 'arrow-path',
+        ],
     ],
 ];

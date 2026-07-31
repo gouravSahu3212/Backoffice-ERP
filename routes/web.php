@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\TourController;
 use App\Http\Controllers\Admin\TourRequestController as AdminTourRequestController;
 use App\Http\Controllers\Admin\TransferBookingController;
 use App\Http\Controllers\Admin\TransferController;
+use App\Http\Controllers\Agent\ActivityLogController as AgentActivityLogController;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
 use App\Http\Controllers\Agent\TourController as AgentTourController;
 use App\Http\Controllers\Agent\TourRequestController as AgentTourRequestController;
@@ -84,6 +85,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('tours/{tour}/availability', [AgentTourController::class, 'availability'])->name('tours.availability');
             Route::post('tours/{tour}/enquire', [AgentTourController::class, 'enquire'])->name('tours.enquire');
             Route::get('tour-requests', [AgentTourRequestController::class, 'index'])->name('tour-requests.index');
+            Route::get('activity-logs', [AgentActivityLogController::class, 'index'])->name('activity-logs.index');
         });
 
 });

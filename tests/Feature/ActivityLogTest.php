@@ -96,3 +96,73 @@ it('dashboard shows recent activities', function () {
         ->assertOk()
         ->assertViewHas('recentActivities');
 });
+
+// ── Agent Activity Log Tests ─────────────────────────────────────────────
+
+it('agent can view their activity log page', function () {
+    $agent = User::factory()->create();
+    $agent->assignRole('Agent');
+
+    $this->actingAs($agent)
+        ->get(route('agent.activity-logs.index'))
+        ->assertOk()
+        ->assertViewIs('agent.activity-logs.index');
+});
+
+it('agent only sees activities related to them', function () {
+    $agent = User::factory()->create();
+    $agent->assignRole('Agent');
+
+    $otherAgent = User::factory()->create();
+    $otherAgent->assignRole('Agent');
+
+    // Logs for this agent
+    ActivityLog::factory()->count(2)->forAgent($agent->id)->create([
+        'user_id' => $this->admin->id,
+        'description' => 'Changed your tour request status',
+    ]);
+
+    // Logs for another agent (should not appear)
+    ActivityLog::factory()->count(3)->forAgent($otherAgent->id)->create([
+        'user_id' => $this->admin->id,
+    ]);
+
+    $this->actingAs($agent)
+        ->get(route('agent.activity-logs.index'))
+        ->assertOk()
+        ->assertViewHas('logs', fn ($logs) => $logs->count() === 2);
+});
+
+it('agent activity log can be filtered by action', function () {
+    $agent = User::factory()->create();
+    $agent->assignRole('Agent');
+
+    ActivityLog::factory()->forAgent($agent->id)->create([
+        'user_id' => $this->admin->id,
+        'action' => 'created',
+    ]);
+
+    ActivityLog::factory()->forAgent($agent->id)->create([
+        'user_id' => $this->admin->id,
+        'action' => 'updated',
+    ]);
+
+    $this->actingAs($agent)
+        ->getJson(route('agent.activity-logs.index', ['action' => 'updated']))
+        ->assertOk()
+        ->assertJsonStructure(['html', 'pagination']);
+});
+
+it('agent dashboard shows recent activities', function () {
+    $agent = User::factory()->create();
+    $agent->assignRole('Agent');
+
+    ActivityLog::factory()->count(2)->forAgent($agent->id)->create([
+        'user_id' => $this->admin->id,
+    ]);
+
+    $this->actingAs($agent)
+        ->get(route('agent.dashboard'))
+        ->assertOk()
+        ->assertViewHas('recentActivities', fn ($activities) => $activities->count() === 2);
+});

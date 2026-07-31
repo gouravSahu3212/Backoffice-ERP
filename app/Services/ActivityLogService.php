@@ -21,10 +21,12 @@ class ActivityLogService
         string $action,
         string $description,
         ?Model $subject = null,
-        ?array $properties = null
+        ?array $properties = null,
+        ?int $relatedAgentId = null
     ): ActivityLog {
         $data = [
             'user_id' => auth()->id(),
+            'related_agent_id' => $relatedAgentId,
             'action' => $action,
             'description' => $description,
             'properties' => $properties,
@@ -79,5 +81,33 @@ class ActivityLogService
             'today' => $this->repository->countToday(),
             'this_week' => $this->repository->countThisWeek(),
         ];
+    }
+
+    /**
+     * Get paginated activity logs scoped to a specific agent.
+     *
+     * @param  array{search?: string, action?: string, date_from?: string, date_to?: string}  $filters
+     */
+    public function listForAgent(int $agentId, array $filters = [], int $perPage = 15): LengthAwarePaginator
+    {
+        return $this->repository->paginateForAgent($agentId, $filters, $perPage);
+    }
+
+    /**
+     * Get recent activity logs for a specific agent.
+     */
+    public function recentForAgent(int $agentId, int $limit = 10): Collection
+    {
+        return $this->repository->recentForAgent($agentId, $limit);
+    }
+
+    /**
+     * Get distinct action types for logs related to a specific agent.
+     *
+     * @return array<int, string>
+     */
+    public function distinctActionsForAgent(int $agentId): array
+    {
+        return $this->repository->distinctActionsForAgent($agentId);
     }
 }
