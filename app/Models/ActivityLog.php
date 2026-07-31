@@ -13,6 +13,7 @@ class ActivityLog extends Model
 
     protected $fillable = [
         'user_id',
+        'related_agent_id',
         'action',
         'subject_type',
         'subject_id',
@@ -46,6 +47,14 @@ class ActivityLog extends Model
     public function subject(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * The agent this activity is relevant to.
+     */
+    public function relatedAgent(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'related_agent_id');
     }
 
     /**

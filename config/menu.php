@@ -47,6 +47,11 @@ return [
                     'route' => 'admin.tours.bookings.index',
                     'icon' => 'calendar',
                 ],
+                [
+                    'title' => 'Requests',
+                    'route' => 'admin.tour-requests.index',
+                    'icon' => 'ticket',
+                ],
             ],
         ],
         [
@@ -81,11 +86,23 @@ return [
             'title' => 'Tours',
             'route' => 'agent.tours.index',
             'icon' => 'map',
+            'submenu' => [
+                [
+                    'title' => 'My Enquiries',
+                    'route' => 'agent.tour-requests.index',
+                    'icon' => 'ticket',
+                ],
+            ],
         ],
         [
             'title' => 'Bookings',
             'route' => 'agent.bookings.index',
             'icon' => 'calendar',
+        ],
+        [
+            'title' => 'Activity Log',
+            'route' => 'agent.activity-logs.index',
+            'icon' => 'arrow-path',
         ],
     ],
 ];

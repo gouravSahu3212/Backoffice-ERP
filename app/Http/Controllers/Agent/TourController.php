@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Agent;
 
+use App\Http\Requests\Agent\StoreTourRequestRequest;
 use App\Models\Tour;
 use App\Repositories\TourRepository;
+use App\Services\TourRequestService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +13,8 @@ use Illuminate\Support\Facades\Storage;
 class TourController
 {
     public function __construct(
-        protected TourRepository $repository
+        protected TourRepository $repository,
+        protected TourRequestService $tourRequestService
     ) {}
 
     public function index()
@@ -182,6 +185,7 @@ class TourController
                 'retail_price' => (float) $tour->retail_price,
                 'agent_price' => (float) $tour->agent_price,
                 'currency' => $tour->currency,
+                'max_capacity' => (int) ($tour->max_capacity ?? 20),
             ];
         })->values();
 
@@ -212,5 +216,19 @@ class TourController
             'summary' => $tour->summary,
             'image_url' => $firstImage ? (str_starts_with($firstImage, 'http') ? $firstImage : Storage::url($firstImage)) : null,
         ];
+    }
+
+    /**
+     * Submit a tour enquiry from an agent.
+     */
+    public function enquire(StoreTourRequestRequest $request, Tour $tour): \Illuminate\Http\JsonResponse
+    {
+        $tourRequest = $this->tourRequestService->create($tour, auth()->user(), $request->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Enquiry submitted successfully.',
+            'reference' => $tourRequest->request_reference,
+        ]);
     }
 }

@@ -22,6 +22,7 @@ class ActivityLogFactory extends Factory
 
         return [
             'user_id' => User::factory(),
+            'related_agent_id' => null,
             'action' => fake()->randomElement($actions),
             'description' => fake()->sentence(),
             'subject_type' => null,
@@ -60,6 +61,16 @@ class ActivityLogFactory extends Factory
     {
         return $this->state(fn () => [
             'action' => 'deleted',
+        ]);
+    }
+
+    /**
+     * State: associate with a specific agent.
+     */
+    public function forAgent(int $agentId): static
+    {
+        return $this->state(fn () => [
+            'related_agent_id' => $agentId,
         ]);
     }
 }

@@ -84,4 +84,57 @@ class ActivityLogRepository extends BaseRepository
             now()->endOfWeek(),
         ])->count();
     }
+
+    /**
+     * Paginate activity logs for a specific agent.
+     *
+     * @param  array{search?: string, action?: string, date_from?: string, date_to?: string}  $filters
+     */
+    public function paginateForAgent(int $agentId, array $filters = [], int $perPage = 15): LengthAwarePaginator
+    {
+        return ActivityLog::with('user')
+            ->where('related_agent_id', $agentId)
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->where('description', 'like', "%{$search}%");
+            })
+            ->when($filters['action'] ?? null, function ($query, $action) {
+                $query->where('action', $action);
+            })
+            ->when($filters['date_from'] ?? null, function ($query, $dateFrom) {
+                $query->whereDate('created_at', '>=', $dateFrom);
+            })
+            ->when($filters['date_to'] ?? null, function ($query, $dateTo) {
+                $query->whereDate('created_at', '<=', $dateTo);
+            })
+            ->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->withQueryString();
+    }
+
+    /**
+     * Get recent activity logs for a specific agent.
+     */
+    public function recentForAgent(int $agentId, int $limit = 10): Collection
+    {
+        return ActivityLog::with('user')
+            ->where('related_agent_id', $agentId)
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get distinct action types for a specific agent.
+     *
+     * @return array<int, string>
+     */
+    public function distinctActionsForAgent(int $agentId): array
+    {
+        return ActivityLog::where('related_agent_id', $agentId)
+            ->distinct()
+            ->pluck('action')
+            ->sort()
+            ->values()
+            ->all();
+    }
 }
