@@ -74,5 +74,6 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           PORT_VAL="${{ secrets.PORT }}"
           PORT_VAL="${PORT_VAL:-22}"
-          ssh -o StrictHostKeyChecking=no -p "$PORT_VAL" ${{ secrets.USERNAME }}@${{ secrets.HOST }} "rm -rf ~/public_html/88booking_mangement/build/assets/* && mkdir -p ~/public_html/88booking_mangement/build/assets"
+          ssh -o StrictHostKeyChecking=no -p "$PORT_VAL" ${{ secrets.USERNAME }}@${{ secrets.HOST }} "rm -rf ~/repositories/Backoffice-ERP/public/build && mkdir -p ~/repositories/Backoffice-ERP/public/build/assets && rm -rf ~/public_html/88booking_mangement/build/assets && mkdir -p ~/public_html/88booking_mangement/build/assets"
+          scp -o StrictHostKeyChecking=no -P "$PORT_VAL" public/build/manifest.json ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/repositories/Backoffice-ERP/public/build/
           scp -o StrictHostKeyChecking=no -P "$PORT_VAL" -r public/build/assets/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/public_html/88booking_mangement/build/
