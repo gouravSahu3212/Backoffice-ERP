@@ -74,4 +74,4 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           PORT_VAL="${{ secrets.PORT }}"
           PORT_VAL="${PORT_VAL:-22}"
-          scp -o StrictHostKeyChecking=no -P "$PORT_VAL" -r public/build/assets/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/88booking-mangement/build/assets/
+          scp -o StrictHostKeyChecking=no -P "$PORT_VAL" -r public/build/assets/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/public_html/88booking_mangement/build/assets/
