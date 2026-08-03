@@ -47,6 +47,12 @@
                     'Agent' => 'agent.dashboard',
                     default => 'dashboard',
                 };
+                $activityLogRoute = match ($roleName) {
+                    'Super Admin' => 'admin.activity-logs.index',
+                    'Agent' => 'agent.activity-logs.index',
+                    default => '',
+                };
+                $unseenCount = app(\App\Services\ActivityLogService::class)->getUnseenCount(auth()->user());
             @endphp
 
             @foreach ($menuItems as $item)
@@ -56,6 +62,7 @@
                         'building' => 'building-office',
                         default => $item['icon'] ?? 'document',
                     };
+                    $itemBadge = ($itemRoute === $activityLogRoute) ? $unseenCount : 0;
                 @endphp
 
                 @if (isset($item['submenu']) && !empty($item['submenu']))
@@ -80,9 +87,16 @@
                                 <span class="shrink-0 {{ $parentActive || $submenuActive ? 'text-white' : 'text-gray-900' }}">
                                     <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
                                 </span>
-                                <span x-show="sidebarOpen" x-transition class="ml-3 truncate">
+                                <span x-show="sidebarOpen" x-transition class="ml-3 flex-1 truncate">
                                     {{ $item['title'] }}
                                 </span>
+                                @if($itemBadge > 0)
+                                    <span x-show="sidebarOpen" x-transition
+                                        class="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-bold rounded-full
+                                        {{ $parentActive || $submenuActive ? 'bg-white text-gray-900' : 'bg-red-500 text-white' }}">
+                                        {{ $itemBadge > 99 ? '99+' : $itemBadge }}
+                                    </span>
+                                @endif
                             </a>
 
                             {{-- Chevron toggle button --}}
@@ -131,7 +145,7 @@
                         </div>
                     </div>
                 @else
-                    <x-nav-item :route="$itemRoute">
+                    <x-nav-item :route="$itemRoute" :badge="$itemBadge">
                         <x-slot:icon>
                             <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
                         </x-slot:icon>

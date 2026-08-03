@@ -26,6 +26,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'is_active',
+        'activity_log_last_seen_at',
     ];
 
     /**
@@ -40,6 +41,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
+            'activity_log_last_seen_at' => 'datetime',
         ];
     }
 

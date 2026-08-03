@@ -2,6 +2,7 @@
     'route',
     'icon' => '',
     'icon2' => '',
+    'badge' => 0,
 ])
 
 @php
@@ -20,9 +21,17 @@
         </span>
     @endif
 
-    <span x-show="sidebarOpen" x-transition class="ml-3">
+    <span x-show="sidebarOpen" x-transition class="ml-3 flex-1">
         {{ $slot }}
     </span>
+
+    @if($badge > 0)
+        <span x-show="sidebarOpen" x-transition
+            class="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-bold rounded-full
+            {{ $active ? 'bg-white text-gray-900' : 'bg-red-500 text-white' }}">
+            {{ $badge > 99 ? '99+' : $badge }}
+        </span>
+    @endif
 
     @if(isset($icon2))
         <span x-show="sidebarOpen" x-transition class="ml-3">

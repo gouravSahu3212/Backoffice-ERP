@@ -22,14 +22,18 @@ class ActivityLogController extends AdminController
         $actions = $this->service->distinctActions();
         $stats = $this->service->stats();
 
+        $lastSeenAt = auth()->user()->activity_log_last_seen_at;
+
         if ($request->expectsJson()) {
             return response()->json([
-                'html' => view('admin.activity-logs._table', compact('logs'))->render(),
+                'html' => view('admin.activity-logs._table', compact('logs', 'lastSeenAt'))->render(),
                 'pagination' => $logs->links()->toHtml(),
                 'stats' => $stats,
             ]);
         }
 
-        return view('admin.activity-logs.index', compact('logs', 'actions', 'stats', 'filters'));
+        $this->service->markAsSeen(auth()->user());
+
+        return view('admin.activity-logs.index', compact('logs', 'actions', 'stats', 'filters', 'lastSeenAt'));
     }
 }

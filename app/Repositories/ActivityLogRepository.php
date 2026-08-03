@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\ActivityLog;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -136,5 +137,23 @@ class ActivityLogRepository extends BaseRepository
             ->sort()
             ->values()
             ->all();
+    }
+
+    /**
+     * Count activity logs created after the given timestamp.
+     */
+    public function countNewSince(Carbon $since): int
+    {
+        return ActivityLog::where('created_at', '>', $since)->count();
+    }
+
+    /**
+     * Count activity logs for a specific agent created after the given timestamp.
+     */
+    public function countNewSinceForAgent(int $agentId, Carbon $since): int
+    {
+        return ActivityLog::where('related_agent_id', $agentId)
+            ->where('created_at', '>', $since)
+            ->count();
     }
 }
