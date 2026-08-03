@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\ActivityLog;
+use App\Models\User;
 use App\Repositories\ActivityLogRepository;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -109,5 +111,27 @@ class ActivityLogService
     public function distinctActionsForAgent(int $agentId): array
     {
         return $this->repository->distinctActionsForAgent($agentId);
+    }
+
+    /**
+     * Get the count of unseen activity logs for the given user.
+     */
+    public function getUnseenCount(User $user): int
+    {
+        $since = $user->activity_log_last_seen_at ?? Carbon::createFromTimestamp(0);
+
+        if ($user->hasRole('Agent')) {
+            return $this->repository->countNewSinceForAgent($user->id, $since);
+        }
+
+        return $this->repository->countNewSince($since);
+    }
+
+    /**
+     * Mark activity logs as seen by updating the user's last-seen timestamp.
+     */
+    public function markAsSeen(User $user): void
+    {
+        $user->update(['activity_log_last_seen_at' => now()]);
     }
 }

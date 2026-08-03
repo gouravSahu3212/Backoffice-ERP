@@ -1,5 +1,8 @@
 @forelse($logs as $log)
-    <tr class="hover:bg-gray-50/60 transition-colors">
+    @php
+        $isNew = isset($lastSeenAt) && $log->created_at->gt($lastSeenAt);
+    @endphp
+    <tr class="{{ $isNew ? 'bg-blue-50/60 border-l-2 border-l-blue-400' : '' }} hover:bg-gray-50/60 transition-colors">
 
         {{-- User --}}
         <td class="px-6 py-4">

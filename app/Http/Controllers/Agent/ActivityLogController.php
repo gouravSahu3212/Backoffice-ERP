@@ -23,13 +23,17 @@ class ActivityLogController extends Controller
         $logs = $this->service->listForAgent($agentId, $filters);
         $actions = $this->service->distinctActionsForAgent($agentId);
 
+        $lastSeenAt = auth()->user()->activity_log_last_seen_at;
+
         if ($request->expectsJson()) {
             return response()->json([
-                'html' => view('agent.activity-logs._table', compact('logs'))->render(),
+                'html' => view('agent.activity-logs._table', compact('logs', 'lastSeenAt'))->render(),
                 'pagination' => $logs->links()->toHtml(),
             ]);
         }
 
-        return view('agent.activity-logs.index', compact('logs', 'actions', 'filters'));
+        $this->service->markAsSeen(auth()->user());
+
+        return view('agent.activity-logs.index', compact('logs', 'actions', 'filters', 'lastSeenAt'));
     }
 }

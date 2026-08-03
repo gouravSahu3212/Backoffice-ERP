@@ -18,11 +18,11 @@
 
         <x-sidebar />
 
-        <div class="flex-1 min-h-screen">
+        <div class="flex-1 flex flex-col min-w-0 h-screen">
 
             <x-header />
 
-            <div class="p-6">
+            <div class="p-6 flex-1 overflow-y-auto">
 
                 <x-flash-message />
 
