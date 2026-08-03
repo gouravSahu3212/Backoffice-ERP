@@ -1,5 +1,5 @@
 <aside
-    class="bg-gray-100 border-r border-gray-200 flex flex-col min-h-screen transition-all duration-300"
+    class="bg-gray-100 border-r border-gray-200 flex flex-col h-screen sticky top-0 transition-all duration-300"
     :class="sidebarOpen ? 'w-64' : 'w-20'"
 >
 
@@ -23,7 +23,7 @@
     </div>
 
     {{-- Navigation --}}
-    <div class="px-4 py-4 flex-1">
+    <div class="px-4 py-4 flex-1 overflow-y-auto">
 
         <p
             x-show="sidebarOpen"
@@ -59,22 +59,60 @@
                 @endphp
 
                 @if (isset($item['submenu']) && !empty($item['submenu']))
-                    <div class="space-y-1">
-                        <x-nav-item :route="$itemRoute">
-                            <x-slot:icon>
-                                <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
-                            </x-slot:icon>
-                            {{ $item['title'] }}
-                            <x-slot:icon2>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="1.8">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
-                            </x-slot:icon2>
-                        </x-nav-item>
+                    @php
+                        $submenuActive = collect($item['submenu'])->contains(function ($sub) {
+                            $r = Route::has($sub['route']) ? $sub['route'] : null;
+                            return $r && (request()->routeIs($r) || request()->routeIs($r . '.*'));
+                        });
+                        $parentActive = request()->routeIs($itemRoute) || request()->routeIs($itemRoute . '.*');
+                    @endphp
 
-                        <div class="pl-4 space-y-1">
+                    <div x-data="{ open: {{ ($submenuActive || $parentActive) ? 'true' : 'false' }} }" class="space-y-0.5">
+                        {{-- Parent row: link + collapse toggle --}}
+                        <div class="flex items-center rounded-lg transition-colors
+                            {{ $parentActive || $submenuActive
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900' }}">
+
+                            {{-- Clickable link to parent route --}}
+                            <a href="{{ route($itemRoute) }}"
+                                class="flex items-center gap-3 flex-1 min-w-0 px-3 py-2.5 text-sm font-medium rounded-l-lg transition-colors">
+                                <span class="shrink-0 {{ $parentActive || $submenuActive ? 'text-white' : 'text-gray-900' }}">
+                                    <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
+                                </span>
+                                <span x-show="sidebarOpen" x-transition class="ml-3 truncate">
+                                    {{ $item['title'] }}
+                                </span>
+                            </a>
+
+                            {{-- Chevron toggle button --}}
+                            <button
+                                x-show="sidebarOpen"
+                                @click="open = !open"
+                                type="button"
+                                class="shrink-0 p-2.5 rounded-r-lg transition-colors
+                                {{ $parentActive || $submenuActive
+                                    ? 'hover:bg-gray-700'
+                                    : 'hover:bg-gray-200' }}"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="w-4 h-4 transition-transform duration-200"
+                                    :class="open ? 'rotate-90' : ''"
+                                    fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="1.8"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {{-- Collapsible sub-items --}}
+                        <div
+                            x-show="open && sidebarOpen"
+                            x-collapse
+                            class="pl-4 space-y-0.5"
+                        >
                             @foreach ($item['submenu'] as $subItem)
                                 @php
                                     $subRoute = Route::has($subItem['route']) ? $subItem['route'] : $fallbackRoute;

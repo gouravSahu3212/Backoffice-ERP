@@ -55,11 +55,6 @@ return [
             ],
         ],
         [
-            'title' => 'Tour Requests',
-            'route' => 'admin.tour-requests.index',
-            'icon' => 'ticket',
-        ],
-        [
             'title' => 'Activity Log',
             'route' => 'admin.activity-logs.index',
             'icon' => 'arrow-path',
