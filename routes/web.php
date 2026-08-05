@@ -11,10 +11,13 @@ use App\Http\Controllers\Admin\TourController;
 use App\Http\Controllers\Admin\TourRequestController as AdminTourRequestController;
 use App\Http\Controllers\Admin\TransferBookingController;
 use App\Http\Controllers\Admin\TransferController;
+use App\Http\Controllers\Admin\TransferRequestController as AdminTransferRequestController;
 use App\Http\Controllers\Agent\ActivityLogController as AgentActivityLogController;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
 use App\Http\Controllers\Agent\TourController as AgentTourController;
 use App\Http\Controllers\Agent\TourRequestController as AgentTourRequestController;
+use App\Http\Controllers\Agent\TransferController as AgentTransferController;
+use App\Http\Controllers\Agent\TransferRequestController as AgentTransferRequestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,6 +38,8 @@ Route::middleware(['auth'])->group(function () {
 
             // Transfers
             Route::get('transfers', [TransferController::class, 'index'])->name('transfers.index');
+            Route::get('transfers/requests', [AdminTransferRequestController::class, 'index'])->name('transfer-requests.index');
+            Route::patch('transfers/requests/{transferRequest}/status', [AdminTransferRequestController::class, 'updateStatus'])->name('transfer-requests.update-status');
             Route::resource('transfers/bookings', TransferBookingController::class)
                 ->only(['index', 'show'])
                 ->names('transfers.bookings');
@@ -79,6 +84,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('agent.')
         ->group(function () {
             Route::get('/dashboard', AgentDashboard::class)->name('dashboard');
+            Route::get('transfers', [AgentTransferController::class, 'index'])->name('transfers.index');
+            Route::get('transfers/search', [AgentTransferController::class, 'search'])->name('transfers.search');
+            Route::post('transfers/enquire', [AgentTransferController::class, 'enquire'])->name('transfers.enquire');
+            Route::get('transfer-requests', [AgentTransferRequestController::class, 'index'])->name('transfer-requests.index');
             Route::get('tours', [AgentTourController::class, 'index'])->name('tours.index');
             Route::get('tours/search', [AgentTourController::class, 'search'])->name('tours.search');
             Route::get('tours/{tour}', [AgentTourController::class, 'show'])->name('tours.show');
