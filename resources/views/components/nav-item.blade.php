@@ -9,7 +9,7 @@
     $active = request()->routeIs($route) || request()->routeIs($route . '.*');
 @endphp
 
-<a href="{{ route($route) }}"
+<a href="{{ Route::has($route) ? route($route) : '#' }}"
     class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
     {{ $active
         ? 'bg-gray-900 text-white'
