@@ -19,36 +19,19 @@ return [
             'icon' => 'truck',
             'submenu' => [
                 [
-                    'title' => 'Booking',
-                    'route' => 'admin.transfers.bookings.index',
-                    'icon' => 'calendar',
+                    'title' => 'Booking Enquiries',
+                    'route' => 'admin.transfer-requests.index',
+                    'icon' => 'ticket',
                 ],
             ],
         ],
-        // [
-        //     'title' => 'Hotels',
-        //     'route' => 'admin.hotels.index',
-        //     'icon' => 'building',
-        //     'submenu' => [
-        //         [
-        //             'title' => 'Booking',
-        //             'route' => 'admin.hotels.bookings.index',
-        //             'icon' => 'calendar',
-        //         ],
-        //     ]
-        // ],
         [
             'title' => 'Tours',
             'route' => 'admin.tours.index',
             'icon' => 'map',
             'submenu' => [
                 [
-                    'title' => 'Booking',
-                    'route' => 'admin.tours.bookings.index',
-                    'icon' => 'calendar',
-                ],
-                [
-                    'title' => 'Requests',
+                    'title' => 'Booking Enquiries',
                     'route' => 'admin.tour-requests.index',
                     'icon' => 'ticket',
                 ],
@@ -76,6 +59,13 @@ return [
             'title' => 'Transfers',
             'route' => 'agent.transfers.index',
             'icon' => 'truck',
+            'submenu' => [
+                [
+                    'title' => 'Booking Enquiries',
+                    'route' => 'agent.transfer-requests.index',
+                    'icon' => 'ticket',
+                ],
+            ],
         ],
         [
             'title' => 'Tours',
@@ -83,7 +73,7 @@ return [
             'icon' => 'map',
             'submenu' => [
                 [
-                    'title' => 'My Enquiries',
+                    'title' => 'Booking Enquiries',
                     'route' => 'agent.tour-requests.index',
                     'icon' => 'ticket',
                 ],

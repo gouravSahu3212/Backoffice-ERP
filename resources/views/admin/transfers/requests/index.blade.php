@@ -1,16 +1,16 @@
 @extends('layouts.dashboard')
 
-@section('page-title', 'Tour Booking Enquiries')
+@section('page-title', 'Transfer Booking Enquiries')
 
 @section('content')
     <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Tour Booking Enquiries</h1>
-            <p class="text-sm text-gray-500 mt-1">Enquiries submitted by agents from the tours module.</p>
+            <h1 class="text-2xl font-bold text-gray-900">Transfer Booking Enquiries</h1>
+            <p class="text-sm text-gray-500 mt-1">Enquiries submitted by agents from the transfers module.</p>
         </div>
 
-        <form method="GET" action="{{ route('admin.tour-requests.index') }}" class="w-full lg:w-72">
-            <label for="requests-search" class="sr-only">Search requests</label>
+        <form method="GET" action="{{ route('admin.transfer-requests.index') }}" class="w-full lg:w-72">
+            <label for="requests-search" class="sr-only">Search enquiries</label>
             <input id="requests-search" name="search" value="{{ $search ?? '' }}" type="search"
                 placeholder="Search reference, customer, passport…"
                 class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
@@ -23,11 +23,11 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Request ID</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Tour</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Transfer Service</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Route</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Customer</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Passport</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Departure</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Pax</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Pickup Date & Time</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Agent</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Price</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date</th>
@@ -42,11 +42,16 @@
                                 {{ $req->request_reference }}
                             </td>
 
-                            {{-- Tour --}}
+                            {{-- Transfer Service --}}
                             <td class="px-4 py-3 text-sm text-gray-700 max-w-[180px]">
-                                <span class="block truncate text-[#0B1527] font-medium" title="{{ $req->tour?->title }}">
-                                    {{ $req->tour?->title ?? '—' }}
+                                <span class="block truncate text-[#0B1527] font-medium" title="{{ $req->title }}">
+                                    {{ $req->title }}
                                 </span>
+                            </td>
+
+                            {{-- Route --}}
+                            <td class="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                                {{ $req->route_label }}
                             </td>
 
                             {{-- Customer --}}
@@ -56,18 +61,16 @@
                             </td>
 
                             {{-- Passport --}}
-                            <td class="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">
+                            <td class="px-4 py-3 text-sm text-gray-600 whitespace-nowrap uppercase">
                                 {{ $req->passport_number }}
                             </td>
 
-                            {{-- Departure --}}
+                            {{-- Pickup Date & Time --}}
                             <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                                {{ $req->departure_date?->format('M d, Y') ?? '—' }}
-                            </td>
-
-                            {{-- Pax --}}
-                            <td class="px-4 py-3 text-sm text-gray-700">
-                                {{ $req->pax }}
+                                <div>{{ $req->pickup_date ? $req->pickup_date->format('M d, Y') : '—' }}</div>
+                                @if($req->pickup_time)
+                                    <div class="text-xs text-gray-400">{{ $req->pickup_time }}</div>
+                                @endif
                             </td>
 
                             {{-- Agent --}}
@@ -77,8 +80,7 @@
 
                             {{-- Price --}}
                             <td class="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                {{ $req->currency }}
-                                {{ number_format((float) $req->total_price, 0) }}
+                                {{ $req->currency }} {{ number_format((float) $req->total_price, 2) }}
                             </td>
 
                             {{-- Submitted Date --}}
@@ -87,10 +89,10 @@
                             </td>
 
                             {{-- Status Dropdown --}}
-                            <td class="px-4 py-3 text-sm">
+                            <td class="px-4 py-3 text-sm whitespace-nowrap">
                                 <div class="inline-flex items-center gap-2">
                                     <select
-                                        class="status-select border border-gray-200 rounded-md px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                        class="transfer-status-select border border-gray-200 rounded-md px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                         data-id="{{ $req->id }}"
                                         data-current="{{ $req->status }}"
                                     >
@@ -109,8 +111,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="px-4 py-16 text-center text-sm text-gray-500">
-                                No tour requests yet.
+                            <td colspan="9" class="px-4 py-12 text-center text-gray-400 text-sm">
+                                No transfer booking enquiries found.
                             </td>
                         </tr>
                     @endforelse
@@ -137,10 +139,7 @@
 
 @push('scripts')
 <script>
-(function() {
-    const statusUrl = @json(url('admin/tours/requests'));
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
+document.addEventListener('DOMContentLoaded', () => {
     function showToast(message) {
         const toast = document.getElementById('toast-notification');
         const toastMsg = document.getElementById('toast-message');
@@ -156,53 +155,50 @@
         }, 3000);
     }
 
-    document.querySelectorAll('.status-select').forEach(function(select) {
-        select.addEventListener('change', async function() {
-            const id = this.dataset.id;
-            const status = this.value;
-            const previous = this.dataset.current;
-            const spinner = this.parentElement.querySelector('.status-spinner');
+    document.querySelectorAll('.transfer-status-select').forEach(select => {
+        select.addEventListener('change', async (e) => {
+            const reqId = select.dataset.id;
+            const newStatus = select.value;
+            const previousStatus = select.dataset.current;
+            const spinner = select.parentElement.querySelector('.status-spinner');
 
-            this.disabled = true;
+            select.disabled = true;
             if (spinner) spinner.classList.remove('hidden');
 
             try {
-                const res = await fetch(`${statusUrl}/${id}/status`, {
+                const response = await fetch(`/admin/transfers/requests/${reqId}/status`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ status }),
+                    body: JSON.stringify({ status: newStatus })
                 });
 
-                const data = await res.json();
+                if (response.ok) {
+                    select.dataset.current = newStatus;
+                    select.classList.add('ring-2', 'ring-emerald-400');
+                    setTimeout(() => select.classList.remove('ring-2', 'ring-emerald-400'), 1200);
 
-                if (res.ok && data.success) {
-                    this.dataset.current = status;
-
-                    // Brief visual feedback
-                    this.classList.add('ring-2', 'ring-emerald-400');
-                    setTimeout(() => this.classList.remove('ring-2', 'ring-emerald-400'), 1200);
-
-                    // Show toast notification
-                    const capitalizedStatus = status.charAt(0).toUpperCase() + status.slice(1);
-                    showToast(`Tour enquiry status updated to "${capitalizedStatus}"`);
+                    const capitalizedStatus = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                    showToast(`Transfer enquiry status updated to "${capitalizedStatus}"`);
                 } else {
-                    this.value = previous;
-                    alert('Failed to update status. Please try again.');
+                    alert('Failed to update status.');
+                    select.value = previousStatus;
                 }
             } catch (err) {
-                this.value = previous;
-                console.error('Status update failed', err);
+                console.error(err);
+                alert('An error occurred while updating status.');
+                select.value = previousStatus;
             } finally {
-                this.disabled = false;
+                select.disabled = false;
                 if (spinner) spinner.classList.add('hidden');
             }
         });
     });
-})();
+});
 </script>
 @endpush
 

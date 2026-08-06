@@ -296,7 +296,7 @@
             {{-- Date of Birth --}}
             <div>
                 <label for="enq-dob" class="block text-sm font-semibold text-gray-700 mb-1.5">Date of Birth <span class="text-red-500">*</span></label>
-                <input type="date" id="enq-dob"
+                <input type="date" id="enq-dob" max="{{ \Carbon\Carbon::yesterday()->format('Y-m-d') }}"
                     class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
                 <p id="err-dob" class="text-red-500 text-xs mt-1 hidden"></p>
             </div>
@@ -550,6 +550,8 @@
         // Reset form
         fCustomerName.value = '';
         fDob.value = '';
+        const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+        fDob.max = yesterdayStr;
         fPassport.value = '';
 
         // Default pax to current travellers value (clamped to allowed max)
@@ -632,6 +634,9 @@
         }
         if (!fDob.value) {
             showFieldError('dob', 'Date of birth is required.');
+            valid = false;
+        } else if (fDob.value >= new Date().toISOString().split('T')[0]) {
+            showFieldError('dob', 'Date of birth must be a past date.');
             valid = false;
         }
         if (!fPassport.value.trim()) {
