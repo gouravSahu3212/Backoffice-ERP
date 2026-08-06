@@ -57,12 +57,12 @@
 
             @foreach ($menuItems as $item)
                 @php
-                    $itemRoute = Route::has($item['route']) ? $item['route'] : $fallbackRoute;
+                    // $itemRoute = Route::has($item['route']) ? $item['route'] : $fallbackRoute;
                     $itemIcon = match ($item['icon'] ?? '') {
                         'building' => 'building-office',
                         default => $item['icon'] ?? 'document',
                     };
-                    $itemBadge = ($itemRoute === $activityLogRoute) ? $unseenCount : 0;
+                    $itemBadge = ($item['route'] === $activityLogRoute) ? $unseenCount : 0;
                 @endphp
 
                 @if (isset($item['submenu']) && !empty($item['submenu']))
@@ -71,7 +71,7 @@
                             $r = Route::has($sub['route']) ? $sub['route'] : null;
                             return $r && (request()->routeIs($r) || request()->routeIs($r . '.*'));
                         });
-                        $parentActive = request()->routeIs($itemRoute) || request()->routeIs($itemRoute . '.*');
+                        $parentActive = request()->routeIs($item['route']) || request()->routeIs($item['route'] . '.*');
                     @endphp
 
                     <div x-data="{ open: {{ ($submenuActive || $parentActive) ? 'true' : 'false' }} }" class="space-y-0.5">
@@ -82,7 +82,7 @@
                                 : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900' }}">
 
                             {{-- Clickable link to parent route --}}
-                            <a href="{{ route($itemRoute) }}"
+                            <a href="{{ Route::has($item['route']) ? route($item['route']) : '#' }}"
                                 class="flex items-center gap-3 flex-1 min-w-0 px-3 py-2.5 text-sm font-medium rounded-l-lg transition-colors">
                                 <span class="shrink-0 {{ $parentActive || $submenuActive ? 'text-white' : 'text-gray-900' }}">
                                     <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
@@ -145,7 +145,7 @@
                         </div>
                     </div>
                 @else
-                    <x-nav-item :route="$itemRoute" :badge="$itemBadge">
+                    <x-nav-item :route="$item['route']" :badge="$itemBadge">
                         <x-slot:icon>
                             <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
                         </x-slot:icon>
