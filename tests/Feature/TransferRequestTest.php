@@ -5,6 +5,9 @@ use App\Models\TransferLocation;
 use App\Models\TransferRequest;
 use App\Models\User;
 use App\Models\VehicleType;
+use App\Notifications\BookingRequestStatusUpdatedNotification;
+use App\Notifications\NewBookingRequestNotification;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -38,6 +41,8 @@ it('restricts guests from accessing transfer request routes', function () {
 });
 
 it('allows agent to submit a transfer booking enquiry', function () {
+    Notification::fake();
+
     $payload = [
         'customer_name' => 'John Doe',
         'date_of_birth' => '1990-05-15',
@@ -58,6 +63,8 @@ it('allows agent to submit a transfer booking enquiry', function () {
         ->assertOk()
         ->assertJsonFragment(['success' => true]);
 
+    Notification::assertSentTo($this->admin, NewBookingRequestNotification::class);
+
     $reference = $response->json('reference');
 
     $this->assertDatabaseHas('transfer_requests', [
@@ -65,7 +72,7 @@ it('allows agent to submit a transfer booking enquiry', function () {
         'agent_id' => $this->agent->id,
         'customer_name' => 'John Doe',
         'passport_number' => 'A1234567',
-        'pickup_date' => '2026-08-20',
+        'pickup_date' => '2026-08-20 00:00:00',
         'pickup_time' => '14:30',
         'status' => 'new',
     ]);
@@ -109,6 +116,8 @@ it('allows admin to view all transfer booking enquiries', function () {
 });
 
 it('allows admin to update transfer request status and logs activity', function () {
+    Notification::fake();
+
     $transferRequest = TransferRequest::factory()->create([
         'agent_id' => $this->agent->id,
         'status' => 'new',
@@ -120,6 +129,8 @@ it('allows admin to update transfer request status and logs activity', function 
         ])
         ->assertOk()
         ->assertJson(['success' => true]);
+
+    Notification::assertSentTo($this->agent, BookingRequestStatusUpdatedNotification::class);
 
     $this->assertDatabaseHas('transfer_requests', [
         'id' => $transferRequest->id,

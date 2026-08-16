@@ -4,8 +4,11 @@ namespace App\Services;
 
 use App\Models\TransferRequest;
 use App\Models\User;
+use App\Notifications\BookingRequestStatusUpdatedNotification;
+use App\Notifications\NewBookingRequestNotification;
 use App\Repositories\TransferRequestRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
 class TransferRequestService
@@ -52,6 +55,9 @@ class TransferRequestService
             $agent->id
         );
 
+        $admins = User::role('Super Admin')->get();
+        Notification::send($admins, new NewBookingRequestNotification($transferRequest));
+
         return $transferRequest;
     }
 
@@ -85,6 +91,10 @@ class TransferRequestService
             null,
             $transferRequest->agent_id
         );
+
+        if ($transferRequest->agent) {
+            $transferRequest->agent->notify(new BookingRequestStatusUpdatedNotification($transferRequest));
+        }
 
         return $transferRequest->fresh();
     }

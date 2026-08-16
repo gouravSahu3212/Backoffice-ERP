@@ -5,7 +5,10 @@ namespace App\Services;
 use App\Models\Tour;
 use App\Models\TourRequest;
 use App\Models\User;
+use App\Notifications\BookingRequestStatusUpdatedNotification;
+use App\Notifications\NewBookingRequestNotification;
 use App\Repositories\TourRequestRepository;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
 class TourRequestService
@@ -46,6 +49,9 @@ class TourRequestService
             $agent->id
         );
 
+        $admins = User::role('Super Admin')->get();
+        Notification::send($admins, new NewBookingRequestNotification($tourRequest));
+
         return $tourRequest;
     }
 
@@ -79,6 +85,10 @@ class TourRequestService
             null,
             $tourRequest->agent_id
         );
+
+        if ($tourRequest->agent) {
+            $tourRequest->agent->notify(new BookingRequestStatusUpdatedNotification($tourRequest));
+        }
 
         return $tourRequest->fresh();
     }
