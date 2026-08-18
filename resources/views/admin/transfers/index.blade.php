@@ -525,44 +525,24 @@
                     <input type="hidden" id="airport-rate-id" name="rate_id" value="">
 
 
-                    {{-- Transfer Type + Zone --}}
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="transfer-type-select" class="block text-sm font-medium text-gray-700 mb-1.5">
-                                Transfer Type <span class="text-red-500">*</span>
-                            </label>
-                            <select id="transfer-type-select" name="transfer_type"
-                                class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
-                                <option value="pickup">Pickup</option>
-                                <option value="drop">Drop</option>
-                            </select>
-                            <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="transfer_type">
-                            </p>
-                        </div>
-                        <div>
-                            <label for="zone-select" class="block text-sm font-medium text-gray-700 mb-1.5">
-                                Zone <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex gap-2">
-                                <select id="zone-select" name="zone_id"
-                                    class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
-                                    <option value="">Select</option>
-                                    @foreach ($zones as $zone)
-                                        <option value="{{ $zone->id }}">{{ $zone->name }}</option>
-                                    @endforeach
-                                </select>
-                                <button type="button" id="add-zone-btn"
-                                    class="flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
-                                    title="Add new zone">+ New</button>
-                            </div>
-                            <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="zone_id"></p>
-                        </div>
+                    {{-- Transfer Type --}}
+                    <div>
+                        <label for="transfer-type-select" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Transfer Type <span class="text-red-500">*</span>
+                        </label>
+                        <select id="transfer-type-select" name="transfer_type"
+                            class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                            <option value="pickup">Pickup</option>
+                            <option value="drop">Drop</option>
+                        </select>
+                        <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="transfer_type">
+                        </p>
                     </div>
 
-                    {{-- Airport --}}
+                    {{-- Pickup --}}
                     <div>
                         <label for="airport-select" class="block text-sm font-medium text-gray-700 mb-1.5">
-                            Airport <span class="text-red-500">*</span>
+                            Airport pickup <span class="text-red-500">*</span>
                         </label>
                         <div class="flex gap-2">
                             <select id="airport-select" name="airport_id"
@@ -577,6 +557,26 @@
                                 title="Add new airport">+ New</button>
                         </div>
                         <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="airport_id"></p>
+                    </div>
+
+                    {{-- Drop --}}
+                    <div>
+                        <label for="zone-select" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Drop Location <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <select id="zone-select" name="zone_id"
+                                class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                                <option value="">Select</option>
+                                @foreach ($zones as $zone)
+                                    <option value="{{ $zone->id }}">{{ $zone->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" id="add-zone-btn"
+                                class="flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                                title="Add new zone">+ New</button>
+                        </div>
+                        <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="zone_id"></p>
                     </div>
 
                     {{-- Vehicle Type --}}
@@ -1616,6 +1616,21 @@
                 airportRateModal));
             document.getElementById('airport-rate-modal-backdrop').addEventListener('click', () => hideModal(
                 airportRateModal));
+
+            // chnage field name on transfer-type
+            transferTypeSel.addEventListener('change', function() {
+                if (this.value === 'pickup') {
+                    document.querySelector('label[for="airport-select"]').innerHTML =
+                        "Airport pickup <span class='text-red-500'>*</span>";
+                    document.querySelector('label[for="zone-select"]').innerHTML =
+                        "Drop Location <span class='text-red-500'>*</span>";
+                } else {
+                    document.querySelector('label[for="airport-select"]').innerHTML =
+                        "Airport Drop <span class='text-red-500'>*</span>";
+                    document.querySelector('label[for="zone-select"]').innerHTML =
+                        "Pickup Location <span class='text-red-500'>*</span>";
+                }
+            });
 
             // Delegated edit button handler
             document.getElementById('airport-rates-tbody').addEventListener('click', (e) => {
