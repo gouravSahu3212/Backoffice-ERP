@@ -37,11 +37,6 @@ return [
                 ],
             ],
         ],
-        [
-            'title' => 'Activity Log',
-            'route' => 'admin.activity-logs.index',
-            'icon' => 'arrow-path',
-        ],
     ],
 
     'agent' => [
@@ -83,11 +78,6 @@ return [
             'title' => 'Bookings',
             'route' => 'agent.bookings.index',
             'icon' => 'calendar',
-        ],
-        [
-            'title' => 'Activity Log',
-            'route' => 'agent.activity-logs.index',
-            'icon' => 'arrow-path',
         ],
     ],
 ];
