@@ -203,7 +203,7 @@
 
                 <div class="space-y-4">
                     {{-- Departure Date Picker --}}
-                    <div>
+                    <div class="hidden">
                         <label for="side-date" class="block text-sm font-semibold mb-1.5">Departure Date</label>
                         <div class="relative">
                             <input type="text" id="side-date" placeholder="Select Departure Date" readonly class="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition cursor-pointer pr-10">
