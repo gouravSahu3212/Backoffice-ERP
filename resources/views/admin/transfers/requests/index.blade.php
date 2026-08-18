@@ -96,7 +96,7 @@
                                         data-id="{{ $req->id }}"
                                         data-current="{{ $req->status }}"
                                     >
-                                        @foreach(['new', 'contacted', 'confirmed', 'closed'] as $statusOption)
+                                        @foreach(['new', 'confirmed', 'reject'] as $statusOption)
                                             <option value="{{ $statusOption }}" {{ $req->status === $statusOption ? 'selected' : '' }}>
                                                 {{ ucfirst($statusOption) }}
                                             </option>
