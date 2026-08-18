@@ -524,26 +524,6 @@
                     @csrf
                     <input type="hidden" id="airport-rate-id" name="rate_id" value="">
 
-                    {{-- Airport --}}
-                    <div>
-                        <label for="airport-select" class="block text-sm font-medium text-gray-700 mb-1.5">
-                            Airport <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex gap-2">
-                            <select id="airport-select" name="airport_id"
-                                class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
-                                <option value="">Select</option>
-                                @foreach ($airports as $airport)
-                                    <option value="{{ $airport->id }}">{{ $airport->name }}</option>
-                                @endforeach
-                            </select>
-                            <button type="button" id="add-airport-btn"
-                                class="flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
-                                title="Add new airport">+ New</button>
-                        </div>
-                        <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="airport_id"></p>
-                    </div>
-
 
                     {{-- Transfer Type + Zone --}}
                     <div class="grid grid-cols-2 gap-3">
@@ -577,6 +557,26 @@
                             </div>
                             <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="zone_id"></p>
                         </div>
+                    </div>
+
+                    {{-- Airport --}}
+                    <div>
+                        <label for="airport-select" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Airport <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <select id="airport-select" name="airport_id"
+                                class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                                <option value="">Select</option>
+                                @foreach ($airports as $airport)
+                                    <option value="{{ $airport->id }}">{{ $airport->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" id="add-airport-btn"
+                                class="flex-shrink-0 px-3 py-2 text-xs font-semibold border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                                title="Add new airport">+ New</button>
+                        </div>
+                        <p class="field-error-airport text-red-500 text-xs mt-1 hidden" data-field="airport_id"></p>
                     </div>
 
                     {{-- Vehicle Type --}}
