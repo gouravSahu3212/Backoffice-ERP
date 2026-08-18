@@ -47,79 +47,57 @@
                     'Agent' => 'agent.dashboard',
                     default => 'dashboard',
                 };
-                $activityLogRoute = match ($roleName) {
-                    'Super Admin' => 'admin.activity-logs.index',
-                    'Agent' => 'agent.activity-logs.index',
-                    default => '',
-                };
-                $unseenCount = app(\App\Services\ActivityLogService::class)->getUnseenCount(auth()->user());
             @endphp
 
             @foreach ($menuItems as $item)
                 @php
-                    // $itemRoute = Route::has($item['route']) ? $item['route'] : $fallbackRoute;
                     $itemIcon = match ($item['icon'] ?? '') {
                         'building' => 'building-office',
                         default => $item['icon'] ?? 'document',
                     };
-                    $itemBadge = ($item['route'] === $activityLogRoute) ? $unseenCount : 0;
                 @endphp
 
                 @if (isset($item['submenu']) && !empty($item['submenu']))
                     @php
-                        $submenuActive = collect($item['submenu'])->contains(function ($sub) {
+                        // Build full submenu: parent's own route first, then children
+                        $fullSubmenu = array_merge(
+                            [['title' => $item['title'], 'route' => $item['route'], 'icon' => $item['icon'] ?? '']],
+                            $item['submenu']
+                        );
+
+                        $anyChildActive = collect($fullSubmenu)->contains(function ($sub) {
                             $r = Route::has($sub['route']) ? $sub['route'] : null;
                             return $r && (request()->routeIs($r) || request()->routeIs($r . '.*'));
                         });
-                        $parentActive = request()->routeIs($item['route']) || request()->routeIs($item['route'] . '.*');
                     @endphp
 
-                    <div x-data="{ open: {{ ($submenuActive || $parentActive) ? 'true' : 'false' }} }" class="space-y-0.5">
-                        {{-- Parent row: link + collapse toggle --}}
-                        <div class="flex items-center rounded-lg transition-colors
-                            {{ $parentActive || $submenuActive
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900' }}">
-
-                            {{-- Clickable link to parent route --}}
-                            <a href="{{ Route::has($item['route']) ? route($item['route']) : '#' }}"
-                                class="flex items-center gap-3 flex-1 min-w-0 px-3 py-2.5 text-sm font-medium rounded-l-lg transition-colors">
-                                <span class="shrink-0 {{ $parentActive || $submenuActive ? 'text-white' : 'text-gray-900' }}">
-                                    <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
-                                </span>
-                                <span x-show="sidebarOpen" x-transition class="ml-3 flex-1 truncate">
-                                    {{ $item['title'] }}
-                                </span>
-                                @if($itemBadge > 0)
-                                    <span x-show="sidebarOpen" x-transition
-                                        class="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-bold rounded-full
-                                        {{ $parentActive || $submenuActive ? 'bg-white text-gray-900' : 'bg-red-500 text-white' }}">
-                                        {{ $itemBadge > 99 ? '99+' : $itemBadge }}
-                                    </span>
-                                @endif
-                            </a>
-
-                            {{-- Chevron toggle button --}}
-                            <button
+                    <div x-data="{ open: {{ $anyChildActive ? 'true' : 'false' }} }" class="space-y-0.5">
+                        {{-- Parent row: toggle-only, never highlighted --}}
+                        <button
+                            @click="open = !open"
+                            type="button"
+                            class="flex items-center w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+                                {{ $anyChildActive
+                                    ? 'bg-gray-900 text-white'
+                                    : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900' }}"
+                        >
+                            <span class="shrink-0 {{ $anyChildActive ? 'text-white' : 'text-gray-900' }}">
+                                <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
+                            </span>
+                            <span x-show="sidebarOpen" x-transition class="ml-3 flex-1 text-left truncate">
+                                {{ $item['title'] }}
+                            </span>
+                            <svg
                                 x-show="sidebarOpen"
-                                @click="open = !open"
-                                type="button"
-                                class="shrink-0 p-2.5 rounded-r-lg transition-colors
-                                {{ $parentActive || $submenuActive
-                                    ? 'hover:bg-gray-700'
-                                    : 'hover:bg-gray-200' }}"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4 shrink-0 transition-transform duration-200"
+                                :class="open ? 'rotate-90' : ''"
+                                fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="1.8"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="w-4 h-4 transition-transform duration-200"
-                                    :class="open ? 'rotate-90' : ''"
-                                    fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="1.8"
-                                >
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        </div>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
 
                         {{-- Collapsible sub-items --}}
                         <div
@@ -127,7 +105,7 @@
                             x-collapse
                             class="pl-4 space-y-0.5"
                         >
-                            @foreach ($item['submenu'] as $subItem)
+                            @foreach ($fullSubmenu as $subItem)
                                 @php
                                     $subRoute = Route::has($subItem['route']) ? $subItem['route'] : $fallbackRoute;
                                     $subIcon = match ($subItem['icon'] ?? '') {
@@ -145,7 +123,7 @@
                         </div>
                     </div>
                 @else
-                    <x-nav-item :route="$item['route']" :badge="$itemBadge">
+                    <x-nav-item :route="$item['route']">
                         <x-slot:icon>
                             <x-dynamic-component :component="'heroicon-o-' . $itemIcon" class="w-4 h-4" />
                         </x-slot:icon>
