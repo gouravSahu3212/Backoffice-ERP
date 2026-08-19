@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Notifications\AgentAccountDeletedNotification;
 use App\Notifications\AgentWelcomeNotification;
 use App\Repositories\AgentRepository;
 use Illuminate\Support\Facades\Password;
@@ -74,6 +75,9 @@ class AgentService
     public function delete(User $agent): void
     {
         $name = $agent->name;
+
+        $agent->notify(new AgentAccountDeletedNotification);
+
         $this->repository->delete($agent);
 
         $this->activityLog->log('deleted', "deleted agent \"{$name}\"");
