@@ -17,7 +17,7 @@
                 ];
                 $colorClass = $actionColors[$log->action] ?? 'bg-gray-50 text-gray-600 border-gray-200';
             @endphp
-            <span class="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-lg border {{ $colorClass }}">
+            <span class="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-lg border whitespace-nowrap {{ $colorClass }}">
                 {{ str_replace('_', ' ', $log->action) }}
             </span>
         </td>
