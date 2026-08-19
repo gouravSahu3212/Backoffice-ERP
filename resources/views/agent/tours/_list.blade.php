@@ -26,7 +26,7 @@
         {{-- Content --}}
         <div class="p-6 flex-1 flex flex-col justify-between">
             <div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $tour->title }}</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-2"><a href="{{ route('agent.tours.show', $tour) }}" class="hover:text-slate-700 transition-colors">{{ $tour->title }}</a></h3>
                 
                 {{-- Rating & Reviews --}}
                 <div class="flex items-center gap-2 mb-3 text-sm">

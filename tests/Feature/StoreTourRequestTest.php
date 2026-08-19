@@ -3,7 +3,10 @@
 use App\Models\Tour;
 use App\Models\TourRequest;
 use App\Models\User;
+use App\Notifications\BookingRequestStatusUpdatedNotification;
+use App\Notifications\NewBookingRequestNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
@@ -12,6 +15,9 @@ beforeEach(function () {
     // Ensure roles exist
     Role::firstOrCreate(['name' => 'Agent', 'guard_name' => 'web']);
     Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+
+    $this->admin = User::factory()->create();
+    $this->admin->assignRole('Super Admin');
 });
 
 function makeAgentWithTour(): array
@@ -45,6 +51,8 @@ function validPayload(): array
 }
 
 test('agent can submit a tour enquiry', function () {
+    Notification::fake();
+
     ['agent' => $agent, 'tour' => $tour] = makeAgentWithTour();
 
     $response = $this->actingAs($agent)
@@ -53,6 +61,8 @@ test('agent can submit a tour enquiry', function () {
     $response->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonStructure(['success', 'message', 'reference']);
+
+    Notification::assertSentTo($this->admin, NewBookingRequestNotification::class);
 
     expect(TourRequest::count())->toBe(1);
 
@@ -106,6 +116,8 @@ test('admin can view all tour requests', function () {
 });
 
 test('admin can update tour request status', function () {
+    Notification::fake();
+
     ['agent' => $agent, 'tour' => $tour] = makeAgentWithTour();
 
     $req = TourRequest::factory()->create([
@@ -121,6 +133,8 @@ test('admin can update tour request status', function () {
         ->patchJson(route('admin.tour-requests.update-status', $req), ['status' => 'confirmed'])
         ->assertOk()
         ->assertJsonPath('success', true);
+
+    Notification::assertSentTo($agent, BookingRequestStatusUpdatedNotification::class);
 
     expect($req->fresh()->status)->toBe('confirmed');
 });

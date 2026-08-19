@@ -107,6 +107,21 @@
                                 @endif
                             </button>
 
+                            {{-- Delete --}}
+                            <button
+                                type="button"
+                                title="Delete agent"
+                                class="open-delete-modal p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                                data-id="{{ $agent->id }}"
+                                data-name="{{ $agent->name }}"
+                                data-delete-url="{{ route('admin.agents.destroy', $agent) }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                </svg>
+                            </button>
+
                         </div>
                     </td>
 
@@ -354,6 +369,31 @@
 
     </div>
 
+</div>
+
+{{-- ============================================================
+     DELETE AGENT MODAL
+     ============================================================ --}}
+<div id="delete-agent-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center"
+    aria-modal="true" role="dialog">
+    <div class="delete-modal-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-7">
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Delete Agent?</h2>
+        <p class="text-sm text-gray-500 mb-6" id="delete-modal-msg">This action cannot be undone. The agent will be notified via email.</p>
+        <div class="flex justify-end gap-3">
+            <button type="button" class="close-delete-modal px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                Cancel
+            </button>
+            <form id="delete-agent-form" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 
 @push('scripts')
@@ -630,6 +670,32 @@
         } finally {
             editSaveBtn.disabled = false;
             editSaveBtn.textContent = 'Save';
+        }
+    });
+
+    // ── DELETE modal ────────────────────────────────────────────────────
+    const deleteModal = document.getElementById('delete-agent-modal');
+    const deleteForm  = document.getElementById('delete-agent-form');
+    const deleteMsg   = document.getElementById('delete-modal-msg');
+
+    document.querySelectorAll('.open-delete-modal').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            deleteForm.action = this.dataset.deleteUrl;
+            deleteMsg.textContent = 'Delete "' + this.dataset.name + '"? This cannot be undone. The agent will be notified via email.';
+            openModal(deleteModal);
+        });
+    });
+
+    document.querySelectorAll('.close-delete-modal, .delete-modal-backdrop').forEach(el =>
+        el.addEventListener('click', () => closeModal(deleteModal))
+    );
+
+    // ── KEYBOARD ESC ───────────────────────────────────────────────────
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeModal(createModal);
+            closeModal(editModal);
+            closeModal(deleteModal);
         }
     });
 })();
