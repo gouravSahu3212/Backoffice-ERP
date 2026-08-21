@@ -404,8 +404,12 @@
             <form id="delete-agent-form" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition">
-                    Delete
+                <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition flex items-center justify-center gap-2">
+                    <svg class="delete-spinner w-4 h-4 text-white animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="delete-text">Delete</span>
                 </button>
             </form>
         </div>
@@ -684,6 +688,31 @@
     document.querySelectorAll('.close-delete-modal, .delete-modal-backdrop').forEach(el =>
         el.addEventListener('click', () => closeModal(deleteModal))
     );
+
+    // Handle delete form submission with loader
+    deleteForm.addEventListener('submit', function (e) {
+        const btn = deleteForm.querySelector('button[type="submit"]');
+        const spinner = btn.querySelector('.delete-spinner');
+        const text = btn.querySelector('.delete-text');
+
+        if (spinner) {
+            spinner.classList.remove('hidden');
+        }
+        if (text) {
+            text.textContent = 'Deleting...';
+        }
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+        const cancelBtn = deleteModal.querySelector('.close-delete-modal');
+        if (cancelBtn) {
+            cancelBtn.disabled = true;
+            cancelBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        e.preventDefault();
+        deleteForm.submit();
+    });
 
     // ── KEYBOARD ESC ───────────────────────────────────────────────────
     document.addEventListener('keydown', function (e) {
