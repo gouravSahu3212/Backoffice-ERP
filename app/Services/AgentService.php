@@ -36,7 +36,7 @@ class AgentService
         $token = Password::getRepository()->create($agent);
         $resetUrl = route('password.reset', ['token' => $token, 'email' => $agent->email]);
 
-        $agent->notify(new AgentWelcomeNotification($resetUrl));
+        $agent->notify(new AgentWelcomeNotification($resetUrl, $data['password']));
 
         $this->activityLog->log('created', "created agent \"{$agent->name}\"", $agent);
 

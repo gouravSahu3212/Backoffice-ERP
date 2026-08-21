@@ -54,7 +54,13 @@ test('super admin can create agent', function () {
     ]);
 
     $agent = User::where('email', 'agent@example.com')->first();
-    Notification::assertSentTo($agent, AgentWelcomeNotification::class);
+    Notification::assertSentTo($agent, AgentWelcomeNotification::class, function ($notification) use ($agent) {
+        $mailData = $notification->toMail($agent);
+
+        return $notification->tempPassword === 'password'
+            && str_contains(implode("\n", $mailData->introLines), 'Username: '.$agent->username)
+            && str_contains(implode("\n", $mailData->introLines), 'Temporary Password: password');
+    });
 });
 
 test('super admin can update agent', function () {
