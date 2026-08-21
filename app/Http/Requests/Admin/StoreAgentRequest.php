@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Rules\Phone;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -42,7 +41,6 @@ class StoreAgentRequest extends FormRequest
             'phone' => [
                 'nullable',
                 'max:20',
-                new Phone,
             ],
             'password' => [
                 'required',

@@ -80,20 +80,21 @@ test('super admin can update agent', function () {
     ]);
 });
 
-test('super admin cannot create agent with invalid phone format', function () {
+test('super admin can create agent with any phone format', function () {
     $admin = User::factory()->create();
     $admin->assignRole('Super Admin');
 
     $response = $this->actingAs($admin)->post(route('admin.agents.store'), [
         'name' => 'Test Agent',
-        'username' => 'test_agent_invalid',
-        'email' => 'invalid-phone@example.com',
-        'phone' => '1234567', // too short / wrong format
+        'username' => 'test_agent_anyphone',
+        'email' => 'any-phone@example.com',
+        'phone' => '1234567', // any format is accepted
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
 
-    $response->assertSessionHasErrors('phone');
+    $response->assertRedirect(route('admin.agents.index'));
+    $this->assertDatabaseHas('users', ['email' => 'any-phone@example.com', 'phone' => '1234567']);
 });
 
 test('super admin can create agent with null phone', function () {
