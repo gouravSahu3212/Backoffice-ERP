@@ -22,6 +22,7 @@
             <table class="min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Request ID</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Transfer Service</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Route</th>
@@ -31,12 +32,26 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Vehicle</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Total Price</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse ($requests as $req)
                         <tr class="hover:bg-gray-50 transition-colors">
+                            {{-- Status Badge --}}
+                            <td class="px-4 py-3 text-sm whitespace-nowrap">
+                                @php
+                                    $statusClasses = match($req->status) {
+                                        'new' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                        'confirmed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        'reject' => 'bg-gray-100 text-gray-600 border-gray-200',
+                                        default => 'bg-gray-50 text-gray-600 border-gray-200',
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border {{ $statusClasses }}">
+                                    {{ ucfirst($req->status) }}
+                                </span>
+                            </td>
+
                             {{-- Request ID --}}
                             <td class="px-4 py-3 text-sm font-semibold text-[#0B1527] whitespace-nowrap">
                                 {{ $req->request_reference }}
@@ -86,22 +101,6 @@
                             {{-- Submitted Date --}}
                             <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
                                 {{ $req->created_at->format('Y-m-d') }}
-                            </td>
-
-                            {{-- Status Badge --}}
-                            <td class="px-4 py-3 text-sm whitespace-nowrap">
-                                @php
-                                    $statusClasses = match($req->status) {
-                                        'new' => 'bg-blue-50 text-blue-700 border-blue-200',
-                                        'contacted' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                        'confirmed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                        'closed' => 'bg-gray-100 text-gray-600 border-gray-200',
-                                        default => 'bg-gray-50 text-gray-600 border-gray-200',
-                                    };
-                                @endphp
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border {{ $statusClasses }}">
-                                    {{ ucfirst($req->status) }}
-                                </span>
                             </td>
                         </tr>
                     @empty
