@@ -208,7 +208,6 @@
                 @error('phone')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
-                <p id="c-phone-error" class="text-red-500 text-xs mt-1 hidden"></p>
             </div>
 
             {{-- Username --}}
@@ -224,13 +223,30 @@
             </div>
 
             {{-- Temporary Password --}}
+            @php
+                $defaultPassword = 'Tmp' . str_pad(random_int(0, 99999), 5, '0', STR_PAD_LEFT) . '!';
+            @endphp
             <div>
                 <label for="c-password" class="block text-sm font-medium text-gray-700 mb-1.5">
                     Temporary Password <span class="text-red-500">*</span>
                 </label>
                 <div class="flex gap-2">
-                    <input id="c-password" type="password" name="password" required
-                        class="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                    <div class="relative flex-1">
+                        <input id="c-password" type="text" name="password" value="{{ old('password', $defaultPassword) }}" required
+                            class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition">
+                    </div>
+                    <button type="button" id="toggle-password-btn" title="Toggle password visibility"
+                        class="px-3 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-gray-500">
+                        {{-- Eye open icon --}}
+                        <svg id="eye-open-icon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {{-- Eye closed icon --}}
+                        <svg id="eye-closed-icon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                        </svg>
+                    </button>
                     <button type="button" id="generate-password-btn" title="Generate password"
                         class="px-3 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-gray-500">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -238,7 +254,7 @@
                         </svg>
                     </button>
                 </div>
-                <input type="hidden" name="password_confirmation" id="c-password-confirm">
+                <input type="hidden" name="password_confirmation" id="c-password-confirm" value="{{ old('password', $defaultPassword) }}">
                 @error('password')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -388,8 +404,12 @@
             <form id="delete-agent-form" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition">
-                    Delete
+                <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition flex items-center justify-center gap-2">
+                    <svg class="delete-spinner w-4 h-4 text-white animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="delete-text">Delete</span>
                 </button>
             </form>
         </div>
@@ -403,38 +423,28 @@
     function openModal(el)  { el.classList.remove('hidden'); el.classList.add('flex'); document.body.classList.add('overflow-hidden'); }
     function closeModal(el) { el.classList.add('hidden'); el.classList.remove('flex'); document.body.classList.remove('overflow-hidden'); }
 
-    function validatePhoneNumber(value) {
-        if (!value) {
-            return true;
-        }
-        const normalized = value.replace(/[\s\-\(\)]+/g, '');
-        const patterns = {
-            Saudi:   /^(?:\+?966|0)?5\d{8}$/,
-            Jordon:  /^(?:\+?962|0)?7[789]\d{7}$/,
-            Morocco: /^(?:\+?212|0)?[67]\d{8}$/,
-            Egypt:   /^(?:\+?20|0)?1[0125]\d{8}$/,
-            Turkey:  /^(?:\+?90|0)?5\d{9}$/,
-            UAE:     /^(?:\+?971|0)?5[024568]\d{7}$/
-        };
-        for (const country in patterns) {
-            if (patterns[country].test(normalized)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // ── CREATE modal ───────────────────────────────────────────────────
     const createModal  = document.getElementById('create-agent-modal');
     const createForm   = document.getElementById('create-agent-form');
     const pwdInput     = document.getElementById('c-password');
     const pwdConfirm   = document.getElementById('c-password-confirm');
     const genPwdBtn    = document.getElementById('generate-password-btn');
+    const togglePwdBtn = document.getElementById('toggle-password-btn');
+    const eyeOpen      = document.getElementById('eye-open-icon');
+    const eyeClosed    = document.getElementById('eye-closed-icon');
 
     document.getElementById('open-create-agent-modal').addEventListener('click', () => openModal(createModal));
     document.querySelectorAll('.close-create-modal, .create-modal-backdrop').forEach(el =>
         el.addEventListener('click', () => closeModal(createModal))
     );
+
+    // Toggle password visibility
+    togglePwdBtn.addEventListener('click', function () {
+        const isPassword = pwdInput.type === 'password';
+        pwdInput.type = isPassword ? 'text' : 'password';
+        eyeOpen.classList.toggle('hidden', !isPassword);
+        eyeClosed.classList.toggle('hidden', isPassword);
+    });
 
     genPwdBtn.addEventListener('click', function () {
         const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$';
@@ -443,29 +453,18 @@
         pwdInput.type  = 'text';
         pwdInput.value = pwd;
         pwdConfirm.value = pwd;
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+    });
+
+    // Sync confirmation on manual password edits
+    pwdInput.addEventListener('input', function () {
+        pwdConfirm.value = pwdInput.value;
     });
 
     @if($errors->any())
         openModal(createModal);
     @endif
-
-    createForm.addEventListener('submit', function (e) {
-        const phoneVal = document.getElementById('c-phone').value.trim();
-        const errEl = document.getElementById('c-phone-error');
-        if (errEl) {
-            errEl.textContent = '';
-            errEl.classList.add('hidden');
-        }
-
-        if (!validatePhoneNumber(phoneVal)) {
-            e.preventDefault();
-            if (errEl) {
-                errEl.textContent = 'The phone must be a valid phone number for Saudi, Jordon, Morocco, Egypt, Turkey, or UAE.';
-                errEl.classList.remove('hidden');
-            }
-            document.getElementById('c-phone').focus();
-        }
-    });
 
     // ── EDIT modal ─────────────────────────────────────────────────────
     const editModal      = document.getElementById('edit-agent-modal');
@@ -689,6 +688,31 @@
     document.querySelectorAll('.close-delete-modal, .delete-modal-backdrop').forEach(el =>
         el.addEventListener('click', () => closeModal(deleteModal))
     );
+
+    // Handle delete form submission with loader
+    deleteForm.addEventListener('submit', function (e) {
+        const btn = deleteForm.querySelector('button[type="submit"]');
+        const spinner = btn.querySelector('.delete-spinner');
+        const text = btn.querySelector('.delete-text');
+
+        if (spinner) {
+            spinner.classList.remove('hidden');
+        }
+        if (text) {
+            text.textContent = 'Deleting...';
+        }
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+        const cancelBtn = deleteModal.querySelector('.close-delete-modal');
+        if (cancelBtn) {
+            cancelBtn.disabled = true;
+            cancelBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        e.preventDefault();
+        deleteForm.submit();
+    });
 
     // ── KEYBOARD ESC ───────────────────────────────────────────────────
     document.addEventListener('keydown', function (e) {

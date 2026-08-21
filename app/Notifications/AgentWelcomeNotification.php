@@ -13,7 +13,7 @@ class AgentWelcomeNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(protected string $resetUrl)
+    public function __construct(public string $resetUrl, public string $tempPassword)
     {
         //
     }
@@ -37,8 +37,11 @@ class AgentWelcomeNotification extends Notification
             ->subject('Welcome to Backoffice ERP')
             ->greeting('Hello '.$notifiable->name.',')
             ->line('Your account has been created by the administrator.')
-            ->line('Please click the link below to set your password and access your account.')
-            ->action('Set Password', $this->resetUrl)
+            ->line('Here are your login credentials:')
+            ->line('Username: '.$notifiable->username)
+            ->line('Temporary Password: '.$this->tempPassword)
+            ->line('Please click the link below to reset your password and access your account.')
+            ->action('Reset Password', $this->resetUrl)
             ->line('If you did not expect this, no further action is required.');
     }
 

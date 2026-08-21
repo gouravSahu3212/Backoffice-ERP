@@ -22,6 +22,7 @@
             <table class="min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Request ID</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Tour</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Customer</th>
@@ -30,12 +31,27 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Pax</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Price</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse ($requests as $req)
                         <tr class="hover:bg-gray-50 transition-colors">
+                            {{-- Status Badge --}}
+                            <td class="px-4 py-3 text-sm">
+                                @php
+                                    $statusColors = [
+                                        'new' => 'bg-blue-50 text-blue-700',
+                                        'confirmed' => 'bg-emerald-50 text-emerald-700',
+                                        'reject' => 'bg-gray-100 text-gray-500',
+                                        default => 'bg-gray-50 text-gray-600 border-gray-200',
+                                    ];
+                                    $colorClass = $statusColors[$req->status] ?? 'bg-gray-100 text-gray-500';
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold {{ $colorClass }}">
+                                    {{ ucfirst($req->status) }}
+                                </span>
+                            </td>
+
                             {{-- Request ID --}}
                             <td class="px-4 py-3 text-sm font-semibold text-[#0B1527] whitespace-nowrap">
                                 {{ $req->request_reference }}
@@ -80,22 +96,6 @@
                             {{-- Submitted Date --}}
                             <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
                                 {{ $req->created_at->format('Y-m-d') }}
-                            </td>
-
-                            {{-- Status Badge --}}
-                            <td class="px-4 py-3 text-sm">
-                                @php
-                                    $statusColors = [
-                                        'new' => 'bg-blue-50 text-blue-700',
-                                        'contacted' => 'bg-amber-50 text-amber-700',
-                                        'confirmed' => 'bg-emerald-50 text-emerald-700',
-                                        'closed' => 'bg-gray-100 text-gray-500',
-                                    ];
-                                    $colorClass = $statusColors[$req->status] ?? 'bg-gray-100 text-gray-500';
-                                @endphp
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold {{ $colorClass }}">
-                                    {{ ucfirst($req->status) }}
-                                </span>
                             </td>
                         </tr>
                     @empty
