@@ -43,7 +43,7 @@
                                         'new' => 'bg-blue-50 text-blue-700',
                                         'confirmed' => 'bg-emerald-50 text-emerald-700',
                                         'reject' => 'bg-gray-100 text-gray-500',
-                                        default => 'bg-gray-50 text-gray-600 border-gray-200',
+                                        'default' => 'bg-gray-50 text-gray-600 border-gray-200',
                                     ];
                                     $colorClass = $statusColors[$req->status] ?? 'bg-gray-100 text-gray-500';
                                 @endphp
