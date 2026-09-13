@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\AirportTransferRateController;
 use App\Http\Controllers\Admin\CityTransferRateController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\FullDayTransferRateController;
+use App\Http\Controllers\Admin\HotelController as AdminHotelController;
+use App\Http\Controllers\Admin\HotelRoomSlotController as AdminHotelRoomSlotController;
 use App\Http\Controllers\Admin\TourBookingController;
 use App\Http\Controllers\Admin\TourController;
 use App\Http\Controllers\Admin\TourRequestController as AdminTourRequestController;
@@ -14,6 +16,8 @@ use App\Http\Controllers\Admin\TransferController;
 use App\Http\Controllers\Admin\TransferRequestController as AdminTransferRequestController;
 use App\Http\Controllers\Agent\ActivityLogController as AgentActivityLogController;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
+use App\Http\Controllers\Agent\HotelController as AgentHotelController;
+use App\Http\Controllers\Agent\HotelRoomSlotController as AgentHotelRoomSlotController;
 use App\Http\Controllers\Agent\TourController as AgentTourController;
 use App\Http\Controllers\Agent\TourRequestController as AgentTourRequestController;
 use App\Http\Controllers\Agent\TransferController as AgentTransferController;
@@ -75,6 +79,19 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('transfers/full-day-rates/{rate}', [FullDayTransferRateController::class, 'destroy'])->name('transfers.full-day-rates.destroy');
             Route::post('transfers/vehicle-models', [FullDayTransferRateController::class, 'storeVehicleModel'])->name('transfers.vehicle-models.store');
 
+            // Hotels & Slots
+            Route::get('hotels', [AdminHotelController::class, 'index'])->name('hotels.index');
+            Route::post('hotels', [AdminHotelController::class, 'store'])->name('hotels.store');
+            Route::put('hotels/{hotel}', [AdminHotelController::class, 'update'])->name('hotels.update');
+            Route::patch('hotels/{hotel}/toggle-status', [AdminHotelController::class, 'toggleStatus'])->name('hotels.toggle-status');
+            Route::delete('hotels/{hotel}', [AdminHotelController::class, 'destroy'])->name('hotels.destroy');
+            Route::post('hotels/locations', [AdminHotelController::class, 'storeLocation'])->name('hotels.locations.store');
+            Route::post('hotels/amenities', [AdminHotelController::class, 'storeAmenity'])->name('hotels.amenities.store');
+            Route::post('hotels/{hotel}/slots', [AdminHotelRoomSlotController::class, 'store'])->name('hotels.slots.store');
+            Route::put('hotels/slots/{slot}', [AdminHotelRoomSlotController::class, 'update'])->name('hotels.slots.update');
+            Route::patch('hotels/slots/{slot}/toggle-status', [AdminHotelRoomSlotController::class, 'toggleStatus'])->name('hotels.slots.toggle-status');
+            Route::delete('hotels/slots/{slot}', [AdminHotelRoomSlotController::class, 'destroy'])->name('hotels.slots.destroy');
+
             // Activity Logs
             Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         });
@@ -84,6 +101,20 @@ Route::middleware(['auth'])->group(function () {
         ->name('agent.')
         ->group(function () {
             Route::get('/dashboard', AgentDashboard::class)->name('dashboard');
+
+            // Hotels & Slots
+            Route::get('hotels', [AgentHotelController::class, 'index'])->name('hotels.index');
+            Route::post('hotels', [AgentHotelController::class, 'store'])->name('hotels.store');
+            Route::put('hotels/{hotel}', [AgentHotelController::class, 'update'])->name('hotels.update');
+            Route::patch('hotels/{hotel}/toggle-status', [AgentHotelController::class, 'toggleStatus'])->name('hotels.toggle-status');
+            Route::delete('hotels/{hotel}', [AgentHotelController::class, 'destroy'])->name('hotels.destroy');
+            Route::post('hotels/locations', [AgentHotelController::class, 'storeLocation'])->name('hotels.locations.store');
+            Route::post('hotels/amenities', [AgentHotelController::class, 'storeAmenity'])->name('hotels.amenities.store');
+            Route::post('hotels/{hotel}/slots', [AgentHotelRoomSlotController::class, 'store'])->name('hotels.slots.store');
+            Route::put('hotels/slots/{slot}', [AgentHotelRoomSlotController::class, 'update'])->name('hotels.slots.update');
+            Route::patch('hotels/slots/{slot}/toggle-status', [AgentHotelRoomSlotController::class, 'toggleStatus'])->name('hotels.slots.toggle-status');
+            Route::delete('hotels/slots/{slot}', [AgentHotelRoomSlotController::class, 'destroy'])->name('hotels.slots.destroy');
+
             Route::get('transfers', [AgentTransferController::class, 'index'])->name('transfers.index');
             Route::get('transfers/search', [AgentTransferController::class, 'search'])->name('transfers.search');
             Route::post('transfers/enquire', [AgentTransferController::class, 'enquire'])->name('transfers.enquire');

@@ -9,6 +9,11 @@ return [
             'icon' => 'home',
         ],
         [
+            'title' => 'Hotels',
+            'route' => 'admin.hotels.index',
+            'icon' => 'building',
+        ],
+        [
             'title' => 'Agents',
             'route' => 'admin.agents.index',
             'icon' => 'users',
