@@ -24,6 +24,23 @@ class HotelService
         return $this->hotelRepository->search($search, $locationId, $starRating, $perPage);
     }
 
+    public function listAvailable(
+        ?string $search = null,
+        ?int $locationId = null,
+        ?int $starRating = null,
+        ?int $guests = null,
+        ?string $checkIn = null,
+        ?string $checkOut = null,
+        int $perPage = 12
+    ) {
+        return $this->hotelRepository->searchAvailable($search, $locationId, $starRating, $guests, $checkIn, $checkOut, $perPage);
+    }
+
+    public function getSlotAvailableQty(int $slotId, string $checkIn, string $checkOut): int
+    {
+        return $this->hotelRepository->getSlotAvailableQty($slotId, $checkIn, $checkOut);
+    }
+
     public function create(array $data, ?User $user = null): Hotel
     {
         $payload = $this->buildPayload($data);
@@ -58,6 +75,7 @@ class HotelService
     public function delete(Hotel $hotel): void
     {
         $name = $hotel->name;
+        $hotel->slots()->delete();
         $this->hotelRepository->delete($hotel);
 
         $this->activityLog->log('deleted', "deleted hotel \"{$name}\"");

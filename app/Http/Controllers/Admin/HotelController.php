@@ -36,7 +36,7 @@ class HotelController extends AdminController
         $locations = TransferLocation::active()->cities()->orderBy('name')->get();
         $amenities = Amenity::active()->orderBy('name')->get();
 
-        return view('agent.hotels.index', compact(
+        return view('admin.hotels.index', compact(
             'hotels',
             'locations',
             'amenities',

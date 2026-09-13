@@ -6,10 +6,14 @@ use App\Http\Requests\Agent\StoreHotelRequest;
 use App\Http\Requests\Agent\UpdateHotelRequest;
 use App\Models\Amenity;
 use App\Models\Hotel;
+use App\Models\HotelBooking;
+use App\Models\HotelRoomSlot;
 use App\Models\TransferLocation;
 use App\Services\HotelService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class HotelController
@@ -23,8 +27,15 @@ class HotelController
         $search = $request->get('search');
         $locationId = $request->filled('location_id') ? (int) $request->get('location_id') : null;
         $starRating = $request->filled('star_rating') ? (int) $request->get('star_rating') : null;
+        $guests = $request->filled('guests') ? (int) $request->get('guests') : 2;
+        $checkIn = $request->get('check_in', date('Y-m-d'));
+        $checkOut = $request->get('check_out', date('Y-m-d', strtotime('+1 day')));
 
-        $hotels = $this->hotelService->list($search, $locationId, $starRating, 15);
+        $checkInDate = Carbon::parse($checkIn);
+        $checkOutDate = Carbon::parse($checkOut);
+        $nights = max(1, $checkInDate->diffInDays($checkOutDate));
+
+        $hotels = $this->hotelService->listAvailable($search, $locationId, $starRating, $guests, $checkIn, $checkOut, 15);
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -42,8 +53,72 @@ class HotelController
             'amenities',
             'search',
             'locationId',
-            'starRating'
+            'starRating',
+            'guests',
+            'checkIn',
+            'checkOut',
+            'nights'
         ));
+    }
+
+    public function book(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'hotel_room_slot_id' => ['required', 'exists:hotel_room_slots,id'],
+            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_email' => ['required', 'email', 'max:255'],
+            'customer_phone' => ['nullable', 'string', 'max:50'],
+            'check_in' => ['required', 'date'],
+            'check_out' => ['required', 'date', 'after:check_in'],
+            'guests' => ['nullable', 'integer', 'min:1'],
+            'rooms_count' => ['nullable', 'integer', 'min:1'],
+            'special_requests' => ['nullable', 'string'],
+        ]);
+
+        $slot = HotelRoomSlot::with('hotel')->findOrFail($validated['hotel_room_slot_id']);
+
+        $checkIn = Carbon::parse($validated['check_in']);
+        $checkOut = Carbon::parse($validated['check_out']);
+        $nights = max(1, $checkIn->diffInDays($checkOut));
+        $roomsCount = max(1, (int) ($validated['rooms_count'] ?? 1));
+
+        $realAvailable = $this->hotelService->getSlotAvailableQty($slot->id, $validated['check_in'], $validated['check_out']);
+
+        if ($roomsCount > $realAvailable) {
+            return response()->json([
+                'success' => false,
+                'message' => $realAvailable > 0
+                    ? "Only {$realAvailable} room(s) available for selected dates."
+                    : 'No rooms available for the selected dates.',
+            ], 422);
+        }
+
+        $totalPrice = $slot->price_per_night * $nights * $roomsCount;
+
+        $booking = HotelBooking::create([
+            'booking_reference' => 'HB-'.strtoupper(Str::random(8)),
+            'user_id' => auth()->id(),
+            'hotel_id' => $slot->hotel_id,
+            'hotel_room_slot_id' => $slot->id,
+            'customer_name' => $validated['customer_name'],
+            'customer_email' => $validated['customer_email'],
+            'customer_phone' => $validated['customer_phone'] ?? null,
+            'check_in' => $validated['check_in'],
+            'check_out' => $validated['check_out'],
+            'guests' => $validated['guests'] ?? 1,
+            'rooms_count' => $roomsCount,
+            'price_per_night' => $slot->price_per_night,
+            'total_price' => $totalPrice,
+            'currency' => $slot->currency ?? 'AED',
+            'status' => 'confirmed',
+            'special_requests' => $validated['special_requests'] ?? null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Room booking confirmed successfully!',
+            'booking' => $booking,
+        ]);
     }
 
     public function store(StoreHotelRequest $request): JsonResponse
