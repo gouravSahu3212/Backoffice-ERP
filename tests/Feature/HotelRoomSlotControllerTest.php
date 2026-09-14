@@ -20,7 +20,7 @@ beforeEach(function () {
     ]);
 });
 
-it('allows agent to store a room slot for a hotel', function () {
+it('allows admin to store a room slot for a hotel', function () {
     $payload = [
         'name' => 'Deluxe Ocean View Room',
         'capacity' => 4,
@@ -30,8 +30,8 @@ it('allows agent to store a room slot for a hotel', function () {
         'is_active' => true,
     ];
 
-    $response = $this->actingAs($this->agent)
-        ->postJson(route('agent.hotels.slots.store', $this->hotel), $payload);
+    $response = $this->actingAs($this->admin)
+        ->postJson(route('admin.hotels.slots.store', $this->hotel), $payload);
 
     $response->assertOk()
         ->assertJsonFragment([
@@ -51,22 +51,22 @@ it('allows agent to store a room slot for a hotel', function () {
 });
 
 it('validates required fields when creating room slot', function () {
-    $response = $this->actingAs($this->agent)
-        ->postJson(route('agent.hotels.slots.store', $this->hotel), []);
+    $response = $this->actingAs($this->admin)
+        ->postJson(route('admin.hotels.slots.store', $this->hotel), []);
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['name', 'price_per_night']);
 });
 
-it('allows agent to update a room slot', function () {
+it('allows admin to update a room slot', function () {
     $slot = HotelRoomSlot::factory()->create([
         'hotel_id' => $this->hotel->id,
         'name' => 'Standard Room',
         'price_per_night' => 200,
     ]);
 
-    $response = $this->actingAs($this->agent)
-        ->putJson(route('agent.hotels.slots.update', [$this->hotel, $slot]), [
+    $response = $this->actingAs($this->admin)
+        ->putJson(route('admin.hotels.slots.update', [$this->hotel, $slot]), [
             'name' => 'Executive Suite',
             'capacity' => 2,
             'available_qty' => 5,
@@ -89,14 +89,14 @@ it('allows agent to update a room slot', function () {
     ]);
 });
 
-it('allows agent to toggle room slot status', function () {
+it('allows admin to toggle room slot status', function () {
     $slot = HotelRoomSlot::factory()->create([
         'hotel_id' => $this->hotel->id,
         'is_active' => true,
     ]);
 
-    $response = $this->actingAs($this->agent)
-        ->patchJson(route('agent.hotels.slots.toggle-status', [$this->hotel, $slot]));
+    $response = $this->actingAs($this->admin)
+        ->patchJson(route('admin.hotels.slots.toggle-status', [$this->hotel, $slot]));
 
     $response->assertOk()
         ->assertJsonFragment([
@@ -110,13 +110,13 @@ it('allows agent to toggle room slot status', function () {
     ]);
 });
 
-it('allows agent to delete a room slot', function () {
+it('allows admin to delete a room slot', function () {
     $slot = HotelRoomSlot::factory()->create([
         'hotel_id' => $this->hotel->id,
     ]);
 
-    $response = $this->actingAs($this->agent)
-        ->deleteJson(route('agent.hotels.slots.destroy', [$this->hotel, $slot]));
+    $response = $this->actingAs($this->admin)
+        ->deleteJson(route('admin.hotels.slots.destroy', [$this->hotel, $slot]));
 
     $response->assertOk()
         ->assertJsonFragment([

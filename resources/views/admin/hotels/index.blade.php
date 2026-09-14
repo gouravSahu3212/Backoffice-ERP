@@ -161,19 +161,27 @@
                             <button 
                                 type="button" 
                                 @click="toggleStatus(hotel)"
-                                class="text-gray-600 hover:text-gray-900 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
                                 :title="hotel.is_active ? 'Deactivate Hotel' : 'Activate Hotel'"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.573 16.49 16.638 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
+                                <template x-if="hotel.is_active">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect>
+                                        <circle cx="16" cy="12" r="2"></circle>
+                                    </svg>
+                                </template>
+                                <template x-if="!hotel.is_active">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect>
+                                        <circle cx="8" cy="12" r="2"></circle>
+                                    </svg>
+                                </template>
                             </button>
 
                             {{-- Delete Hotel Button --}}
                             <button 
                                 type="button" 
-                                @click="deleteHotel(hotel)"
+                                @click="confirmDeleteHotel(hotel)"
                                 class="text-gray-600 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors"
                                 title="Delete Hotel"
                             >
@@ -642,6 +650,53 @@
         </div>
     </div>
 
+    {{-- Delete Hotel Confirmation Modal --}}
+    <div 
+        x-show="deleteModalOpen" 
+        class="fixed inset-0 z-50 overflow-y-auto"
+        style="display: none;"
+    >
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-xs" @click="cancelDeleteHotel()"></div>
+
+            <div class="relative inline-block w-full max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl z-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">Delete Hotel?</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">This action cannot be undone.</p>
+                    </div>
+                </div>
+
+                <p class="text-xs text-gray-600 mb-6 leading-relaxed">
+                    Are you sure you want to delete <span class="font-bold text-gray-900" x-text="hotelToDelete ? ('\x22' + hotelToDelete.name + '\x22') : 'this hotel'"></span> and all of its associated room slots?
+                </p>
+
+                <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
+                    <button 
+                        type="button" 
+                        @click="cancelDeleteHotel()" 
+                        class="px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="deleteHotel()" 
+                        :disabled="deletingHotel"
+                        class="bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs px-4 py-2 rounded-lg transition-colors inline-flex items-center justify-center gap-2 shadow-sm"
+                    >
+                        <span x-text="deletingHotel ? 'Deleting...' : 'Delete Hotel'"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @push('scripts')
@@ -660,6 +715,10 @@ function adminHotels() {
         editingHotelId: null,
         submittingForm: false,
         errors: {},
+        
+        deleteModalOpen: false,
+        hotelToDelete: null,
+        deletingHotel: false,
         
         showAddLocationInput: false,
         newLocationName: '',
@@ -964,13 +1023,23 @@ function adminHotels() {
             }
         },
 
-        async deleteHotel(hotel) {
-            if (!confirm(`Are you sure you want to delete "${hotel.name}" and all of its associated rooms? This action cannot be undone.`)) {
-                return;
-            }
+        confirmDeleteHotel(hotel) {
+            this.hotelToDelete = hotel;
+            this.deleteModalOpen = true;
+        },
+
+        cancelDeleteHotel() {
+            this.deleteModalOpen = false;
+            this.hotelToDelete = null;
+            this.deletingHotel = false;
+        },
+
+        async deleteHotel() {
+            if (!this.hotelToDelete) return;
+            this.deletingHotel = true;
 
             try {
-                const response = await fetch(`${this.baseUrl}/${hotel.id}`, {
+                const response = await fetch(`${this.baseUrl}/${this.hotelToDelete.id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -982,14 +1051,18 @@ function adminHotels() {
 
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    this.hotelsList = this.hotelsList.filter(h => h.id !== hotel.id);
+                    const deletedId = this.hotelToDelete.id;
+                    this.hotelsList = this.hotelsList.filter(h => h.id !== deletedId);
                     this.successMessage = data.message || 'Hotel deleted successfully.';
+                    this.cancelDeleteHotel();
                 } else {
                     alert(data.message || 'Failed to delete hotel.');
                 }
             } catch (err) {
                 console.error('Delete hotel failed', err);
                 alert('Failed to delete hotel.');
+            } finally {
+                this.deletingHotel = false;
             }
         },
 
