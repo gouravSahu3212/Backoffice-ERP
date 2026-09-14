@@ -22,6 +22,8 @@ class UpdateHotelRequest extends FormRequest
             'star_rating' => ['required', 'integer', 'min:1', 'max:5'],
             'amenities' => ['nullable', 'array'],
             'amenities.*' => ['string', 'max:100'],
+            'image_urls' => ['nullable', 'array'],
+            'image_urls.*' => ['nullable'],
             'is_active' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
         ];

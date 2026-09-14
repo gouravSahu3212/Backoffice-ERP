@@ -14,17 +14,22 @@
     {{-- Success Toast Notification --}}
     <div 
         x-show="successMessage" 
-        x-transition
-        class="mb-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm font-medium flex items-center justify-between shadow-sm"
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="translate-y-4 opacity-0 scale-95"
+        x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+        x-transition:leave-end="translate-y-4 opacity-0 scale-95"
+        class="fixed bottom-5 right-5 z-[9999] max-w-md bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-2xl text-sm font-medium flex items-center justify-between gap-3 border border-emerald-500/30"
         style="display: none;"
     >
-        <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <div class="flex items-center gap-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span x-text="successMessage"></span>
+            <span x-text="successMessage" class="leading-snug"></span>
         </div>
-        <button type="button" @click="successMessage = ''" class="text-emerald-500 hover:text-emerald-700">
+        <button type="button" @click="successMessage = ''" class="text-emerald-200 hover:text-white p-1 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -130,12 +135,22 @@
                     
                     <div>
                         {{-- Hotel Image --}}
-                        <div class="relative h-48 bg-gray-100 overflow-hidden">
-                            <img 
-                                :src="getHotelImage(hotel)" 
-                                :alt="hotel.name"
-                                class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                            />
+                        <div class="relative h-48 bg-gray-100 overflow-hidden flex items-center justify-center border-b border-gray-100">
+                            <template x-if="getHotelImage(hotel)">
+                                <img 
+                                    :src="getHotelImage(hotel)" 
+                                    :alt="hotel.name"
+                                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                                />
+                            </template>
+                            <template x-if="!getHotelImage(hotel)">
+                                <div class="w-full h-full flex flex-col items-center justify-center bg-gray-100/80 text-gray-400 p-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-1.5 opacity-40 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.008v.008H6.75V6.75zm0 3h.008v.008H6.75V9.75zm0 3h.008v.008H6.75v-.008zm0 3h.008v.008H6.75v-.008zM12 6.75h.008v.008H12V6.75zm0 3h.008v.008H12V9.75zm0 3h.008v.008H12v-.008zm0 3h.008v.008H12v-.008z" />
+                                    </svg>
+                                    <span class="text-[11px] font-medium text-gray-400">No Image Uploaded</span>
+                                </div>
+                            </template>
                         </div>
 
                         {{-- Card Header & Info --}}
@@ -214,20 +229,38 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
                 
                 {{-- Left: Main Resort Image & Thumbnails --}}
-                <div class="md:col-span-6 space-y-3">
-                    <div class="h-72 rounded-2xl overflow-hidden shadow-xs bg-gray-100 border border-gray-200">
-                        <img 
-                            :src="getHotelImage(selectedHotel)" 
-                            :alt="selectedHotel.name"
-                            class="w-full h-full object-cover"
-                        />
+                <div class="md:col-span-6 space-y-3" x-data="{ activeImageIndex: 0 }">
+                    <div class="h-72 rounded-2xl overflow-hidden shadow-xs bg-gray-100 border border-gray-200 flex items-center justify-center">
+                        <template x-if="getHotelImages(selectedHotel).length > 0">
+                            <img 
+                                :src="getHotelImages(selectedHotel)[activeImageIndex] || getHotelImage(selectedHotel)" 
+                                :alt="selectedHotel.name"
+                                class="w-full h-full object-cover"
+                            />
+                        </template>
+                        <template x-if="getHotelImages(selectedHotel).length === 0">
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-gray-100/80 text-gray-400 p-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mb-2 opacity-40 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.008v.008H6.75V6.75zm0 3h.008v.008H6.75V9.75zm0 3h.008v.008H6.75v-.008zm0 3h.008v.008H6.75v-.008zM12 6.75h.008v.008H12V6.75zm0 3h.008v.008H12V9.75zm0 3h.008v.008H12v-.008zm0 3h.008v.008H12v-.008z" />
+                                </svg>
+                                <span class="text-xs font-medium text-gray-400">No Image Uploaded</span>
+                            </div>
+                        </template>
                     </div>
                     {{-- Thumbnail grid --}}
-                    <div class="flex gap-2">
-                        <div class="w-24 h-16 rounded-lg border border-gray-200 overflow-hidden bg-gray-100">
-                            <img :src="getHotelImage(selectedHotel)" class="w-full h-full object-cover opacity-90 hover:opacity-100 cursor-pointer" />
+                    <template x-if="getHotelImages(selectedHotel).length > 1">
+                        <div class="flex gap-2 overflow-x-auto pb-1">
+                            <template x-for="(imgUrl, idx) in getHotelImages(selectedHotel)" :key="idx">
+                                <div 
+                                    @click="activeImageIndex = idx"
+                                    :class="activeImageIndex === idx ? 'border-gray-900 ring-2 ring-gray-900' : 'border-gray-200 opacity-70 hover:opacity-100'"
+                                    class="w-20 h-14 rounded-lg border overflow-hidden bg-gray-100 cursor-pointer transition-all shrink-0"
+                                >
+                                    <img :src="imgUrl" class="w-full h-full object-cover" />
+                                </div>
+                            </template>
                         </div>
-                    </div>
+                    </template>
                 </div>
 
                 {{-- Right: Hotel Details & Amenities --}}
@@ -473,19 +506,24 @@ function agentHotels() {
             special_requests: ''
         },
 
-        hotelImages: [
-            'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80'
-        ],
-
         init() {
             this.updateNights();
         },
 
+        formatImageUrl(img) {
+            if (!img) return '';
+            if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('/')) return img;
+            return '/storage/' + img;
+        },
+
         getHotelImage(hotel) {
-            if (!hotel || !hotel.id) return this.hotelImages[0];
-            return this.hotelImages[hotel.id % this.hotelImages.length];
+            if (!hotel || !hotel.image_urls || !hotel.image_urls.length) return null;
+            return this.formatImageUrl(hotel.image_urls[0]);
+        },
+
+        getHotelImages(hotel) {
+            if (!hotel || !hotel.image_urls || !hotel.image_urls.length) return [];
+            return hotel.image_urls.map(img => this.formatImageUrl(img));
         },
 
         getLocationName(hotel) {
@@ -615,6 +653,7 @@ function agentHotels() {
                 if (response.ok && data.success) {
                     this.bookingModalOpen = false;
                     this.successMessage = data.message || 'Room booking confirmed successfully!';
+                    setTimeout(() => { this.successMessage = ''; }, 5000);
                     this.filterHotels();
                 } else {
                     alert(data.message || 'Booking failed. Please check availability.');

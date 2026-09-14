@@ -40,13 +40,14 @@
                             <td class="px-4 py-3 text-xs">
                                 @php
                                     $statusClasses = match ($booking->status) {
-                                        'confirmed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                        'cancelled' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                        'confirmed' => 'bg-slate-900 text-white border-slate-900 font-bold',
+                                        'payment_received' => 'bg-emerald-600 text-white border-emerald-600 font-bold',
+                                        'rejected', 'cancelled' => 'bg-rose-50 text-rose-700 border-rose-200',
                                         default => 'bg-amber-50 text-amber-700 border-amber-200',
                                     };
                                 @endphp
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border {{ $statusClasses }} capitalize">
-                                    {{ $booking->status }}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border {{ $statusClasses }}">
+                                    {{ str_replace('_', ' ', ucfirst($booking->status)) }}
                                 </span>
                             </td>
 

@@ -12,6 +12,13 @@ return [
             'title' => 'Hotels',
             'route' => 'admin.hotels.index',
             'icon' => 'building',
+            'submenu' => [
+                [
+                    'title' => 'Hotel Bookings',
+                    'route' => 'admin.hotels.bookings.index',
+                    'icon' => 'ticket',
+                ],
+            ],
         ],
         [
             'title' => 'Agents',

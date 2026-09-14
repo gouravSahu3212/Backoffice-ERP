@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AirportTransferRateController;
 use App\Http\Controllers\Admin\CityTransferRateController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\FullDayTransferRateController;
+use App\Http\Controllers\Admin\HotelBookingController as AdminHotelBookingController;
 use App\Http\Controllers\Admin\HotelController as AdminHotelController;
 use App\Http\Controllers\Admin\HotelRoomSlotController as AdminHotelRoomSlotController;
 use App\Http\Controllers\Admin\TourBookingController;
@@ -91,6 +92,13 @@ Route::middleware(['auth'])->group(function () {
             Route::put('hotels/slots/{slot}', [AdminHotelRoomSlotController::class, 'update'])->name('hotels.slots.update');
             Route::patch('hotels/slots/{slot}/toggle-status', [AdminHotelRoomSlotController::class, 'toggleStatus'])->name('hotels.slots.toggle-status');
             Route::delete('hotels/slots/{slot}', [AdminHotelRoomSlotController::class, 'destroy'])->name('hotels.slots.destroy');
+
+            // Hotel Bookings
+            Route::get('hotel-bookings', [AdminHotelBookingController::class, 'index'])->name('hotel-bookings.index');
+            Route::get('hotels/bookings', [AdminHotelBookingController::class, 'index'])->name('hotels.bookings.index');
+            Route::get('hotels/bookings/{hotelBooking}', [AdminHotelBookingController::class, 'show'])->name('hotels.bookings.show');
+            Route::patch('hotels/bookings/{hotelBooking}/status', [AdminHotelBookingController::class, 'updateStatus'])->name('hotels.bookings.update-status');
+            Route::get('hotels/bookings/{hotelBooking}/print', [AdminHotelBookingController::class, 'print'])->name('hotels.bookings.print');
 
             // Activity Logs
             Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');

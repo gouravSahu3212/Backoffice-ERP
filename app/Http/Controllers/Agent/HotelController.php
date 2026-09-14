@@ -6,20 +6,20 @@ use App\Http\Requests\Agent\StoreHotelRequest;
 use App\Http\Requests\Agent\UpdateHotelRequest;
 use App\Models\Amenity;
 use App\Models\Hotel;
-use App\Models\HotelBooking;
 use App\Models\HotelRoomSlot;
 use App\Models\TransferLocation;
+use App\Services\HotelBookingService;
 use App\Services\HotelService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class HotelController
 {
     public function __construct(
-        protected HotelService $hotelService
+        protected HotelService $hotelService,
+        protected HotelBookingService $bookingService
     ) {}
 
     public function index(Request $request): View|JsonResponse
@@ -95,9 +95,7 @@ class HotelController
 
         $totalPrice = $slot->price_per_night * $nights * $roomsCount;
 
-        $booking = HotelBooking::create([
-            'booking_reference' => 'HB-'.strtoupper(Str::random(8)),
-            'user_id' => auth()->id(),
+        $booking = $this->bookingService->createBooking(auth()->user(), [
             'hotel_id' => $slot->hotel_id,
             'hotel_room_slot_id' => $slot->id,
             'customer_name' => $validated['customer_name'],
@@ -110,13 +108,12 @@ class HotelController
             'price_per_night' => $slot->price_per_night,
             'total_price' => $totalPrice,
             'currency' => $slot->currency ?? 'AED',
-            'status' => 'confirmed',
             'special_requests' => $validated['special_requests'] ?? null,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Room booking confirmed successfully!',
+            'message' => "Room booking request sent successfully! Reference: {$booking->booking_reference}",
             'booking' => $booking,
         ]);
     }
@@ -215,6 +212,7 @@ class HotelController
             'terms_and_conditions' => $hotel->terms_and_conditions ?? '',
             'star_rating' => (int) $hotel->star_rating,
             'amenities' => $hotel->amenities ?? [],
+            'image_urls' => $hotel->image_urls ?? [],
             'is_active' => (bool) $hotel->is_active,
             'is_featured' => (bool) $hotel->is_featured,
         ];

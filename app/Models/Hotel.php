@@ -19,6 +19,7 @@ class Hotel extends Model
         'terms_and_conditions',
         'star_rating',
         'amenities',
+        'image_urls',
         'is_active',
         'is_featured',
         'created_by',
@@ -31,6 +32,7 @@ class Hotel extends Model
     {
         return [
             'amenities' => 'array',
+            'image_urls' => 'array',
             'star_rating' => 'integer',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',

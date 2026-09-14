@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Repositories\AmenityRepository;
 use App\Repositories\HotelRepository;
 use App\Repositories\TransferLocationRepository;
+use Illuminate\Http\UploadedFile;
 
 class HotelService
 {
@@ -121,8 +122,40 @@ class HotelService
             'terms_and_conditions' => $data['terms_and_conditions'] ?? null,
             'star_rating' => isset($data['star_rating']) ? (int) $data['star_rating'] : 4,
             'amenities' => is_array($amenities) ? array_values(array_unique($amenities)) : [],
+            'image_urls' => $this->normalizeImageUrls($data['image_urls'] ?? null, $existing?->image_urls ?? []),
             'is_active' => isset($data['is_active']) ? (bool) $data['is_active'] : ($existing?->is_active ?? true),
             'is_featured' => isset($data['is_featured']) ? (bool) $data['is_featured'] : ($existing?->is_featured ?? false),
         ];
+    }
+
+    /**
+     * Store uploaded image files and keep existing values when no new files are provided.
+     *
+     * @param  array<int, string>  $existing
+     * @return array<int, string>
+     */
+    private function normalizeImageUrls(mixed $value, array $existing = []): array
+    {
+        if ($value instanceof UploadedFile) {
+            return [$value->store('hotels/images', 'public')];
+        }
+
+        if (is_array($value)) {
+            $storedPaths = [];
+
+            foreach ($value as $item) {
+                if ($item instanceof UploadedFile) {
+                    $storedPaths[] = $item->store('hotels/images', 'public');
+                } elseif (is_string($item) && trim($item) !== '') {
+                    $storedPaths[] = trim($item);
+                }
+            }
+
+            if ($storedPaths !== []) {
+                return $storedPaths;
+            }
+        }
+
+        return $existing;
     }
 }

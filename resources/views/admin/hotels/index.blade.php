@@ -56,7 +56,7 @@
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-900 mb-1.5">Location</label>
-                <select x-model="filters.location_id" @change="filterHotels()" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <select x-model="filters.location_id" @change="filterHotels()" class="w-full bg-white border border-gray-200 rounded-lg pl-3.5 pr-8 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 cursor-pointer">
                     <option value="">All Locations</option>
                     <template x-for="loc in locationsList" :key="loc.id">
                         <option :value="loc.id" x-text="loc.name"></option>
@@ -65,7 +65,7 @@
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-900 mb-1.5">Star Rating</label>
-                <select x-model="filters.star_rating" @change="filterHotels()" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <select x-model="filters.star_rating" @change="filterHotels()" class="w-full bg-white border border-gray-200 rounded-lg pl-3.5 pr-8 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 cursor-pointer">
                     <option value="">All Ratings</option>
                     <option value="5">5 Stars</option>
                     <option value="4">4 Stars</option>
@@ -112,8 +112,19 @@
                     {{-- Header Bar --}}
                     <div class="px-6 py-5 flex items-center justify-between gap-4">
                         
-                        {{-- Left side: Name, Stars, Badges --}}
+                        {{-- Left side: Image thumbnail, Name, Stars, Badges --}}
                         <div class="flex items-center gap-3.5 flex-wrap">
+                            <div class="w-11 h-11 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shrink-0 flex items-center justify-center shadow-2xs">
+                                <template x-if="getHotelImage(hotel)">
+                                    <img :src="getHotelImage(hotel)" class="w-full h-full object-cover" />
+                                </template>
+                                <template x-if="!getHotelImage(hotel)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.008v.008H6.75V6.75zm0 3h.008v.008H6.75V9.75zm0 3h.008v.008H6.75v-.008zm0 3h.008v.008H6.75v-.008zM12 6.75h.008v.008H12V6.75zm0 3h.008v.008H12V9.75zm0 3h.008v.008H12v-.008zm0 3h.008v.008H12v-.008z" />
+                                    </svg>
+                                </template>
+                            </div>
+
                             <h3 class="font-bold text-gray-900 text-lg" x-text="hotel.name"></h3>
                             
                             {{-- Star Rating (Black Stars matching SS) --}}
@@ -127,10 +138,17 @@
                             <button 
                                 type="button" 
                                 @click="toggleStatus(hotel)"
+                                :disabled="togglingHotelIds.includes(hotel.id)"
                                 :class="hotel.is_active ? 'bg-[#0B1527] text-white' : 'bg-gray-200 text-gray-600'"
-                                class="text-xs font-medium px-3 py-0.5 rounded-full lowercase tracking-wide transition-colors"
+                                class="text-xs font-medium px-3 py-0.5 rounded-full lowercase tracking-wide transition-colors inline-flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
                             >
-                                <span x-text="hotel.is_active ? 'active' : 'inactive'"></span>
+                                <template x-if="togglingHotelIds.includes(hotel.id)">
+                                    <svg class="animate-spin h-3 w-3 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </template>
+                                <span x-text="togglingHotelIds.includes(hotel.id) ? 'updating...' : (hotel.is_active ? 'active' : 'inactive')"></span>
                             </button>
 
                             {{-- Featured Badge (Light capsule matching SS) --}}
@@ -161,20 +179,31 @@
                             <button 
                                 type="button" 
                                 @click="toggleStatus(hotel)"
-                                class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                :disabled="togglingHotelIds.includes(hotel.id)"
+                                class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 :title="hotel.is_active ? 'Deactivate Hotel' : 'Activate Hotel'"
                             >
-                                <template x-if="hotel.is_active">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect>
-                                        <circle cx="16" cy="12" r="2"></circle>
+                                <template x-if="togglingHotelIds.includes(hotel.id)">
+                                    <svg class="animate-spin h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
                                 </template>
-                                <template x-if="!hotel.is_active">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect>
-                                        <circle cx="8" cy="12" r="2"></circle>
-                                    </svg>
+                                <template x-if="!togglingHotelIds.includes(hotel.id)">
+                                    <div>
+                                        <template x-if="hotel.is_active">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect>
+                                                <circle cx="16" cy="12" r="2"></circle>
+                                            </svg>
+                                        </template>
+                                        <template x-if="!hotel.is_active">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect width="20" height="12" x="2" y="6" rx="6" ry="6"></rect>
+                                                <circle cx="8" cy="12" r="2"></circle>
+                                            </svg>
+                                        </template>
+                                    </div>
                                 </template>
                             </button>
 
@@ -279,9 +308,16 @@
                                                     <button 
                                                         type="button" 
                                                         @click="toggleSlotStatus(slot, hotel)"
+                                                        :disabled="togglingSlotIds.includes(slot.id)"
                                                         :class="slot.is_active ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-600'"
-                                                        class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full lowercase tracking-wide transition-colors">
-                                                        <span x-text="slot.is_active ? 'active' : 'inactive'"></span>
+                                                        class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full lowercase tracking-wide transition-colors inline-flex items-center gap-1 disabled:opacity-60 disabled:cursor-not-allowed">
+                                                        <template x-if="togglingSlotIds.includes(slot.id)">
+                                                            <svg class="animate-spin h-2.5 w-2.5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                        </template>
+                                                        <span x-text="togglingSlotIds.includes(slot.id) ? 'updating...' : (slot.is_active ? 'active' : 'inactive')"></span>
                                                     </button>
                                                 </td>
                                                 <td class="px-4 py-3 text-xs text-right">
@@ -525,6 +561,49 @@
                         </div>
                     </div>
 
+                    {{-- Hotel Images --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-900 mb-1.5">Hotel Images</label>
+                        <input 
+                            type="file" 
+                            x-ref="hotelImageInput"
+                            @change="handleImageFileSelect($event)"
+                            multiple 
+                            accept="image/*"
+                            class="w-full text-xs text-gray-500 border border-gray-200 rounded-lg p-2 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-900 file:text-white hover:file:bg-slate-800 cursor-pointer"
+                        />
+                        <p class="text-[11px] text-gray-400 mt-1">Upload image files for this hotel property.</p>
+
+                        {{-- Previews list --}}
+                        <div class="flex flex-wrap gap-2 mt-3" x-show="(form.image_urls && form.image_urls.length > 0) || (form.image_previews && form.image_previews.length > 0)">
+                            {{-- Existing image URLs --}}
+                            <template x-for="(img, idx) in form.image_urls" :key="'exist-' + idx">
+                                <div class="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-200 group bg-gray-100">
+                                    <img :src="formatImageUrl(img)" class="w-full h-full object-cover" />
+                                    <button 
+                                        type="button" 
+                                        @click="removeExistingImage(idx)"
+                                        class="absolute top-0.5 right-0.5 bg-rose-600 text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center shadow-xs hover:bg-rose-700 transition-colors"
+                                        title="Remove image"
+                                    >×</button>
+                                </div>
+                            </template>
+
+                            {{-- Newly selected image files previews --}}
+                            <template x-for="(prev, idx) in form.image_previews" :key="'new-' + idx">
+                                <div class="relative w-16 h-16 rounded-lg overflow-hidden border border-emerald-400 group bg-emerald-50">
+                                    <img :src="prev" class="w-full h-full object-cover" />
+                                    <button 
+                                        type="button" 
+                                        @click="removeNewImage(idx)"
+                                        class="absolute top-0.5 right-0.5 bg-rose-600 text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center shadow-xs hover:bg-rose-700 transition-colors"
+                                        title="Remove image"
+                                    >×</button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
                     <div class="flex items-center gap-6 pt-2">
                         <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
                             <input type="checkbox" x-model="form.is_active" class="rounded border-gray-300 text-gray-900 focus:ring-gray-900 w-4 h-4">
@@ -712,6 +791,8 @@ function adminHotels() {
         locationsList: @json($locations),
         availableAmenitiesList: @json($amenities),
         expandedHotels: [],
+        togglingHotelIds: [],
+        togglingSlotIds: [],
         successMessage: '',
         modalOpen: false,
         isEditing: false,
@@ -761,11 +842,47 @@ function adminHotels() {
             terms_and_conditions: '',
             star_rating: 4,
             amenities: [],
+            image_urls: [],
+            new_image_files: [],
+            image_previews: [],
             is_active: true,
             is_featured: false
         },
 
         init() {},
+
+        formatImageUrl(img) {
+            if (!img) return '';
+            if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('/')) return img;
+            return '/storage/' + img;
+        },
+
+        getHotelImage(hotel) {
+            if (!hotel || !hotel.image_urls || !hotel.image_urls.length) return null;
+            return this.formatImageUrl(hotel.image_urls[0]);
+        },
+
+        handleImageFileSelect(event) {
+            const files = Array.from(event.target.files || []);
+            files.forEach(file => {
+                this.form.new_image_files.push(file);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.image_previews.push(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        },
+
+        removeExistingImage(index) {
+            this.form.image_urls.splice(index, 1);
+        },
+
+        removeNewImage(index) {
+            this.form.new_image_files.splice(index, 1);
+            this.form.image_previews.splice(index, 1);
+        },
 
         getStarArray(count) {
             const num = parseInt(count) || 1;
@@ -846,9 +963,15 @@ function adminHotels() {
                 terms_and_conditions: '',
                 star_rating: 4,
                 amenities: ['WiFi', 'Pool', 'Spa', 'Gym', 'Restaurant'],
+                image_urls: [],
+                new_image_files: [],
+                image_previews: [],
                 is_active: true,
                 is_featured: false
             };
+            if (this.$refs.hotelImageInput) {
+                this.$refs.hotelImageInput.value = '';
+            }
             this.modalOpen = true;
         },
 
@@ -868,9 +991,15 @@ function adminHotels() {
                 terms_and_conditions: hotel.terms_and_conditions || '',
                 star_rating: hotel.star_rating || 4,
                 amenities: Array.isArray(hotel.amenities) ? [...hotel.amenities] : [],
+                image_urls: Array.isArray(hotel.image_urls) ? [...hotel.image_urls] : [],
+                new_image_files: [],
+                image_previews: [],
                 is_active: Boolean(hotel.is_active),
                 is_featured: Boolean(hotel.is_featured)
             };
+            if (this.$refs.hotelImageInput) {
+                this.$refs.hotelImageInput.value = '';
+            }
             this.modalOpen = true;
         },
 
@@ -955,26 +1084,46 @@ function adminHotels() {
             this.submittingForm = true;
             this.errors = {};
 
+            const formData = new FormData();
+            formData.append('_token', '{{ csrf_token() }}');
+            if (this.isEditing) {
+                formData.append('_method', 'PUT');
+            }
+
+            formData.append('name', this.form.name || '');
+            formData.append('location_id', this.form.location_id || '');
+            formData.append('star_rating', this.form.star_rating || 4);
+            formData.append('address', this.form.address || '');
+            formData.append('description', this.form.description || '');
+            formData.append('terms_and_conditions', this.form.terms_and_conditions || '');
+            formData.append('is_active', this.form.is_active ? '1' : '0');
+            formData.append('is_featured', this.form.is_featured ? '1' : '0');
+
+            (this.form.amenities || []).forEach((amenity, idx) => {
+                formData.append(`amenities[${idx}]`, amenity);
+            });
+
+            (this.form.image_urls || []).forEach((url, idx) => {
+                formData.append(`image_urls[${idx}]`, url);
+            });
+
+            const existingCount = (this.form.image_urls || []).length;
+            (this.form.new_image_files || []).forEach((file, idx) => {
+                formData.append(`image_urls[${existingCount + idx}]`, file);
+            });
+
             const url = this.isEditing 
                 ? `${this.baseUrl}/${this.editingHotelId}`
                 : `${this.baseUrl}`;
 
-            const method = this.isEditing ? 'PUT' : 'POST';
-
-            const payload = {
-                _token: '{{ csrf_token() }}',
-                ...this.form
-            };
-
             try {
                 const response = await fetch(url, {
-                    method: method,
+                    method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify(payload)
+                    body: formData
                 });
 
                 const data = await response.json();
@@ -1005,6 +1154,8 @@ function adminHotels() {
         },
 
         async toggleStatus(hotel) {
+            if (this.togglingHotelIds.includes(hotel.id)) return;
+            this.togglingHotelIds.push(hotel.id);
             try {
                 const response = await fetch(`${this.baseUrl}/${hotel.id}/toggle-status`, {
                     method: 'PATCH',
@@ -1023,6 +1174,8 @@ function adminHotels() {
                 }
             } catch (err) {
                 console.error('Status toggle failed', err);
+            } finally {
+                this.togglingHotelIds = this.togglingHotelIds.filter(id => id !== hotel.id);
             }
         },
 
@@ -1161,6 +1314,8 @@ function adminHotels() {
         },
 
         async toggleSlotStatus(slot, hotel) {
+            if (this.togglingSlotIds.includes(slot.id)) return;
+            this.togglingSlotIds.push(slot.id);
             try {
                 const response = await fetch(`${this.baseUrl}/slots/${slot.id}/toggle-status`, {
                     method: 'PATCH',
@@ -1179,6 +1334,8 @@ function adminHotels() {
                 }
             } catch (err) {
                 console.error('Slot status toggle failed', err);
+            } finally {
+                this.togglingSlotIds = this.togglingSlotIds.filter(id => id !== slot.id);
             }
         }
     };

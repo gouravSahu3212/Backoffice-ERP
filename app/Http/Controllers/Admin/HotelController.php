@@ -49,48 +49,24 @@ class HotelController extends AdminController
     public function store(StoreHotelRequest $request): JsonResponse
     {
         $hotel = $this->hotelService->create($request->validated(), auth()->user());
-        $hotel->load('location');
+        $hotel->load(['location', 'slots']);
 
         return response()->json([
             'success' => true,
             'message' => 'Hotel created successfully.',
-            'hotel' => [
-                'id' => $hotel->id,
-                'name' => $hotel->name,
-                'location_id' => $hotel->location_id,
-                'location_name' => $hotel->location->name ?? 'N/A',
-                'address' => $hotel->address ?? '',
-                'description' => $hotel->description ?? '',
-                'terms_and_conditions' => $hotel->terms_and_conditions ?? '',
-                'star_rating' => (int) $hotel->star_rating,
-                'amenities' => $hotel->amenities ?? [],
-                'is_active' => (bool) $hotel->is_active,
-                'is_featured' => (bool) $hotel->is_featured,
-            ],
+            'hotel' => $this->formatHotel($hotel),
         ]);
     }
 
     public function update(UpdateHotelRequest $request, Hotel $hotel): JsonResponse
     {
         $hotel = $this->hotelService->update($hotel, $request->validated());
-        $hotel->load('location');
+        $hotel->load(['location', 'slots']);
 
         return response()->json([
             'success' => true,
             'message' => 'Hotel updated successfully.',
-            'hotel' => [
-                'id' => $hotel->id,
-                'name' => $hotel->name,
-                'location_id' => $hotel->location_id,
-                'location_name' => $hotel->location->name ?? 'N/A',
-                'address' => $hotel->address ?? '',
-                'description' => $hotel->description ?? '',
-                'terms_and_conditions' => $hotel->terms_and_conditions ?? '',
-                'star_rating' => (int) $hotel->star_rating,
-                'amenities' => $hotel->amenities ?? [],
-                'is_active' => (bool) $hotel->is_active,
-                'is_featured' => (bool) $hotel->is_featured,
-            ],
+            'hotel' => $this->formatHotel($hotel),
         ]);
     }
 
@@ -150,5 +126,24 @@ class HotelController extends AdminController
                 'name' => $amenity->name,
             ],
         ]);
+    }
+
+    private function formatHotel(Hotel $hotel): array
+    {
+        return [
+            'id' => $hotel->id,
+            'name' => $hotel->name,
+            'location_id' => $hotel->location_id,
+            'location_name' => $hotel->location->name ?? 'N/A',
+            'address' => $hotel->address ?? '',
+            'description' => $hotel->description ?? '',
+            'terms_and_conditions' => $hotel->terms_and_conditions ?? '',
+            'star_rating' => (int) $hotel->star_rating,
+            'amenities' => $hotel->amenities ?? [],
+            'image_urls' => $hotel->image_urls ?? [],
+            'is_active' => (bool) $hotel->is_active,
+            'is_featured' => (bool) $hotel->is_featured,
+            'slots' => $hotel->relationLoaded('slots') ? $hotel->slots : [],
+        ];
     }
 }
