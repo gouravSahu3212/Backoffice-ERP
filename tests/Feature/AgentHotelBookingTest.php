@@ -4,6 +4,7 @@ use App\Models\Hotel;
 use App\Models\HotelBooking;
 use App\Models\HotelRoomSlot;
 use App\Models\User;
+use App\Repositories\HotelRepository;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -138,4 +139,78 @@ it('filters hotel bookings by search query', function () {
         ->assertOk()
         ->assertSee('HB-ALPHA111')
         ->assertDontSee('HB-BETA222');
+});
+
+it('allows agent to cancel unconfirmed hotel booking and restores room slot availability', function () {
+    $hotelRepo = app(HotelRepository::class);
+
+    $checkIn = now()->addDays(3)->format('Y-m-d');
+    $checkOut = now()->addDays(5)->format('Y-m-d');
+
+    $booking = HotelBooking::create([
+        'booking_reference' => 'HB-CANCEL01',
+        'user_id' => $this->agent->id,
+        'hotel_id' => $this->hotel->id,
+        'hotel_room_slot_id' => $this->slot->id,
+        'customer_name' => 'Agent Guest',
+        'customer_email' => 'agentguest@example.com',
+        'check_in' => $checkIn,
+        'check_out' => $checkOut,
+        'guests' => 2,
+        'rooms_count' => 3,
+        'price_per_night' => 200,
+        'total_price' => 400,
+        'currency' => 'SAR',
+        'status' => 'new',
+    ]);
+
+    expect($hotelRepo->getSlotAvailableQty($this->slot->id, $checkIn, $checkOut))->toBe(7);
+
+    $response = $this->actingAs($this->agent)
+        ->patchJson(route('agent.hotel-bookings.cancel', $booking));
+
+    $response->assertOk()
+        ->assertJson([
+            'success' => true,
+        ]);
+
+    $this->assertDatabaseHas('hotel_bookings', [
+        'id' => $booking->id,
+        'status' => 'cancelled',
+    ]);
+
+    expect($hotelRepo->getSlotAvailableQty($this->slot->id, $checkIn, $checkOut))->toBe(10);
+});
+
+it('prevents agent from cancelling confirmed hotel booking and returns contact admin notice', function () {
+    $booking = HotelBooking::create([
+        'booking_reference' => 'HB-CONFIRMED01',
+        'user_id' => $this->agent->id,
+        'hotel_id' => $this->hotel->id,
+        'hotel_room_slot_id' => $this->slot->id,
+        'customer_name' => 'Confirmed Guest',
+        'customer_email' => 'confirmed@example.com',
+        'check_in' => now()->addDays(3)->format('Y-m-d'),
+        'check_out' => now()->addDays(5)->format('Y-m-d'),
+        'guests' => 2,
+        'rooms_count' => 1,
+        'price_per_night' => 200,
+        'total_price' => 400,
+        'currency' => 'SAR',
+        'status' => 'confirmed',
+    ]);
+
+    $response = $this->actingAs($this->agent)
+        ->patchJson(route('agent.hotel-bookings.cancel', $booking));
+
+    $response->assertStatus(422)
+        ->assertJson([
+            'success' => false,
+            'message' => 'Confirmed bookings cannot be cancelled directly. Please contact admin to cancel confirmed bookings.',
+        ]);
+
+    $this->assertDatabaseHas('hotel_bookings', [
+        'id' => $booking->id,
+        'status' => 'confirmed',
+    ]);
 });

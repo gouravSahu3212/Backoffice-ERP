@@ -30,6 +30,8 @@ class HotelRoomSlotController extends AdminController
                 'available_qty' => (int) $slot->available_qty,
                 'price_per_night' => (float) $slot->price_per_night,
                 'currency' => $slot->currency,
+                'month' => $slot->month,
+                'season_type' => $slot->season_type,
                 'is_active' => (bool) $slot->is_active,
             ],
         ]);
@@ -50,6 +52,8 @@ class HotelRoomSlotController extends AdminController
                 'available_qty' => (int) $slot->available_qty,
                 'price_per_night' => (float) $slot->price_per_night,
                 'currency' => $slot->currency,
+                'month' => $slot->month,
+                'season_type' => $slot->season_type,
                 'is_active' => (bool) $slot->is_active,
             ],
         ]);

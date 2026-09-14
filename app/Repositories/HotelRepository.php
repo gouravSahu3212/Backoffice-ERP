@@ -45,6 +45,8 @@ class HotelRepository extends BaseRepository
         ?int $guests = null,
         ?string $checkIn = null,
         ?string $checkOut = null,
+        ?string $month = null,
+        ?string $seasonType = null,
         int $perPage = 12
     ): LengthAwarePaginator {
         $cIn = $checkIn ? date('Y-m-d', strtotime($checkIn)) : date('Y-m-d');
@@ -52,16 +54,28 @@ class HotelRepository extends BaseRepository
 
         $query = $this->model->newQuery()
             ->active()
-            ->with(['location', 'slots' => function ($q) use ($guests) {
+            ->with(['location', 'slots' => function ($q) use ($guests, $month, $seasonType) {
                 $q->active()->where('available_qty', '>', 0);
                 if ($guests && $guests > 0) {
                     $q->where('capacity', '>=', $guests);
                 }
+                if ($month && trim($month) !== '') {
+                    $q->where('month', $month);
+                }
+                if ($seasonType && trim($seasonType) !== '') {
+                    $q->where('season_type', $seasonType);
+                }
             }])
-            ->whereHas('slots', function ($q) use ($guests) {
+            ->whereHas('slots', function ($q) use ($guests, $month, $seasonType) {
                 $q->active()->where('available_qty', '>', 0);
                 if ($guests && $guests > 0) {
                     $q->where('capacity', '>=', $guests);
+                }
+                if ($month && trim($month) !== '') {
+                    $q->where('month', $month);
+                }
+                if ($seasonType && trim($seasonType) !== '') {
+                    $q->where('season_type', $seasonType);
                 }
             });
 
@@ -88,14 +102,22 @@ class HotelRepository extends BaseRepository
         $hotels = $query->latest()->paginate($perPage);
 
         // Deduct overlapping bookings for requested check-in and check-out dates
-        $hotels->getCollection()->transform(function (Hotel $hotel) use ($cIn, $cOut, $guests) {
-            $validSlots = $hotel->slots->filter(function ($slot) use ($cIn, $cOut, $guests) {
+        $hotels->getCollection()->transform(function (Hotel $hotel) use ($cIn, $cOut, $guests, $month, $seasonType) {
+            $validSlots = $hotel->slots->filter(function ($slot) use ($cIn, $cOut, $guests, $month, $seasonType) {
                 if (! $slot->is_active || ($guests && $slot->capacity < $guests)) {
                     return false;
                 }
 
+                if ($month && trim($month) !== '' && $slot->month !== $month) {
+                    return false;
+                }
+
+                if ($seasonType && trim($seasonType) !== '' && $slot->season_type !== $seasonType) {
+                    return false;
+                }
+
                 $bookedRooms = HotelBooking::where('hotel_room_slot_id', $slot->id)
-                    ->where('status', '!=', 'cancelled')
+                    ->whereNotIn('status', ['cancelled', 'rejected'])
                     ->where('check_in', '<', $cOut)
                     ->where('check_out', '>', $cIn)
                     ->sum('rooms_count');
@@ -128,7 +150,7 @@ class HotelRepository extends BaseRepository
         $cOut = date('Y-m-d', strtotime($checkOut));
 
         $bookedRooms = HotelBooking::where('hotel_room_slot_id', $slotId)
-            ->where('status', '!=', 'cancelled')
+            ->whereNotIn('status', ['cancelled', 'rejected'])
             ->where('check_in', '<', $cOut)
             ->where('check_out', '>', $cIn)
             ->sum('rooms_count');

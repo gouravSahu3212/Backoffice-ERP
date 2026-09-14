@@ -32,9 +32,11 @@ class HotelService
         ?int $guests = null,
         ?string $checkIn = null,
         ?string $checkOut = null,
+        ?string $month = null,
+        ?string $seasonType = null,
         int $perPage = 12
     ) {
-        return $this->hotelRepository->searchAvailable($search, $locationId, $starRating, $guests, $checkIn, $checkOut, $perPage);
+        return $this->hotelRepository->searchAvailable($search, $locationId, $starRating, $guests, $checkIn, $checkOut, $month, $seasonType, $perPage);
     }
 
     public function getSlotAvailableQty(int $slotId, string $checkIn, string $checkOut): int

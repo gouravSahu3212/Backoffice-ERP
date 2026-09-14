@@ -114,6 +114,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('hotels', [AgentHotelController::class, 'index'])->name('hotels.index');
             Route::post('hotels/book', [AgentHotelController::class, 'book'])->name('hotels.book');
             Route::get('hotel-bookings', [AgentHotelBookingController::class, 'index'])->name('hotel-bookings.index');
+            Route::patch('hotel-bookings/{hotelBooking}/cancel', [AgentHotelBookingController::class, 'cancel'])->name('hotel-bookings.cancel');
 
             Route::get('transfers', [AgentTransferController::class, 'index'])->name('transfers.index');
             Route::get('transfers/search', [AgentTransferController::class, 'search'])->name('transfers.search');

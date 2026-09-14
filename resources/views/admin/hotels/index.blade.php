@@ -289,6 +289,7 @@
                                         <tr>
                                             <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Slot Name</th>
                                             <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Capacity</th>
+                                            <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Month & Season</th>
                                             <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Price/Night</th>
                                             <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Currency</th>
                                             <th class="px-4 py-3 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Stock Qty</th>
@@ -301,6 +302,25 @@
                                             <tr class="hover:bg-gray-50/60 transition-colors">
                                                 <td class="px-4 py-3 text-xs font-semibold text-gray-900" x-text="slot.name"></td>
                                                 <td class="px-4 py-3 text-xs text-gray-600" x-text="slot.capacity + ' guests'"></td>
+                                                <td class="px-4 py-3 text-xs text-gray-600">
+                                                    <template x-if="slot.month">
+                                                        <span class="inline-flex items-center gap-1.5 flex-wrap">
+                                                            <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded text-[11px] font-medium" x-text="slot.month"></span>
+                                                            <template x-if="slot.season_type">
+                                                                <span class="px-2 py-0.5 rounded text-[11px] font-semibold"
+                                                                    :class="{
+                                                                        'bg-rose-100 text-rose-700 border border-rose-200': slot.season_type === 'High',
+                                                                        'bg-emerald-100 text-emerald-700 border border-emerald-200': slot.season_type === 'Low',
+                                                                        'bg-amber-100 text-amber-700 border border-amber-200': slot.season_type === 'Shoulder'
+                                                                    }"
+                                                                    x-text="slot.season_type + ' Season'"></span>
+                                                            </template>
+                                                        </span>
+                                                    </template>
+                                                    <template x-if="!slot.month">
+                                                        <span class="text-gray-400 font-mono text-[11px]">—</span>
+                                                    </template>
+                                                </td>
                                                 <td class="px-4 py-3 text-xs font-medium text-gray-900" x-text="slot.price_per_night"></td>
                                                 <td class="px-4 py-3 text-xs text-gray-600 uppercase" x-text="slot.currency"></td>
                                                 <td class="px-4 py-3 text-xs text-gray-600 font-semibold" x-text="slot.available_qty"></td>
@@ -335,7 +355,7 @@
                                         </template>
                                         <template x-if="!hotel.slots || hotel.slots.length === 0">
                                             <tr>
-                                                <td colspan="7" class="px-4 py-6 text-center text-xs text-gray-400 italic">
+                                                <td colspan="8" class="px-4 py-6 text-center text-xs text-gray-400 italic">
                                                     No slots/rooms added yet. Click "+ Add Room Slot" above.
                                                 </td>
                                             </tr>
@@ -709,6 +729,31 @@
                             </select>
                         </div>
                     </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-900 mb-1.5">Month</label>
+                            <select 
+                                x-model="slotForm.month"
+                                @change="onSlotMonthChange()"
+                                class="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                                <option value="">None / All Months</option>
+                                <template x-for="m in ['January','February','March','April','May','June','July','August','September','October','November','December']" :key="m">
+                                    <option :value="m" x-text="m"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div x-show="slotForm.month && slotForm.month.trim() !== ''" x-transition>
+                            <label class="block text-xs font-semibold text-gray-900 mb-1.5">Season Type *</label>
+                            <select 
+                                x-model="slotForm.season_type"
+                                class="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                                <option value="">Select Season</option>
+                                <option value="High">High</option>
+                                <option value="Low">Low</option>
+                                <option value="Shoulder">Shoulder</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div class="flex items-center gap-6 pt-2">
                         <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
@@ -825,7 +870,15 @@ function adminHotels() {
             available_qty: 1,
             price_per_night: 0,
             currency: 'AED',
+            month: '',
+            season_type: '',
             is_active: true
+        },
+
+        onSlotMonthChange() {
+            if (!this.slotForm.month) {
+                this.slotForm.season_type = '';
+            }
         },
 
         filters: {
@@ -1233,6 +1286,8 @@ function adminHotels() {
                 available_qty: 1,
                 price_per_night: 0,
                 currency: 'AED',
+                month: '',
+                season_type: '',
                 is_active: true
             };
             this.slotModalOpen = true;
@@ -1249,6 +1304,8 @@ function adminHotels() {
                 available_qty: slot.available_qty,
                 price_per_night: slot.price_per_night,
                 currency: slot.currency || 'AED',
+                month: slot.month || '',
+                season_type: slot.season_type || '',
                 is_active: Boolean(slot.is_active)
             };
             this.slotModalOpen = true;

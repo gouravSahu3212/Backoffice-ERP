@@ -24,7 +24,7 @@ class HotelBookingNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $hotelName = $this->booking->hotel->name ?? 'Hotel';
-        $slotName = $this->booking->slot->name ?? 'Room';
+        $slotName = $this->booking->roomSlot->name ?? ($this->booking->slot->name ?? 'Room');
         $checkIn = $this->booking->check_in ? $this->booking->check_in->format('M d, Y') : 'N/A';
         $checkOut = $this->booking->check_out ? $this->booking->check_out->format('M d, Y') : 'N/A';
         $ref = $this->booking->booking_reference;
@@ -48,14 +48,14 @@ class HotelBookingNotification extends Notification
         return (new MailMessage)
             ->subject("Hotel Booking Confirmation [{$ref}] - {$hotelName}")
             ->greeting("Hello {$this->booking->customer_name},")
-            ->line('Your hotel room booking has been successfully confirmed!')
+            ->line('Your hotel room booking request has been submitted successfully!')
             ->line("Booking Reference: {$ref}")
             ->line("Hotel: {$hotelName}")
             ->line("Room Category: {$slotName}")
             ->line("Check-in Date: {$checkIn}")
             ->line("Check-out Date: {$checkOut}")
             ->line("Guests: {$this->booking->guests}")
-            ->line("Total Amount Paid: {$price} {$currency}")
+            ->line("Total Amount: {$price} {$currency}")
             ->line('Thank you for booking with us!');
     }
 }

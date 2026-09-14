@@ -17,6 +17,8 @@ class HotelRoomSlot extends Model
         'available_qty',
         'price_per_night',
         'currency',
+        'month',
+        'season_type',
         'is_active',
     ];
 
