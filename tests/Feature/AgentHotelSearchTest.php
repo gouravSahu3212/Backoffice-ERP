@@ -103,9 +103,11 @@ it('allows agent to book a room and dispatches notifications', function () {
         'customer_email' => 'johndoe@example.com',
     ]);
 
-    Notification::assertSentTo(
-        $this->admin,
-        HotelBookingNotification::class
+    Notification::assertSentOnDemand(
+        HotelBookingNotification::class,
+        function ($notification, $channels, $notifiable) {
+            return $notifiable->routes['mail'] === 'johndoe@example.com';
+        }
     );
 });
 

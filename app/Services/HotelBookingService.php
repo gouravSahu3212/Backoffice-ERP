@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\HotelBooking;
 use App\Models\User;
+use App\Notifications\HotelBookingNotification;
 use App\Notifications\HotelBookingReceivedNotification;
 use App\Notifications\HotelBookingStatusUpdatedNotification;
 use App\Repositories\HotelBookingRepository;
@@ -54,6 +55,11 @@ class HotelBookingService
             Notification::send($admins, new HotelBookingReceivedNotification($booking));
         }
 
+        if (! empty($booking->customer_email)) {
+            Notification::route('mail', $booking->customer_email)
+                ->notify(new HotelBookingNotification($booking, 'customer'));
+        }
+
         return $booking;
     }
 
@@ -83,6 +89,11 @@ class HotelBookingService
             $updatedBooking->user->notify(new HotelBookingStatusUpdatedNotification($updatedBooking));
         }
 
+        if (! empty($updatedBooking->customer_email)) {
+            Notification::route('mail', $updatedBooking->customer_email)
+                ->notify(new HotelBookingStatusUpdatedNotification($updatedBooking));
+        }
+
         return $updatedBooking;
     }
 
@@ -101,6 +112,11 @@ class HotelBookingService
         $admins = User::role('Super Admin')->get();
         if ($admins->count() > 0) {
             Notification::send($admins, new HotelBookingStatusUpdatedNotification($updatedBooking));
+        }
+
+        if (! empty($updatedBooking->customer_email)) {
+            Notification::route('mail', $updatedBooking->customer_email)
+                ->notify(new HotelBookingStatusUpdatedNotification($updatedBooking));
         }
 
         return $updatedBooking;
