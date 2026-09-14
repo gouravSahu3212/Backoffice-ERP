@@ -9,6 +9,18 @@ return [
             'icon' => 'home',
         ],
         [
+            'title' => 'Hotels',
+            'route' => 'admin.hotels.index',
+            'icon' => 'building',
+            'submenu' => [
+                [
+                    'title' => 'Hotel Bookings',
+                    'route' => 'admin.hotels.bookings.index',
+                    'icon' => 'ticket',
+                ],
+            ],
+        ],
+        [
             'title' => 'Agents',
             'route' => 'admin.agents.index',
             'icon' => 'users',
@@ -49,6 +61,13 @@ return [
             'title' => 'Hotels',
             'route' => 'agent.hotels.index',
             'icon' => 'building',
+            'submenu' => [
+                [
+                    'title' => 'Hotel Bookings',
+                    'route' => 'agent.hotel-bookings.index',
+                    'icon' => 'ticket',
+                ],
+            ],
         ],
         [
             'title' => 'Transfers',

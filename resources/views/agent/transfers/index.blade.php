@@ -38,17 +38,22 @@
     {{-- Success Toast Notification --}}
     <div 
         x-show="successMessage" 
-        x-transition
-        class="mb-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm font-medium flex items-center justify-between shadow-sm"
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="translate-y-4 opacity-0 scale-95"
+        x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+        x-transition:leave-end="translate-y-4 opacity-0 scale-95"
+        class="fixed bottom-5 right-5 z-[9999] max-w-md bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-2xl text-sm font-medium flex items-center justify-between gap-3 border border-emerald-500/30"
         style="display: none;"
     >
-        <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <div class="flex items-center gap-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span x-text="successMessage"></span>
+            <span x-text="successMessage" class="leading-snug"></span>
         </div>
-        <button type="button" @click="successMessage = ''" class="text-emerald-500 hover:text-emerald-700">
+        <button type="button" @click="successMessage = ''" class="text-emerald-200 hover:text-white p-1 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -664,6 +669,7 @@ function agentTransfers() {
                     this.enquiryModalOpen = false;
                     this.drawerOpen = false;
                     this.successMessage = `Enquiry ${data.reference} submitted successfully! You can view it under Booking Enquiries.`;
+                    setTimeout(() => { this.successMessage = ''; }, 5000);
                     this.enquiryForm.customer_name = '';
                     this.enquiryForm.date_of_birth = '';
                     this.enquiryForm.passport_number = '';
