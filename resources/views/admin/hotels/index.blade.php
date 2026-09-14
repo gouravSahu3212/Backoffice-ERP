@@ -619,12 +619,15 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-900 mb-1.5">Currency</label>
-                            <input 
-                                type="text" 
-                                x-model="slotForm.currency" 
-                                required
-                                class="w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2 text-sm text-gray-900 uppercase focus:outline-none focus:ring-2 focus:ring-gray-900"
-                            />
+                            <select 
+                                id="e-currency" 
+                                name="currency"
+                                x-model="slotForm.currency"
+                                class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition bg-white">
+                                @foreach (['SAR'] as $cur)
+                                    <option value="{{ $cur }}">{{ $cur }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 

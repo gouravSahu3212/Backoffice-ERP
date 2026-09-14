@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\TransferController;
 use App\Http\Controllers\Admin\TransferRequestController as AdminTransferRequestController;
 use App\Http\Controllers\Agent\ActivityLogController as AgentActivityLogController;
 use App\Http\Controllers\Agent\DashboardController as AgentDashboard;
+use App\Http\Controllers\Agent\HotelBookingController as AgentHotelBookingController;
 use App\Http\Controllers\Agent\HotelController as AgentHotelController;
 use App\Http\Controllers\Agent\TourController as AgentTourController;
 use App\Http\Controllers\Agent\TourRequestController as AgentTourRequestController;
@@ -104,6 +105,7 @@ Route::middleware(['auth'])->group(function () {
             // Hotels & Room Availability
             Route::get('hotels', [AgentHotelController::class, 'index'])->name('hotels.index');
             Route::post('hotels/book', [AgentHotelController::class, 'book'])->name('hotels.book');
+            Route::get('hotel-bookings', [AgentHotelBookingController::class, 'index'])->name('hotel-bookings.index');
 
             Route::get('transfers', [AgentTransferController::class, 'index'])->name('transfers.index');
             Route::get('transfers/search', [AgentTransferController::class, 'search'])->name('transfers.search');

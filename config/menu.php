@@ -54,6 +54,13 @@ return [
             'title' => 'Hotels',
             'route' => 'agent.hotels.index',
             'icon' => 'building',
+            'submenu' => [
+                [
+                    'title' => 'Hotel Bookings',
+                    'route' => 'agent.hotel-bookings.index',
+                    'icon' => 'ticket',
+                ],
+            ],
         ],
         [
             'title' => 'Transfers',
