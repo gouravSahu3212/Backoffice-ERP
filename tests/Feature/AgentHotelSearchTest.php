@@ -108,3 +108,41 @@ it('allows agent to book a room and dispatches notifications', function () {
         HotelBookingNotification::class
     );
 });
+
+it('filters hotels by month and season type on agent catalog search', function () {
+    // Create a second hotel with Low season in June
+    $hotelJune = Hotel::factory()->create([
+        'name' => 'Summer Escape Hotel',
+        'location_id' => $this->location->id,
+        'star_rating' => 4,
+        'is_active' => true,
+    ]);
+
+    HotelRoomSlot::factory()->create([
+        'hotel_id' => $hotelJune->id,
+        'name' => 'Summer Discount Room',
+        'month' => 'June',
+        'season_type' => 'Low',
+        'is_active' => true,
+    ]);
+
+    // Give our initial hotel slot a December High season
+    $this->slot->update([
+        'month' => 'December',
+        'season_type' => 'High',
+    ]);
+
+    // Search for December + High
+    $this->actingAs($this->agent)
+        ->get(route('agent.hotels.index', ['month' => 'December', 'season_type' => 'High']))
+        ->assertOk()
+        ->assertSee('Marina Grand Resort')
+        ->assertDontSee('Summer Escape Hotel');
+
+    // Search for June + Low
+    $this->actingAs($this->agent)
+        ->get(route('agent.hotels.index', ['month' => 'June', 'season_type' => 'Low']))
+        ->assertOk()
+        ->assertSee('Summer Escape Hotel')
+        ->assertDontSee('Marina Grand Resort');
+});

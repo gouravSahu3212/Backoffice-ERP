@@ -38,7 +38,7 @@
 
     {{-- Top Filter Bar (Always visible in both grid & detail view) --}}
     <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs mb-6">
-        <form @submit.prevent="filterHotels()" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3.5 items-end">
+        <form @submit.prevent="filterHotels()" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3.5 items-end">
             
             {{-- City/Location Dropdown --}}
             <div>
@@ -48,6 +48,28 @@
                     <template x-for="loc in locationsList" :key="loc.id">
                         <option :value="loc.id" x-text="loc.name"></option>
                     </template>
+                </select>
+            </div>
+
+            {{-- Month Filter --}}
+            <div>
+                <label class="block text-xs font-semibold text-gray-900 mb-1.5">Month</label>
+                <select x-model="filters.month" @change="filterHotels()" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <option value="">All Months</option>
+                    <template x-for="m in ['January','February','March','April','May','June','July','August','September','October','November','December']" :key="m">
+                        <option :value="m" x-text="m"></option>
+                    </template>
+                </select>
+            </div>
+
+            {{-- Season Filter --}}
+            <div>
+                <label class="block text-xs font-semibold text-gray-900 mb-1.5">Season</label>
+                <select x-model="filters.season_type" @change="filterHotels()" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <option value="">All Seasons</option>
+                    <option value="High">High Season</option>
+                    <option value="Low">Low Season</option>
+                    <option value="Shoulder">Shoulder Season</option>
                 </select>
             </div>
 
@@ -99,8 +121,8 @@
             </div>
 
             {{-- Search Button --}}
-            <div>
-                <button type="submit" class="w-full bg-[#0B1527] hover:bg-slate-800 text-white font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors inline-flex items-center justify-center gap-2 shadow-xs">
+            <div class="sm:col-span-2 lg:col-span-1">
+                <button type="submit" class="w-full bg-[#0B1527] hover:bg-slate-800 text-white font-semibold text-sm px-4 py-2 rounded-lg transition-colors inline-flex items-center justify-center gap-2 shadow-xs">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -314,11 +336,25 @@
                         <h4 class="font-bold text-gray-900 text-base" x-text="slot.name"></h4>
                         
                         {{-- Capacity & Real Availability Count --}}
-                        <p class="text-xs text-gray-500 font-medium">
+                        <div class="flex items-center gap-1.5 flex-wrap text-xs text-gray-500 font-medium">
                             <span x-text="`Capacity: ${slot.capacity} guests`"></span>
+                            <template x-if="slot.month">
+                                <span class="inline-flex items-center gap-1">
+                                    <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded text-[10px] font-semibold" x-text="slot.month"></span>
+                                    <template x-if="slot.season_type">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                            :class="{
+                                                'bg-rose-100 text-rose-700': slot.season_type === 'High',
+                                                'bg-emerald-100 text-emerald-700': slot.season_type === 'Low',
+                                                'bg-amber-100 text-amber-700': slot.season_type === 'Shoulder'
+                                            }"
+                                            x-text="slot.season_type + ' Season'"></span>
+                                    </template>
+                                </span>
+                            </template>
                             <span>•</span>
                             <span class="text-emerald-700 font-semibold" x-text="`${slot.real_available_qty !== undefined ? slot.real_available_qty : slot.available_qty} available`"></span>
-                        </p>
+                        </div>
 
                         {{-- Total Price & Per Night Subtitle --}}
                         <div class="pt-1 flex items-baseline gap-1.5">
@@ -492,7 +528,9 @@ function agentHotels() {
             star_rating: @json($starRating ?? ''),
             guests: @json($guests ?? 2),
             check_in: @json($checkIn ?? date('Y-m-d')),
-            check_out: @json($checkOut ?? date('Y-m-d', strtotime('+1 day')))
+            check_out: @json($checkOut ?? date('Y-m-d', strtotime('+1 day'))),
+            month: @json($month ?? ''),
+            season_type: @json($seasonType ?? '')
         },
 
         bookingModalOpen: false,
@@ -566,6 +604,8 @@ function agentHotels() {
                 if (this.filters.guests) params.append('guests', this.filters.guests);
                 if (this.filters.check_in) params.append('check_in', this.filters.check_in);
                 if (this.filters.check_out) params.append('check_out', this.filters.check_out);
+                if (this.filters.month) params.append('month', this.filters.month);
+                if (this.filters.season_type) params.append('season_type', this.filters.season_type);
 
                 const response = await fetch(`${this.baseUrl}?${params.toString()}`, {
                     headers: {

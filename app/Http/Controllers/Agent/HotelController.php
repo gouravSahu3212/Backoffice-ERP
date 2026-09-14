@@ -35,7 +35,10 @@ class HotelController
         $checkOutDate = Carbon::parse($checkOut);
         $nights = max(1, $checkInDate->diffInDays($checkOutDate));
 
-        $hotels = $this->hotelService->listAvailable($search, $locationId, $starRating, $guests, $checkIn, $checkOut, 15);
+        $month = $request->filled('month') ? $request->get('month') : null;
+        $seasonType = $request->filled('season_type') ? $request->get('season_type') : null;
+
+        $hotels = $this->hotelService->listAvailable($search, $locationId, $starRating, $guests, $checkIn, $checkOut, $month, $seasonType, 15);
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -57,6 +60,8 @@ class HotelController
             'guests',
             'checkIn',
             'checkOut',
+            'month',
+            'seasonType',
             'nights'
         ));
     }

@@ -153,3 +153,57 @@ it('allows admin to create a room slot for a hotel', function () {
         'name' => 'Admin Presidential Suite',
     ]);
 });
+
+it('allows admin to store a room slot with month and season type', function () {
+    $payload = [
+        'name' => 'High Season Suite',
+        'capacity' => 2,
+        'available_qty' => 10,
+        'price_per_night' => 800,
+        'currency' => 'AED',
+        'month' => 'December',
+        'season_type' => 'High',
+        'is_active' => true,
+    ];
+
+    $response = $this->actingAs($this->admin)
+        ->postJson(route('admin.hotels.slots.store', $this->hotel), $payload);
+
+    $response->assertOk()
+        ->assertJsonFragment([
+            'success' => true,
+            'message' => 'Room slot added successfully.',
+        ]);
+
+    $this->assertDatabaseHas('hotel_room_slots', [
+        'hotel_id' => $this->hotel->id,
+        'name' => 'High Season Suite',
+        'month' => 'December',
+        'season_type' => 'High',
+    ]);
+});
+
+it('clears season_type if month is empty when storing or updating room slot', function () {
+    $payload = [
+        'name' => 'Shoulder Season Room',
+        'capacity' => 2,
+        'available_qty' => 5,
+        'price_per_night' => 300,
+        'currency' => 'AED',
+        'month' => null,
+        'season_type' => 'Shoulder',
+        'is_active' => true,
+    ];
+
+    $response = $this->actingAs($this->admin)
+        ->postJson(route('admin.hotels.slots.store', $this->hotel), $payload);
+
+    $response->assertOk();
+
+    $this->assertDatabaseHas('hotel_room_slots', [
+        'hotel_id' => $this->hotel->id,
+        'name' => 'Shoulder Season Room',
+        'month' => null,
+        'season_type' => null,
+    ]);
+});
