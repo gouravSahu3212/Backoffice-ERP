@@ -32,7 +32,7 @@
                 <option value="">All Statuses</option>
                 <option value="new" {{ ($status ?? '') === 'new' ? 'selected' : '' }}>New</option>
                 <option value="confirmed" {{ ($status ?? '') === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                <option value="cancelled" {{ ($status ?? '') === 'cancelled' || ($status ?? '') === 'rejected' ? 'selected' : '' }}>Cancelled</option>
+                <option value="rejected" {{ ($status ?? '') === 'rejected' || ($status ?? '') === 'cancelled' ? 'selected' : '' }}>Rejected</option>
             </select>
         </form>
     </div>
@@ -85,7 +85,7 @@
                             $checkOutDate = \Carbon\Carbon::parse($b->check_out);
                             $nightsCount = max(1, $checkInDate->diffInDays($checkOutDate));
                             $isPaid = $b->status === 'confirmed';
-                            $displayStatus = ($b->status === 'rejected') ? 'cancelled' : $b->status;
+                            $displayStatus = ($b->status === 'cancelled') ? 'rejected' : $b->status;
                         @endphp
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             {{-- Booking Ref --}}
@@ -130,17 +130,17 @@
                                     @change="onStatusSelectChange({{ $b->id }}, '{{ $b->booking_reference }}', '{{ $displayStatus }}', $event)" 
                                     class="text-xs font-bold rounded-full pl-3.5 pr-7 py-1 border-0 focus:ring-2 focus:ring-gray-900 cursor-pointer shadow-xs transition-all"
                                     :style="{
-                                        width: '{{ $displayStatus }}' === 'new' ? '70px' : ('{{ $displayStatus }}' === 'confirmed' ? '105px' : '100px')
+                                        width: '{{ $displayStatus }}' === 'new' ? '70px' : ('{{ $displayStatus }}' === 'confirmed' ? '105px' : '90px')
                                     }"
                                     :class="{
                                         'bg-amber-100 text-amber-800': '{{ $displayStatus }}' === 'new',
                                         'bg-[#0F172A] text-white': '{{ $displayStatus }}' === 'confirmed',
-                                        'bg-rose-100 text-rose-700': '{{ $displayStatus }}' === 'cancelled'
+                                        'bg-rose-100 text-rose-700': '{{ $displayStatus }}' === 'rejected' || '{{ $displayStatus }}' === 'cancelled'
                                     }"
                                 >
                                     <option value="new" {{ $displayStatus === 'new' ? 'selected' : '' }}>new</option>
                                     <option value="confirmed" {{ $displayStatus === 'confirmed' ? 'selected' : '' }}>confirmed</option>
-                                    <option value="cancelled" {{ $displayStatus === 'cancelled' ? 'selected' : '' }}>cancelled</option>
+                                    <option value="rejected" {{ $displayStatus === 'rejected' || $displayStatus === 'cancelled' ? 'selected' : '' }}>rejected</option>
                                 </select>
                             </td>
 
@@ -176,13 +176,13 @@
                                         </svg>
                                     </button>
 
-                                    {{-- Cancel Icon --}}
-                                    @if($displayStatus !== 'cancelled')
+                                    {{-- Reject Icon --}}
+                                    @if($displayStatus !== 'rejected' && $displayStatus !== 'cancelled')
                                         <button 
                                             type="button" 
-                                            @click="openCancelModal({{ $b->id }}, '{{ $b->booking_reference }}', '{{ $displayStatus }}')"
+                                            @click="openCancelModal({{ $b->id }}, '{{ $b->booking_reference }}', '{{ $displayStatus }}', 'rejected')"
                                             class="p-1.5 text-gray-500 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
-                                            title="Cancel Booking"
+                                            title="Reject Booking"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -373,7 +373,7 @@
                 @click.away="cancelStatusChange()"
             >
                 <div class="flex items-start justify-between mb-3">
-                    <h3 class="text-xl font-bold text-gray-900" x-text="statusChangeData.newStatus === 'cancelled' ? 'Cancel Booking' : (statusChangeData.newStatus === 'confirmed' ? 'Confirm Booking' : 'Update Booking Status')"></h3>
+                    <h3 class="text-xl font-bold text-gray-900" x-text="(statusChangeData.newStatus === 'rejected' || statusChangeData.newStatus === 'cancelled') ? 'Reject Booking' : (statusChangeData.newStatus === 'confirmed' ? 'Confirm Booking' : 'Update Booking Status')"></h3>
                     <button type="button" @click="cancelStatusChange()" class="text-gray-400 hover:text-gray-600 p-1 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -382,8 +382,8 @@
                 </div>
 
                 <p class="text-gray-500 text-sm leading-relaxed mb-6">
-                    <template x-if="statusChangeData.newStatus === 'cancelled'">
-                        <span>Are you sure you want to cancel booking <strong class="text-gray-800" x-text="statusChangeData.reference"></strong>? This will also mark payment as refunded.</span>
+                    <template x-if="statusChangeData.newStatus === 'rejected' || statusChangeData.newStatus === 'cancelled'">
+                        <span>Are you sure you want to reject booking <strong class="text-gray-800" x-text="statusChangeData.reference"></strong>? This will release the booked rooms back to availability.</span>
                     </template>
                     <template x-if="statusChangeData.newStatus === 'confirmed'">
                         <span>Are you sure you want to confirm booking <strong class="text-gray-800" x-text="statusChangeData.reference"></strong>? This will mark payment as paid.</span>
@@ -406,11 +406,11 @@
                         @click="confirmStatusChange()" 
                         class="px-5 py-2.5 font-semibold rounded-xl text-sm shadow-sm transition-colors text-white"
                         :class="{
-                            'bg-[#EF4444] hover:bg-red-600': statusChangeData.newStatus === 'cancelled',
+                            'bg-[#EF4444] hover:bg-red-600': statusChangeData.newStatus === 'rejected' || statusChangeData.newStatus === 'cancelled',
                             'bg-[#0F172A] hover:bg-slate-800': statusChangeData.newStatus === 'confirmed',
                             'bg-amber-600 hover:bg-amber-700': statusChangeData.newStatus === 'new'
                         }"
-                        x-text="statusChangeData.newStatus === 'cancelled' ? 'Yes, Cancel' : (statusChangeData.newStatus === 'confirmed' ? 'Yes, Confirm' : 'Yes, Update')"
+                        x-text="(statusChangeData.newStatus === 'rejected' || statusChangeData.newStatus === 'cancelled') ? 'Yes, Reject' : (statusChangeData.newStatus === 'confirmed' ? 'Yes, Confirm' : 'Yes, Update')"
                     >
                     </button>
                 </div>
@@ -443,12 +443,12 @@ function adminHotelBookings() {
             this.modalOpen = true;
         },
 
-        openCancelModal(id, reference, currentStatus = 'new') {
+        openCancelModal(id, reference, currentStatus = 'new', targetStatus = 'rejected') {
             this.statusChangeData = {
                 bookingId: id,
                 reference: reference,
                 oldStatus: currentStatus,
-                newStatus: 'cancelled',
+                newStatus: targetStatus,
                 selectElement: null
             };
             this.confirmModalOpen = true;

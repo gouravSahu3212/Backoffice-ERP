@@ -6,6 +6,7 @@ use App\Models\HotelRoomSlot;
 use App\Models\User;
 use App\Notifications\HotelBookingReceivedNotification;
 use App\Notifications\HotelBookingStatusUpdatedNotification;
+use App\Repositories\HotelRepository;
 use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
@@ -196,4 +197,48 @@ it('renders printable pdf view for hotel booking', function () {
         ->assertSee('Hotel Booking Voucher')
         ->assertSee('BK-004')
         ->assertSee('Abhay Patel');
+});
+
+it('allows super admin to reject hotel booking and restores room slot availability', function () {
+    $hotelRepo = app(HotelRepository::class);
+
+    $checkIn = now()->addDays(5)->format('Y-m-d');
+    $checkOut = now()->addDays(7)->format('Y-m-d');
+
+    $booking = HotelBooking::create([
+        'booking_reference' => 'BK-REJ001',
+        'user_id' => $this->agent->id,
+        'hotel_id' => $this->hotel->id,
+        'hotel_room_slot_id' => $this->slot->id,
+        'customer_name' => 'Sarah Connor',
+        'customer_email' => 'sarah@example.com',
+        'check_in' => $checkIn,
+        'check_out' => $checkOut,
+        'guests' => 2,
+        'rooms_count' => 5,
+        'price_per_night' => 450,
+        'total_price' => 1800,
+        'currency' => 'AED',
+        'status' => 'new',
+    ]);
+
+    expect($hotelRepo->getSlotAvailableQty($this->slot->id, $checkIn, $checkOut))->toBe(5);
+
+    $response = $this->actingAs($this->admin)
+        ->patchJson(route('admin.hotels.bookings.update-status', $booking), [
+            'status' => 'rejected',
+        ]);
+
+    $response->assertOk()
+        ->assertJson([
+            'success' => true,
+            'status' => 'rejected',
+        ]);
+
+    $this->assertDatabaseHas('hotel_bookings', [
+        'id' => $booking->id,
+        'status' => 'rejected',
+    ]);
+
+    expect($hotelRepo->getSlotAvailableQty($this->slot->id, $checkIn, $checkOut))->toBe(10);
 });

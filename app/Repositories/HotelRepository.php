@@ -95,7 +95,7 @@ class HotelRepository extends BaseRepository
                 }
 
                 $bookedRooms = HotelBooking::where('hotel_room_slot_id', $slot->id)
-                    ->where('status', '!=', 'cancelled')
+                    ->whereNotIn('status', ['cancelled', 'rejected'])
                     ->where('check_in', '<', $cOut)
                     ->where('check_out', '>', $cIn)
                     ->sum('rooms_count');
@@ -128,7 +128,7 @@ class HotelRepository extends BaseRepository
         $cOut = date('Y-m-d', strtotime($checkOut));
 
         $bookedRooms = HotelBooking::where('hotel_room_slot_id', $slotId)
-            ->where('status', '!=', 'cancelled')
+            ->whereNotIn('status', ['cancelled', 'rejected'])
             ->where('check_in', '<', $cOut)
             ->where('check_out', '>', $cIn)
             ->sum('rooms_count');

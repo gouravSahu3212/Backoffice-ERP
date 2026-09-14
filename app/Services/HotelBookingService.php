@@ -85,4 +85,24 @@ class HotelBookingService
 
         return $updatedBooking;
     }
+
+    public function cancelBookingByAgent(HotelBooking $booking, User $agent): HotelBooking
+    {
+        $updatedBooking = $this->repository->updateStatus($booking, 'cancelled');
+
+        $this->activityLog->log(
+            'cancelled',
+            "cancelled hotel booking {$updatedBooking->booking_reference}",
+            $updatedBooking,
+            null,
+            $agent->id
+        );
+
+        $admins = User::role('Super Admin')->get();
+        if ($admins->count() > 0) {
+            Notification::send($admins, new HotelBookingStatusUpdatedNotification($updatedBooking));
+        }
+
+        return $updatedBooking;
+    }
 }
